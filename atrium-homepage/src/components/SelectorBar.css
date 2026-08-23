@@ -1,0 +1,36 @@
+.nav_bar {
+    height: 60px;
+    background: #ddd;
+    box-sizing: border-box;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+button {
+    border-radius: 20%;
+    border: 0;
+
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    padding: 10px;
+
+    cursor: pointer;
+}
+
+button.inactive {
+    background: whitesmoke;
+    color: gray;
+}
+
+button.active {
+    background: gray;
+    color: whitesmoke;
+}
+
+button:active {
+    transform: scale(0.95);
+}
