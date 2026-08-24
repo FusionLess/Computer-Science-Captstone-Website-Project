@@ -52,3 +52,12 @@ button:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
 }
+
+.backdrop {
+    position: fixed;
+    top: var(--bar-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+}
