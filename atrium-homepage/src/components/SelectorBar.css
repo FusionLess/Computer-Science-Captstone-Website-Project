@@ -1,12 +1,13 @@
 .nav_bar {
-    height: 60px;
-    background: #ddd;
+    height: var(--bar-height);
+    background: var(--selector-colour);
     box-sizing: border-box;
-    padding: 5px;
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    border-bottom: 1px var(--box-border) solid;
 }
 
 button {
@@ -19,16 +20,18 @@ button {
     padding: 10px;
 
     cursor: pointer;
+    font-weight: bolder;
 }
 
 button.inactive {
-    background: whitesmoke;
-    color: gray;
+    background: var(--button-inactive-bg);
+    color: var(--button-inactive-text);
 }
 
 button.active {
-    background: gray;
-    color: whitesmoke;
+    background: var(--button-active-bg);
+    color: var(--button-active-text);
+    border: 2px solid var(--button-border);
 }
 
 button:active {
