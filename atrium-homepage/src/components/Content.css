@@ -1,0 +1,30 @@
+.content {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas: "left middle right";
+    gap: 20px;
+    box-sizing: border-box;
+    padding: 20px;
+    background: var(--background-colour);
+    flex: 1;
+}
+
+.box {
+    background: var(--background-colour-2);
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    border-radius: 20px;
+}
+
+.left {
+    grid-area: left;
+}
+
+.right {
+    grid-area: right;
+}
+
+.middle {
+    grid-area: middle;
+}
