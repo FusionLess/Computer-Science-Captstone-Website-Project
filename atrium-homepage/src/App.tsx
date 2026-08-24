@@ -1,5 +1,5 @@
 import './App.css'
-import SelectBar from './components/SelectorBar.tsx'
+import SelectBar from './components/TopBar.tsx'
 import Content from './components/Content.tsx'
 import GraphBar from './components/GraphBar.tsx'
 

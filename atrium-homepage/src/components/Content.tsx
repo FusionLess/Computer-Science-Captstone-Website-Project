@@ -29,7 +29,7 @@ function MiddleBox() {
 function RightBox() {
     return (
         <aside className="right box">
-            
+
         </aside>
     )
 }
