@@ -1,17 +1,22 @@
-.nav_bar {
+.topbar {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
     height: var(--bar-height);
-    background: var(--selector-colour);
     box-sizing: border-box;
     padding: 10px;
+    border-bottom: 1px var(--box-border) solid;
+    background: var(--selector-colour);
+}
+
+.toggle_buttons {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px var(--box-border) solid;
 }
 
 button {
-    border-radius: 20%;
+    border-radius: 20px;
     border: 0;
 
     align-items: center;
@@ -21,6 +26,10 @@ button {
 
     cursor: pointer;
     font-weight: bolder;
+
+    background: var(--button-inactive-bg);
+    color: var(--button-inactive-text);
+
 }
 
 button.inactive {
@@ -32,8 +41,14 @@ button.active {
     background: var(--button-active-bg);
     color: var(--button-active-text);
     border: 2px solid var(--button-border);
+
 }
 
 button:active {
     transform: scale(0.95);
+}
+
+button:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
 }
