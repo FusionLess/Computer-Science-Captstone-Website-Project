@@ -13,6 +13,7 @@ function GraphBar() {
 function ECGContainer() {
     return (
         <div className = "ecg container">
+            [ ECG Graph ]
         </div>
     )
 }
@@ -20,6 +21,7 @@ function ECGContainer() {
 function HeartRateContainer() {
     return (
         <div className = "heartrate container">
+            [ HeartRate ]
         </div>
     )
 }
@@ -27,6 +29,7 @@ function HeartRateContainer() {
 function PressureContainer() {
     return (
         <div className = "pressure container">
+            [ Pressure Graph ]
         </div>
     )
 }

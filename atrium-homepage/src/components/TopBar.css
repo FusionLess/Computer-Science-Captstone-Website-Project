@@ -15,6 +15,18 @@
     gap: 10px;
 }
 
+.left_buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    font-weight : 800;
+    font-family: Helvetica Neue, sans-serif;
+    color: darkred;
+}
+
 button {
     border-radius: 20px;
     border: 0;
