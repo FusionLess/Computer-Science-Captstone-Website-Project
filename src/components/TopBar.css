@@ -1,0 +1,75 @@
+.topbar {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    height: var(--bar-height);
+    box-sizing: border-box;
+    padding: 10px;
+    border-bottom: 1px var(--box-border) solid;
+    background: var(--selector-colour);
+}
+
+.toggle_buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.left_buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    font-weight : 800;
+    font-family: Helvetica Neue, sans-serif;
+    color: darkred;
+}
+
+button {
+    border-radius: 20px;
+    border: 0;
+
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    padding: 10px;
+
+    cursor: pointer;
+    font-weight: bolder;
+
+    background: var(--button-inactive-bg);
+    color: var(--button-inactive-text);
+
+}
+
+button.inactive {
+    background: var(--button-inactive-bg);
+    color: var(--button-inactive-text);
+}
+
+button.active {
+    background: var(--button-active-bg);
+    color: var(--button-active-text);
+    border: 2px solid var(--button-border);
+
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.backdrop {
+    position: fixed;
+    top: var(--bar-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+}

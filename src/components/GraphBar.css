@@ -1,0 +1,15 @@
+.graphs {
+    height: var(--graph-height);
+    background: var(--button-border);
+    box-sizing: border-box;
+    border-top: 1px solid var(--box-border);
+    display: grid;
+    grid-template-columns: 1fr 148px 1fr;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    background: var(--background-colour-3);
+    outline: 1px solid var(--box-border);
+}
