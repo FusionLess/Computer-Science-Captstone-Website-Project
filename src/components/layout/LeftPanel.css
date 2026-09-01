@@ -10,3 +10,9 @@
     width: 100%;
     border-radius: 10px;
 }
+
+.left {
+    width: var(--left-panel-width);
+    border-right: 1px solid var(--box-border);
+    background: var(--background-colour-3);
+}

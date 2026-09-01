@@ -4,7 +4,7 @@
     import HealthyHeart from "../hearts/HealthyHeart.tsx";
     import HeartAttack from "../hearts/HeartAttack.tsx";
     import ElectricityHeart from "../hearts/ElectricityHeart.tsx";
-    import {useState} from "react";
+    import RightBox from "./RightPanel.tsx";
 
 function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
 
@@ -34,20 +34,5 @@ function MiddleBox({active} : {active: HeartState}) {
         </>
     )
 }
-
-function RightBox() {
-    const [isOpen, setIsOpen] = useState(true)
-
-    return (
-        <aside className = "right box">
-            <button onClick={() => setIsOpen(false)}>»</button>
-            {isOpen && <div className = "right_content"/>}
-            <div className = "right_content">
-            [ Heart State Description ]
-            </div>
-        </aside>
-    )
-}
-
 
 export default Content

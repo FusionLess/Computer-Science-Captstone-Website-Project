@@ -1,7 +1,7 @@
 .content {
-    display: grid;
-    grid-template-columns: 1fr 3fr 1fr;
-    grid-template-areas: "left middle right";
+    display: flex;
+    /*grid-template-columns: 1fr 3fr 1fr;*/
+    /*grid-template-areas: "left middle right";*/
     box-sizing: border-box;
     background: var(--background-colour);
     flex: 1;
@@ -12,24 +12,13 @@
     box-sizing: border-box;
 }
 
-.left {
-    grid-area: left;
-    border-right: 1px solid var(--box-border);
-    background: var(--background-colour-3);
-}
-
-.right {
-    grid-area: right;
-    border-left: 1px solid var(--box-border);
-    background: var(--background-colour-3);
-}
-
 .middle {
     padding: 0;
     grid-area: middle;
     background: var(--background-colour-2);
     box-sizing: border-box;
     display: flex;
+    flex: 1;
     border-radius: 20px;
     margin: 20px;
     position: relative;
