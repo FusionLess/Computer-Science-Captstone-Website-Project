@@ -9,6 +9,7 @@ function TopBar({active, setActive}) {
             <HeartButtons active={active} setActive={setActive} />
             <RightButtons />
         </header>
+
     )
 }
 
