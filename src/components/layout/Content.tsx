@@ -1,7 +1,9 @@
     import "./Content.css"
     import LeftBox from "./LeftPanel.tsx"
-    import "./states.ts"
-    import type {HeartState} from "./states.ts";
+    import type {HeartState} from "../types/states.ts";
+    import HealthyHeart from "../hearts/HealthyHeart.tsx";
+    import HeartAttack from "../hearts/HeartAttack.tsx";
+    import ElectricityHeart from "../hearts/ElectricityHeart.tsx";
 
 function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
     return (
@@ -14,9 +16,9 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
 }
 
 const views = {
-    healthy: <> This is the healthy heart viewer</>, // You probably would want a separate component for heart states
-    attack: <> This is the heart attack viewer</>, // We would probably also need more heart states
-    electricity: <> This is the electricity heart viewer</> // heart failure , severe heart attacks etc.
+    healthy: <HealthyHeart/>,
+    attack: <HeartAttack/>,
+    electricity: <ElectricityHeart/>
 };
 
 function MiddleBox({active} : {active: HeartState}) {

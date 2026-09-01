@@ -6,7 +6,9 @@ function TopBar() {
     return (
         <header className="topbar">
             <LeftButtons />
-            {/*<HeartButtons active={active} setActive={setActive} />*/}
+            <div className="logo">
+                [ Project Atrium ]
+            </div>
             <RightButtons />
         </header>
     )
@@ -22,17 +24,15 @@ function LeftButtons() {
             </button>
             {isOpen && <div className="backdrop" onClick={() => setIsOpen(false)} />}
             <SidePanel isOpen={isOpen} />
-            <div className="logo">
-                [ Project Atrium ]
-            </div>
         </div>
     )
 }
 
 function RightButtons() {
     return (
-        <>
-        </>
+        <div className = "right_buttons">
+            <button>about</button>
+        </div>
     )
 }
 

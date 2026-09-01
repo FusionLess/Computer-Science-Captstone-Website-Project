@@ -15,9 +15,18 @@
 }
 
 .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight : 800;
     font-family: Helvetica Neue, sans-serif;
     color: darkred;
+}
+
+.right_buttons {
+    display: flex;
+    justify-content: right;
+    align-items: center;
 }
 
 button {
@@ -26,7 +35,7 @@ button {
 
     align-items: center;
     justify-content: center;
-    width: 50px;
+    width: fit-content  ;
     padding: 10px;
 
     cursor: pointer;

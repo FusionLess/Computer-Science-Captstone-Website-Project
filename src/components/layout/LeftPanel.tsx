@@ -1,6 +1,5 @@
 import "./LeftPanel.css"
-import "./states.ts"
-import type {HeartState} from "./states.ts";
+import type {HeartState} from "../types/states.ts";
 
 function LeftBox({active, setActive} :
                  {active: HeartState, setActive: (v: HeartState) => void}) {
