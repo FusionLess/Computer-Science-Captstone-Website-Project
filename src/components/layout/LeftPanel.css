@@ -1,0 +1,12 @@
+.toggle_buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle_buttons button {
+    width: 100%;
+    border-radius: 10px;
+}
