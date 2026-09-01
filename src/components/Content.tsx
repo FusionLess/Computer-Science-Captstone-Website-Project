@@ -1,9 +1,12 @@
-import "./Content.css"
+    import "./Content.css"
+    import LeftBox from "./LeftPanel.tsx"
+    import "./states.ts"
+    import type {HeartState} from "./states.ts";
 
-function Content({active}) {
+function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
     return (
         <main className="content">
-            <LeftBox />
+            <LeftBox active={active} setActive={setActive} />
             <MiddleBox active={active}/>
             <RightBox />
         </main>
@@ -16,21 +19,12 @@ const views = {
     electricity: <> This is the electricity heart viewer</> // heart failure , severe heart attacks etc.
 };
 
-function LeftBox() {
-    return (
-        <aside className="left box">
-            [ More Content ]
-            (Perhaps click on a section of the heart to learn more about it here?)
-        </aside>
-    )
-}
-
-function MiddleBox({active}) {
+function MiddleBox({active} : {active: HeartState}) {
 
     return (
         <aside className="middle box">
             [ 3D Interactive Heart ]
-            {views[active] || views[healthy]}
+            {views[active] || views["healthy"]}
         </aside>
     )
 }

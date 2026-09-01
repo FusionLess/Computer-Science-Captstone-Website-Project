@@ -8,13 +8,6 @@
     background: var(--selector-colour);
 }
 
-.toggle_buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
 .left_buttons {
     display: flex;
     align-items: center;
