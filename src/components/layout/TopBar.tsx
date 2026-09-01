@@ -11,6 +11,7 @@ function TopBar() {
             </div>
             <RightButtons />
         </header>
+
     )
 }
 
