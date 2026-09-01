@@ -26,10 +26,12 @@ const views = {
 function MiddleBox({active} : {active: HeartState}) {
 
     return (
-        <aside className="middle box">
-            [ 3D Interactive Heart ]
-            {views[active] || views["healthy"]}
-        </aside>
+        <>
+            <aside className="middle box">
+                <div className="mask"></div>
+                {views[active] || views["healthy"]}
+            </aside>
+        </>
     )
 }
 

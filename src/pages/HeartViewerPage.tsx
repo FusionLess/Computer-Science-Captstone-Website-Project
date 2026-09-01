@@ -61,7 +61,14 @@ export default function HeartViewerPage() {
     }, [sliceEnabled, pitch, yaw, sliceDistance])
 
     return (
-        <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#111' }}>
+        <div style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            overflow: 'hidden',
+            background: 'var(--background-colour-2)',
+            borderRadius: '20px',
+        }}>
             <Canvas
                 camera={{ position: [-225, -20, -200], fov: 45 }}
                 gl={{
@@ -110,7 +117,7 @@ export default function HeartViewerPage() {
                     background: 'rgba(20, 20, 22, 0.9)',
                     padding: '16px 20px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(242, 255, 255, 0.1)',
                     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
                     backdropFilter: 'blur(8px)',
                     color: '#ffffff',

@@ -25,11 +25,13 @@
 }
 
 .middle {
+    padding: 0;
     grid-area: middle;
     background: var(--background-colour-2);
-    padding: 10px;
-    /*box-sizing: border-box;*/
+    box-sizing: border-box;
     display: flex;
     border-radius: 20px;
     margin: 20px;
+    position: relative;
+    overflow: hidden;
 }
