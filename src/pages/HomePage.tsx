@@ -9,8 +9,8 @@ export default function HomePage() {
 
     return (
         <main className="app">
-            <TopBar active={active} setActive={setActive} />
-            <Content active={active} />
+            <TopBar />
+            <Content active={active} setActive={setActive} />
             <GraphBar />
         </main>
     )
