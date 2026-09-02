@@ -1,6 +1,8 @@
+import HeartViewerPage from "../../pages/HeartViewerPage.tsx";
+
 function HealthyHeart() {
     return (
-        <> This is the healthy heart viewer</>
+        <HeartViewerPage />
     )
 }
 

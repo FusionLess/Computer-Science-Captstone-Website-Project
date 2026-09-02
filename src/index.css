@@ -1,6 +1,8 @@
 :root {
   --bar-height: 60px;
   --graph-height: 150px;
+  --left-panel-width: 200px;
+  --right-panel-width: 300px;
 
   --background-colour: #FAFAF8;
   --background-colour-2: #F2F0EC;
