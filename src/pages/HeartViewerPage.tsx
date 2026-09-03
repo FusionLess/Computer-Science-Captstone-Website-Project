@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Center, OrbitControls } from '@react-three/drei'
@@ -6,7 +6,18 @@ import { HeartModel } from '../components/HeartModel'
 import { useHeartMonitor } from "../components/context/HeartMonitorContext.tsx"
 
 
-export default function HeartViewerPage() {
+    
+
+
+export default function HeartViewerPage({
+    embedded = false,
+    onSelectPart,
+}: {
+    embedded?: boolean
+    onSelectPart?: (part: string) => void
+}) {
+
+
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
     const [showEpi, setShowEpi] = useState(true)
 
@@ -17,7 +28,7 @@ export default function HeartViewerPage() {
     const [sliceDistance, setSliceDistance] = useState(-20) // Initial height at the atrioventricular junction
 
     // sets the preset independent depth slices per selection
-    const [activePreset, setActivePreset] = useState('shortAxis')
+    const [activePreset, setActivePreset] = useState<'frontal' | 'sagittal' | 'shortAxis' | null>('shortAxis')
     const [presetDepths, setPresetDepths] = useState({
         frontal: 0,
         sagittal: -3,
@@ -25,14 +36,18 @@ export default function HeartViewerPage() {
     })
 
     // tidies up the onClick part of the button to set the preset values of each slicing view
-    const handlePresetSelect = (presetKey, p, y) => {
+    const handlePresetSelect = (
+        presetKey: 'frontal' | 'sagittal' | 'shortAxis',
+        p: number,
+        y: number,
+    ) => {
         setActivePreset(presetKey)
         setPitch(p)
         setYaw(y)
         setSliceDistance(presetDepths[presetKey])
     }
 
-    const handleDepthSliderChange = (newDepth) => {
+    const handleDepthSliderChange = (newDepth: number) => {
         setSliceDistance(newDepth)
         if (activePreset) {
             setPresetDepths((prev) => ({
@@ -41,6 +56,12 @@ export default function HeartViewerPage() {
             }))
         }
     }
+    const [hoverInfo, setHoverInfo] = useState<{
+        name: string
+        x: number
+        y: number
+    } | null>(null)
+    const [selectedMesh, setSelectedMesh] = useState<string | null>(null)
 
     // compute arbitrary 3d normal vector from pitch and yaw
     const clipPlane = useMemo(() => {
@@ -59,7 +80,42 @@ export default function HeartViewerPage() {
         // slices everything on the side the normal points towards
         return new THREE.Plane(normal, sliceDistance)
     }, [sliceEnabled, pitch, yaw, sliceDistance])
+    const [infoPosition, setInfoPosition] = useState({
+        x: 20,
+        y: 20,
+    })
 
+    const [isDragging, setIsDragging] = useState(false)
+
+    const dragOffset = useRef({
+        x: 0,
+        y: 0,
+    })
+    const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+        setIsDragging(true)
+
+        dragOffset.current = {
+            x: event.clientX - infoPosition.x,
+            y: event.clientY - infoPosition.y,
+        }
+
+        event.currentTarget.setPointerCapture(event.pointerId)
+    }
+
+    const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+        if (!isDragging) return
+
+        setInfoPosition({
+            x: event.clientX - dragOffset.current.x,
+            y: event.clientY - dragOffset.current.y,
+        })
+    }
+
+    const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+        setIsDragging(false)
+        event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    
     return (
         <div style={{
             position: 'relative',
@@ -84,12 +140,16 @@ export default function HeartViewerPage() {
                 <Suspense fallback={null}>
                     <Center>
                         <HeartModel
-                            bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
+                            bpm={bpm}
                             showEpi={showEpi}
-                            clipPlane={clipPlane}
+                            clipPlane={clipPlane as unknown as null}
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             beatInterval={beatInterval}
+                            rotation={[-Math.PI / 12, -Math.PI / 3, 0]}
+
+                            onHover={setHoverInfo}
+                            onSelect={setSelectedMesh}
                         />
                     </Center>
                 </Suspense>
@@ -97,17 +157,100 @@ export default function HeartViewerPage() {
                 <OrbitControls
                     makeDefault
                     target={[0, 0, 0]}
-                    onChange={(e) => {
-                        const cam = e?.target?.object
-                        // if (cam) {
-                        //   console.log(
-                        //     `camera pos: [${cam.position.x.toFixed(0)}, ${cam.position.y.toFixed(0)}, ${cam.position.z.toFixed(0)}]`
-                        //   )
-                        // }
-                        // old debug options to find out where the camera coordinates should begin
-                    }}
+                    // onChange={(e) => {
+                    //     const cam = e?.target?.object
+                    //     // if (cam) {
+                    //     //   console.log(
+                    //     //     `camera pos: [${cam.position.x.toFixed(0)}, ${cam.position.y.toFixed(0)}, ${cam.position.z.toFixed(0)}]`
+                    //     //   )
+                    //     // }
+                    //     // old debug options to find out where the camera coordinates should begin
+                    // }}
                 />
+                
             </Canvas>
+            
+            {/* Hover popup */}
+            {hoverInfo && (
+            <div
+                style={{
+                position: 'fixed',
+                left: hoverInfo.x + 12,
+                top: hoverInfo.y + 12,
+                background: 'rgba(0, 0, 0, 0.85)',
+                color: 'white',
+                padding: '6px 10px',
+                borderRadius: '5px',
+                fontSize: '14px',
+                zIndex: 99999,
+                pointerEvents: 'none',
+                }}
+            >
+                {HeartParts[hoverInfo.name as keyof typeof HeartParts]?.name ?? hoverInfo.name}
+            </div>
+            )}
+
+            {selectedMesh && (
+            <div
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                style={{
+                position: "absolute",
+
+                left: infoPosition.x,
+                top: infoPosition.y,
+
+                width: 280,
+                background: "rgba(20, 20, 20, 0.95)",
+                color: "white",
+                padding: 20,
+                borderRadius: 10,
+                zIndex: 100,
+
+                cursor: isDragging ? "grabbing" : "grab",
+                userSelect: "none",
+                touchAction: "none",
+                }}
+            >
+                <button
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={() => setSelectedMesh(null)}
+                style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 10,
+                    background: "transparent",
+                    border: "none",
+                    color: "white",
+                    cursor: "pointer",
+                    fontSize: 18,
+                }}
+                >
+                ×
+                </button>
+
+                <h2>
+                {HeartParts[selectedMesh as keyof typeof HeartParts]?.name
+                    ?? selectedMesh}
+                </h2>
+
+                <p>
+                {HeartParts[selectedMesh as keyof typeof HeartParts]?.description
+                    ?? "No information available."}
+                </p>
+
+                {HeartParts[selectedMesh as keyof typeof HeartParts] && (
+                <>
+                    <strong>Function</strong>
+
+                    <p>
+                    {HeartParts[selectedMesh as keyof typeof HeartParts].function}
+                    </p>
+                </>
+                )}
+            </div>
+            )}
 
             {/* Floating Control Panel */}
             <div
