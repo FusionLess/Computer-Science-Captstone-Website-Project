@@ -1,7 +1,8 @@
-function FibrillatingHeart() {
-    return (
-        <> This is the electricity heart viewer</>
-    )
+import HeartViewerPage from '../../pages/HeartViewerPage'
+
+function ElectricityHeart() {
+    return <HeartViewerPage embedded />
+    
 }
 
 export default FibrillatingHeart

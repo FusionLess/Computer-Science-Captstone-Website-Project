@@ -1,9 +1,7 @@
-import HeartViewerPage from "../../pages/HeartViewerPage.tsx";
+import HeartViewerPage from '../../pages/HeartViewerPage'
 
 function HealthyHeart() {
-    return (
-        <HeartViewerPage />
-    )
+    return <HeartViewerPage embedded />
 }
 
 export default HealthyHeart
