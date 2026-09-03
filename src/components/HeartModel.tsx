@@ -10,7 +10,7 @@ const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
-function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
+function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect}) {
   const { scene } = useGLTF(url)
   const epiMeshRef = useRef(null)
 
@@ -45,7 +45,60 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
     })
   }, [scene, clipPlane])
 
-  return <primitive object={scene} visible={isVisible} />
+  return (
+  
+  <primitive
+      object={scene}
+      visible={isVisible}
+
+      onPointerMove={(event) => {
+      event.stopPropagation()
+
+      const hit = event.intersections.find((intersection) => {
+        // Ignore the epicardium when it is toggled off
+        if (!showEpi && intersection.object.name === "mesh0") {
+          return false
+        }
+
+        return intersection.object.visible
+      })
+
+      if (!hit) return
+
+      console.log("Hovering:", hit.object.name)
+
+      onHover?.({
+        name: hit.object.name,
+        x: event.nativeEvent.clientX,
+        y: event.nativeEvent.clientY,
+      })
+
+      document.body.style.cursor = "pointer"
+    }}
+
+      onPointerOut={() => {
+        onHover?.(null)
+        document.body.style.cursor = 'default'
+      }}
+      onClick={(event) => {
+      event.stopPropagation()
+
+      const hit = event.intersections.find((intersection) => {
+        if (!showEpi && intersection.object.name === "mesh0") {
+          return false
+        }
+
+        return intersection.object.visible
+      })
+
+      if (!hit) return
+
+      console.log("Clicked:", hit.object.name)
+
+      onSelect?.(hit.object.name)
+    }}
+    />
+  )
 }
 
 export function HeartModel({
@@ -54,10 +107,13 @@ export function HeartModel({
   clipPlane = null,
   isPaused = false,
   beatInterval,
+  onHover,
+  onSelect,
   ...props
 }) {
   const [activeFrame, setActiveFrame] = useState(0)
   const animState = useRef({ elapsed: 0, currentFrame: 0 })
+
 
   useFrame((_, delta) => {
     // stop advancing the animation timeline if paused
@@ -91,6 +147,10 @@ export function HeartModel({
           isVisible={idx === activeFrame}
           showEpi={showEpi}
           clipPlane={clipPlane}
+
+          onHover={onHover}
+          onSelect={onSelect}
+      
         />
       ))}
     </group>
