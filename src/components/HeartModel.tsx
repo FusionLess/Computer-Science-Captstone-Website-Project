@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 
 const NUM_FRAMES = 25
 // loads all the frames path into an array and iterates over all of them
-// starts at frame 18 to sync with ECG and Pressure graph
+// starts at frame_18 to sync with ECG and Pressure graph
 const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${(i+18) % NUM_FRAMES}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.

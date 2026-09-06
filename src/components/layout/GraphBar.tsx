@@ -115,7 +115,7 @@ function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressu
                         bottom: 0,
                         left: `${xPos}%`,
                         width: '0.15%',
-                        background: 'darkred',
+                        background: '#b8362a',
                         opacity: 0.98,
                         pointerEvents: 'none',
                         transition: 'none',
@@ -127,12 +127,21 @@ function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressu
     )
 }
 
-function HeartRateContainer({ bpm }: { bpm: number }) {
+function HeartRateContainer() {
+    const { bpm, setBpm } = useHeartMonitor()
     return (
         <div className="heartrate container">
             <span className="heart-rate-label">HEART RATE</span>
             <strong className="heart-rate-value">{bpm}</strong>
             <span className="heart-rate-label">BPM</span>
+            <input
+                className="bpm-slider"
+                type="range"
+                min="0"
+                max="180"
+                value={bpm}
+                onChange={(e) => setBpm(Number(e.target.value))}
+            />
         </div>
     )
 }

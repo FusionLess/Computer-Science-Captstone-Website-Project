@@ -72,3 +72,34 @@
     font-size: 28px;
     line-height: 1;
 }
+
+.bpm-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: 8px;
+    width: 90%;
+    cursor: pointer;
+    background: grey;
+    height: 2px;
+    border-radius: 15px;
+}
+
+.bpm-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b8362a;
+    box-shadow: 0 0 1px;
+    cursor: pointer;
+}
+
+.bpm-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b8362a;
+    border: none;
+    cursor: pointer;
+}
