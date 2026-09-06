@@ -8,7 +8,7 @@
     padding: 0 10px 10px 10px;
 }
 
-.left button:hover {
+.toggle_buttons, .compare_options button:hover {
     box-shadow: none;
     background: #ededed;
     cursor: pointer;
@@ -127,7 +127,7 @@
 }
 
 button.compare_button {
-    width: 50%;
+    width: fit-content;
 }
 
 .toggle_buttons::-webkit-scrollbar {
