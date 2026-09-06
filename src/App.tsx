@@ -1,9 +1,11 @@
 import './App.css'
 import HomePage from './pages/HomePage'
-import HeartViewerPage from "./pages/HeartViewerPage.tsx";
+import { HeartMonitorProvider } from './components/context/HeartMonitorContext'
 
 export default function App() {
-    return window.location.pathname === '/viewer'
-        ? <HeartViewerPage />
-        : <HomePage />
+    return (
+        <HeartMonitorProvider>
+            <HomePage />
+        </HeartMonitorProvider>
+    );
 }

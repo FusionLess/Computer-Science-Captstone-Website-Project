@@ -3,11 +3,11 @@ import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Center, OrbitControls } from '@react-three/drei'
 import { HeartModel } from '../components/HeartModel'
+import { useHeartMonitor } from "../components/context/HeartMonitorContext.tsx"
 
 
 export default function HeartViewerPage() {
-    const [bpm, setBpm] = useState(60)
-    const [isPaused, setIsPaused] = useState(false)
+    const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
     const [showEpi, setShowEpi] = useState(true)
 
     // sets the preset states you can slice the heart
@@ -89,6 +89,7 @@ export default function HeartViewerPage() {
                             clipPlane={clipPlane}
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
+                            beatInterval={beatInterval}
                         />
                     </Center>
                 </Suspense>
