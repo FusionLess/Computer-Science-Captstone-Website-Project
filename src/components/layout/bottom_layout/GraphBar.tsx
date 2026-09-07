@@ -1,9 +1,9 @@
 import "./GraphBar.css"
-import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../context/HeartMonitorContext.tsx"
+import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
 
 const BEAT_COUNT = GRAPH_BEAT_COUNT
 const VIEWBOX_WIDTH = 500
-
+    
 export default function GraphBar() {
     const { bpm, graphPhase } = useHeartMonitor()
 
