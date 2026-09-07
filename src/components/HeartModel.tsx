@@ -5,7 +5,8 @@ import { useFrame } from '@react-three/fiber'
 
 const NUM_FRAMES = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
+// starts at frame_18 to sync with ECG and Pressure graph
+const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${(i+18) % NUM_FRAMES}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
@@ -52,6 +53,7 @@ export function HeartModel({
   showEpi = true,
   clipPlane = null,
   isPaused = false,
+  beatInterval,
   ...props
 }) {
   const [activeFrame, setActiveFrame] = useState(0)
@@ -66,6 +68,7 @@ export function HeartModel({
     const frameInterval = cycleDuration / NUM_FRAMES
 
     animState.current.elapsed += delta
+    beatInterval?.(animState.current.elapsed)
 
     const targetFrame = Math.floor(
       (animState.current.elapsed % cycleDuration) / frameInterval
