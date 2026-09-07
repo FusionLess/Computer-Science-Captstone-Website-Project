@@ -10,8 +10,6 @@ export default function HomePage() {
         category: "healthy",
         option: "Normal"
     });
-
-    const [active, setActive] = useState<HeartState>("healthy")
     const [selectedPart, setSelectedPart] = useState<string | null>(null)
     return (
         <main className="app">

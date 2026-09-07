@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { Center, OrbitControls } from '@react-three/drei'
 import { HeartModel } from '../components/HeartModel'
 import { useHeartMonitor } from "../components/context/HeartMonitorContext.tsx"
+import { HeartParts } from '../data/HeartParts.ts'
 
 
     
@@ -151,13 +152,9 @@ export default function HeartViewerPage({
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             beatInterval={beatInterval}
-                            rotation={[-Math.PI / 12, -Math.PI / 3, 0]}
 
                             onHover={setHoverInfo}
-                            onSelect={(part: string) => {
-                                setSelectedMesh(part)
-                                onSelectPart?.(part)
-                            }}
+                            onSelect={onSelectPart}
                         />
                     </Center>
                 </Suspense>

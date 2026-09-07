@@ -1,7 +1,6 @@
 import {useState} from "react";
 import "./RightPanel.css"
-import HeartPartInfo from "./HeartPartInfo"
-
+import HeartPartInfo from "../HeartPartInfo";
 function RightBox({selectedPart} : {selectedPart: string | null}) {
     const [isOpen, setIsOpen] = useState(true)
 

@@ -13,9 +13,9 @@
 
 function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
     const [isComparing, setIsComparing] = useState<boolean>(false);
-    const [selection1, chooseSelection1] = useState<HeartOption>(null)
-    const [selection2, chooseSelection2] = useState<HeartOption>(null)
-
+    const [selection1, chooseSelection1] = useState<HeartOption | null>(null); 
+    const [selection2, chooseSelection2] = useState<HeartOption | null>(null);
+    const [selectedPart, setSelectedPart] = useState<string | null>(null);
     const compareState: CompareState = {
         selection1,
         selection2,
@@ -28,42 +28,50 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
     return (
         <main className="content">
             <LeftBox active={active} setActive={setActive} compareState={compareState}/>
-            <MiddleBox active={active} compareState={compareState}/>
-            <RightBox />
+            <MiddleBox active={active} compareState={compareState} setSelectedPart={setSelectedPart}/>
+            <RightBox selectedPart={selectedPart} />
         </main>
     )
 }
 
-const views = {
-    Normal: <HealthyHeart/>,
-    Minor: <MinorAttack/>,
-    Severe: <SevereAttack/>,
-    Fibrillation: <FibrillatingHeart/>,
-    Compensated: <CompensatedHeart/>,
-    Decompensated: <DecompensatedHeart/>
-};
-
-function MiddleBox({active, compareState} : {active: HeartState, compareState: CompareState}) {
+function MiddleBox({active, compareState, setSelectedPart} : {active: HeartState, compareState: CompareState, setSelectedPart: (part: string) => void}) {
 
     const {
         selection1,
         selection2,
-        chooseSelection1,
-        chooseSelection2,
         isComparing,
-        setIsComparing,
     } = compareState;
-
+    const views = (option: HeartOption) => {
+        switch (option) {
+            case "Normal":
+                return <HealthyHeart onSelectPart={setSelectedPart} />
+            case "Minor":
+                return <MinorAttack />
+            case "Severe":
+                return <SevereAttack />
+            case "Fibrillation":
+                return <FibrillatingHeart />
+            case "Compensated":
+                return <CompensatedHeart />
+            case "Decompensated":
+                return <DecompensatedHeart />
+            default:
+                return null
+        }
+    }
+    
     return (
         <>
             <aside className="middle box">
-                {!isComparing && views[active.option]}
-                {isComparing && views[selection1]}
+                {!isComparing && views(active.option)}
+                {isComparing && views(selection1)}
             </aside>
 
-            {isComparing && <aside className="middle box">
-                {views[selection2]}
-            </aside>}
+            {isComparing && (
+                <aside className="middle box">
+                    {views(selection2)}
+                </aside>
+            )}
         </>
     )
 }
