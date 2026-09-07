@@ -1,7 +1,8 @@
 import {useState} from "react";
 import "./RightPanel.css"
+import HeartPartInfo from "./HeartPartInfo"
 
-function RightBox() {
+function RightBox({selectedPart} : {selectedPart: string | null}) {
     const [isOpen, setIsOpen] = useState(true)
 
     return (
@@ -9,7 +10,12 @@ function RightBox() {
             { isOpen && <button className="right_collapse" onClick={() => setIsOpen(!isOpen)}> » </button>}
             { !isOpen && <button className="right_open" onClick={() => setIsOpen(!isOpen)}> « </button>}
             <div className = {`right_content ${isOpen ? "" : "closed"}`}>
-                [ Heart State Description ]
+                <div className="heart_state_info">
+
+                    [ Heart State Description ]
+                </div>
+                <HeartPartInfo selectedPart={selectedPart} />
+
             </div>
         </aside>
     )
