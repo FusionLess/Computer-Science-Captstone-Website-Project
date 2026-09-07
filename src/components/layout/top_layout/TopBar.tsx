@@ -16,14 +16,14 @@ function TopBar() {
 }
 
 function LeftButtons() {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setOpen] = useState(false)
 
     return (
         <div className = "left_buttons">
-            <button onClick={() => setIsOpen(!isOpen)} className={(isOpen ? "active" : "inactive")} >
+            <button onClick={() => setOpen(!isOpen)} className={(isOpen ? "active" : "inactive")} >
                 ≡
             </button>
-            {isOpen && <div className="backdrop" onClick={() => setIsOpen(false)} />}
+            {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
             <SidePanel isOpen={isOpen} />
         </div>
     )

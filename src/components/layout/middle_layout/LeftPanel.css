@@ -1,0 +1,135 @@
+.left.box {
+    display: flex;
+    width: var(--left-panel-width);
+    border-right: 1px solid var(--box-border);
+    background: var(--background-colour-3);
+    flex-direction: column;
+    height: 100%;
+    padding: 0 10px 10px 10px;
+}
+
+.toggle_buttons, .compare_options button:hover {
+    box-shadow: none;
+    background: #ededed;
+    cursor: pointer;
+}
+
+.left_heading {
+    align-self: start;
+    margin: 10px 0 10px 0;
+}
+
+.toggle_buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+
+    -webkit-mask-image: linear-gradient(
+            to bottom,
+            black 80%,
+            transparent 100%
+    );
+    mask-image: linear-gradient(
+            to bottom,
+            black 80%,
+            transparent 100%
+    );
+}
+
+.left button {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 0;
+    background: white;
+    border-radius: 10px;
+    box-sizing: border-box;
+    border: 1px solid var(--box-border);
+}
+
+.toggle_buttons button.healthy.active {
+    background: rgba(0,125,15,0.2);
+}
+
+.toggle_buttons button.attack.active {
+    background: rgba(125,0,0,0.2);
+}
+
+.toggle_buttons button.electricity.active {
+    background: rgba(232,209,0,0.2);
+}
+
+.toggle_buttons button.failure.active {
+    background: rgba(60,0,115,0.2);
+}
+
+.dropdown {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    box-sizing: border-box;
+
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.dropdown button {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.dropdown.open {
+    display: flex;
+    padding: 5px;
+    gap: 5px;
+    max-height: 200px;
+    opacity: 1;
+}
+
+.dropdown.closing {
+    transition: max-height 0.1s ease;
+}
+
+.dropdown button.selected {
+    background: #ededed;
+}
+
+.compare {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    flex-shrink: 0;
+    border-top: 1px solid var(--box-border);
+}
+
+.compare_options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.compare_options button {
+    border: 1px solid var(--box-border);
+}
+
+button.compare_button {
+    width: fit-content;
+}
+
+.toggle_buttons::-webkit-scrollbar {
+    display: none;                /* Chrome/Safari */
+}

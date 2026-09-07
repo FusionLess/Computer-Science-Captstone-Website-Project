@@ -1,10 +1,9 @@
 .content {
     display: flex;
-    /*grid-template-columns: 1fr 3fr 1fr;*/
-    /*grid-template-areas: "left middle right";*/
     box-sizing: border-box;
     background: var(--background-colour);
     flex: 1;
+    height: calc(100vh - var(--graph-height) - var(--bar-height));
 }
 
 .box {

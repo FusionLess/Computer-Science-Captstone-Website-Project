@@ -1,7 +1,7 @@
-function ElectricityHeart() {
+function FibrillatingHeart() {
     return (
         <> This is the electricity heart viewer</>
     )
 }
 
-export default ElectricityHeart
+export default FibrillatingHeart
