@@ -3,7 +3,7 @@ import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorCon
 
 const BEAT_COUNT = GRAPH_BEAT_COUNT
 const VIEWBOX_WIDTH = 500
-    
+
 export default function GraphBar() {
     const { bpm, graphPhase } = useHeartMonitor()
 
@@ -55,7 +55,7 @@ function generateECGPath() {
             C ${x + w * 0.18} 107, ${x + w * 0.20} 117, ${x + w * 0.22} 118
             C ${x + w * 0.24} 116, ${x + w * 0.25} 119, ${x + w * 0.28} 118
             
-            L ${x + w * 0.30} 125
+            L ${x + w * 0.30} 121
             L ${x + w * 0.33} 13     
             L ${x + w * 0.36} 138
             C ${x + w * 0.37} 134, ${x + w * 0.38} 130, ${x + w * 0.39} 121
@@ -96,32 +96,38 @@ function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressu
 
     return (
         <div className={`${type} container`}>
-            {type === 'pressure' && (
-                <div className="pressure-scale">
-                    <span>120</span>
-                    <span className="pressure-unit">mmHg</span>
-                    <span>0</span>
-                </div>
-            )}
-            <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, overflow: 'hidden' }}>
-                <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
-                    <path d={d} className={`${type}-waveform`} />
-                </svg>
+            <div className="container-content-wrapper">
+                <div className="waveform-main-area">
+                    {type === 'pressure' && (
+                        <div className="pressure-scale">
+                            <span>120</span>
+                            <span>0</span>
+                        </div>
+                    )}
+                    <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, overflow: 'hidden' }}>
+                        <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
+                            <path d={d} className={`${type}-waveform`} />
+                        </svg>
 
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        bottom: 0,
-                        left: `${xPos}%`,
-                        width: '0.15%',
-                        background: '#b8362a',
-                        opacity: 0.98,
-                        pointerEvents: 'none',
-                        transition: 'none',
-                        borderRadius: '20px',
-                    }}
-                />
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                bottom: 0,
+                                left: `${xPos}%`,
+                                width: '0.15%',
+                                background: '#b8362a',
+                                opacity: 0.98,
+                                pointerEvents: 'none',
+                                transition: 'none',
+                                borderRadius: '20px',
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="graph-description">
+                    {type === "ecg" ? "Electrocardiogram (ECG)" : "Pressure (mmHg)"}
+                </div>
             </div>
         </div>
     )
