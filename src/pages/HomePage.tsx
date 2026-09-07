@@ -11,10 +11,16 @@ export default function HomePage() {
         option: "Normal"
     });
 
+    const [active, setActive] = useState<HeartState>("healthy")
+    const [selectedPart, setSelectedPart] = useState<string | null>(null)
     return (
         <main className="app">
             <TopBar />
-            <Content active={active} setActive={setActive} />
+            <Content active={active} 
+            setActive={setActive} 
+            selectedPart={selectedPart} 
+            setSelectedPart={setSelectedPart}  
+            />
             <GraphBar />
         </main>
     )

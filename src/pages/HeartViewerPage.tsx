@@ -61,7 +61,7 @@ export default function HeartViewerPage({
         x: number
         y: number
     } | null>(null)
-    const [selectedMesh, setSelectedMesh] = useState<string | null>(null)
+    const [selectedMesh, setSelectedMeshState] = useState<string | null>(null)
 
     // compute arbitrary 3d normal vector from pitch and yaw
     const clipPlane = useMemo(() => {
@@ -116,6 +116,11 @@ export default function HeartViewerPage({
         event.currentTarget.releasePointerCapture(event.pointerId)
     }
     
+    function setSelectedMesh(part: any) {
+        const partName = typeof part === 'string' ? part : part?.name
+        setSelectedMeshState(partName ?? null)
+    }
+
     return (
         <div style={{
             position: 'relative',
@@ -149,7 +154,10 @@ export default function HeartViewerPage({
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]}
 
                             onHover={setHoverInfo}
-                            onSelect={setSelectedMesh}
+                            onSelect={(part: string) => {
+                                setSelectedMesh(part)
+                                onSelectPart?.(part)
+                            }}
                         />
                     </Center>
                 </Suspense>
@@ -187,68 +195,6 @@ export default function HeartViewerPage({
                 }}
             >
                 {HeartParts[hoverInfo.name as keyof typeof HeartParts]?.name ?? hoverInfo.name}
-            </div>
-            )}
-
-            {selectedMesh && (
-            <div
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                style={{
-                position: "absolute",
-
-                left: infoPosition.x,
-                top: infoPosition.y,
-
-                width: 280,
-                background: "rgba(20, 20, 20, 0.95)",
-                color: "white",
-                padding: 20,
-                borderRadius: 10,
-                zIndex: 100,
-
-                cursor: isDragging ? "grabbing" : "grab",
-                userSelect: "none",
-                touchAction: "none",
-                }}
-            >
-                <button
-                onPointerDown={(event) => event.stopPropagation()}
-                onClick={() => setSelectedMesh(null)}
-                style={{
-                    position: "absolute",
-                    top: 8,
-                    right: 10,
-                    background: "transparent",
-                    border: "none",
-                    color: "white",
-                    cursor: "pointer",
-                    fontSize: 18,
-                }}
-                >
-                ×
-                </button>
-
-                <h2>
-                {HeartParts[selectedMesh as keyof typeof HeartParts]?.name
-                    ?? selectedMesh}
-                </h2>
-
-                <p>
-                {HeartParts[selectedMesh as keyof typeof HeartParts]?.description
-                    ?? "No information available."}
-                </p>
-
-                {HeartParts[selectedMesh as keyof typeof HeartParts] && (
-                <>
-                    <strong>Function</strong>
-
-                    <p>
-                    {HeartParts[selectedMesh as keyof typeof HeartParts].function}
-                    </p>
-                </>
-                )}
             </div>
             )}
 
