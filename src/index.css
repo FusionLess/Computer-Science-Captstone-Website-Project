@@ -1,36 +1,10 @@
-:root {
-  --bar-height: 60px;
-  --graph-height: 150px;
-  --left-panel-width: 200px;
-  --right-panel-width: 300px;
-
-  --background-colour: #FAFAF8;
-  --background-colour-2: #F2F0EC;
-  --background-colour-3: #f7f6f2;
-
-  --selector-colour: #F4F1EE;
-
-  --button-inactive-bg: #ffffff;
-  --button-inactive-text: #6A5C53;
-
-  --button-active-bg: #ffe6e0;
-  --button-active-text: #b8362a;
-
-  --button-border: #b8362a;
-  --box-border: #D3D3D3FF;
-
-  font-family: Helvetica, sans-serif;
-}
-
-
-
-html, body {
+html,
+body,
+#root {
+  width: 100%;
   height: 100%;
   margin: 0;
-}
-
-#root {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  background-color: #141416;
 }
