@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Center } from '@react-three/drei'
 import { HeartModel } from './HeartModel'
+import { SlicePlaneHelper } from './SlicePlaneHelper'
 
 export default function App() {
   const [bpm, setBpm] = useState(60)
@@ -11,9 +12,10 @@ export default function App() {
 
   // sets the preset states you can slice the heart
   const [sliceEnabled, setSliceEnabled] = useState(false)
-  const [pitch, setPitch] = useState(-90) // Points normal downward (-Y) to cut off superior structures
+  const [showPlaneGuide, setShowPlaneGuide] = useState(true)
+  const [pitch, setPitch] = useState(-90) // points the normal downward to cut off superior structures
   const [yaw, setYaw] = useState(0)
-  const [sliceDistance, setSliceDistance] = useState(-20) // Initial height at the atrioventricular junction
+  const [sliceDistance, setSliceDistance] = useState(-20) // initial height at the atrioventricular junction
 
   // sets the preset independent depth slices per selection
   const [activePreset, setActivePreset] = useState('shortAxis')
@@ -73,7 +75,7 @@ export default function App() {
         <directionalLight position={[300, 300, 350]} intensity={1.2} />
         <directionalLight position={[-250, -250, 200]} intensity={0.6} />
 
-        <Suspense fallback={null}> 
+        <Suspense fallback={null}>
           <Center>
             <HeartModel
               bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
@@ -85,20 +87,24 @@ export default function App() {
           </Center>
         </Suspense>
 
+        {/* Rendered at world root to match THREE.Plane world-space coordinate evaluation */}
+        <SlicePlaneHelper
+          clipPlane={clipPlane}
+          size={180}
+          visible={sliceEnabled && showPlaneGuide}
+        />
+
         <OrbitControls
           makeDefault
           target={[0, 0, 0]}
           minDistance={50} // Prevents clipping into the model when zooming in
-          maxDistance={2500} //Limits how far you can zoom out 
-          onChange={(e) => {
-            const cam = e?.target?.object
-            // if (cam) {
+          maxDistance={2500} // Limits how far you can zoom out 
+          // if (cam) {
             //   console.log(
             //     `camera pos: [${cam.position.x.toFixed(0)}, ${cam.position.y.toFixed(0)}, ${cam.position.z.toFixed(0)}]`
             //   )
             // }
             // old debug options to find out where the camera coordinates should begin
-          }}
         />
       </Canvas>
 
@@ -157,7 +163,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Epicardium Toggle (outside wall thing) */}
+        {/* Epicardium Toggle */}
         <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
           <span>Outer Wall (Epi)</span>
           <input
@@ -183,6 +189,17 @@ export default function App() {
 
         {sliceEnabled && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {/* Guide Plane Visibility Toggle */}
+            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: '#a0a0a5' }}>
+              <span>Show Slice Indicator</span>
+              <input
+                type="checkbox"
+                checked={showPlaneGuide}
+                onChange={(e) => setShowPlaneGuide(e.target.checked)}
+                style={{ cursor: 'pointer', accentColor: '#3498db' }}
+              />
+            </label>
+
             {/* Quick Clinical Views */}
             <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
               <button

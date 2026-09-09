@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 
 const NUM_FRAMES = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/fibrillation_heart/frame_${i}.glb`)
+const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
@@ -16,14 +16,29 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
   useEffect(() => {
     scene.traverse((child) => {
       if (child.isMesh) {
-        if (child.name === 'mesh0' || child.name.toLowerCase().includes('epi')) {
+        const isEpi = child.name === 'mesh0' || child.name.toLowerCase().includes('epi')
+        
+        if (isEpi) {
           epiMeshRef.current = child
         }
 
         if (child.material) {
           child.material.side = THREE.DoubleSide
-          child.material.clipShadows = true
-          child.material.flatShading = false // Disable facet/flat shading
+          child.material.flatShading = false
+
+          // forces GPU to prioritize outer shell over inner cavities when facing camera
+          if (isEpi) {
+            child.renderOrder = 2
+            child.material.polygonOffset = true
+            child.material.polygonOffsetFactor = -1.0 // pulls epicardium closer to camera
+            child.material.polygonOffsetUnits = -1.0
+          } else {
+            child.renderOrder = 1
+            child.material.polygonOffset = true
+            child.material.polygonOffsetFactor = 1.0  // pushes internal chambers back
+            child.material.polygonOffsetUnits = 1.0
+          }
+
           child.material.needsUpdate = true
         }
       }
