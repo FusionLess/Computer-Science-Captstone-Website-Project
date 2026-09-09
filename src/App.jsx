@@ -1,7 +1,7 @@
 import React, { Suspense, useState, useMemo } from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Center } from '@react-three/drei'
+import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel'
 import { SlicePlaneHelper } from './SlicePlaneHelper'
 
@@ -85,6 +85,17 @@ export default function App() {
               rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
             />
           </Center>
+
+          {/* Soft contact floor shadow */}
+          <ContactShadows
+            position={[0, -90, 0]}   // Sits just beneath the lowest tip of the apex
+            opacity={0.65}           // Shadow intensity
+            scale={220}              // Floor shadow spread
+            blur={2.0}               // Softness edge blur
+            far={120}                // Vertical projection distance
+            resolution={512}
+            color="#050508"
+          />
         </Suspense>
 
         {/* Rendered at world root to match THREE.Plane world-space coordinate evaluation */}
