@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 
 const NUM_FRAMES = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/severe_heart_attack/frame_${i}.glb`)
+const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/fibrillation_heart/frame_${i}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
@@ -23,6 +23,8 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
         if (child.material) {
           child.material.side = THREE.DoubleSide
           child.material.clipShadows = true
+          child.material.flatShading = false // Disable facet/flat shading
+          child.material.needsUpdate = true
         }
       }
     })
