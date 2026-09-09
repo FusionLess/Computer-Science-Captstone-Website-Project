@@ -1,11 +1,77 @@
-import React, { Suspense, useState, useMemo } from 'react'
+import React, { Suspense, useState, useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel'
 import { SlicePlaneHelper } from './SlicePlaneHelper'
 
+const INITIAL_CAMERA_POS = [-225, -20, -200]
+
+function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
+  const { camera } = useThree()
+  const controlsRef = useRef(null)
+
+  const animatingRef = useRef(false)
+  const startTimeRef = useRef(0)
+  const DURATION = 0.8 // Duration in seconds
+
+  const startPos = useRef(new THREE.Vector3())
+  const endPos = useMemo(() => new THREE.Vector3(...initialPos), [initialPos])
+  const startTarget = useRef(new THREE.Vector3())
+  const endTarget = useMemo(() => new THREE.Vector3(0, 0, 0), [])
+  const startUp = useRef(new THREE.Vector3())
+  const endUp = useMemo(() => new THREE.Vector3(0, 1, 0), [])
+
+  useEffect(() => {
+    if (resetTrigger === 0 || !controlsRef.current) return
+
+    startPos.current.copy(camera.position)
+    startTarget.current.copy(controlsRef.current.target)
+    startUp.current.copy(camera.up)
+
+    startTimeRef.current = performance.now()
+    animatingRef.current = true
+  }, [resetTrigger, camera])
+
+  useFrame(() => {
+    if (!animatingRef.current || !controlsRef.current) return
+
+    const elapsed = (performance.now() - startTimeRef.current) / 1000
+    const rawT = Math.min(elapsed / DURATION, 1.0)
+
+    // Smooth cubic ease-out: t = 1 - (1 - t)^3
+    const t = 1.0 - Math.pow(1.0 - rawT, 3)
+
+    camera.position.lerpVectors(startPos.current, endPos, t)
+    camera.up.lerpVectors(startUp.current, endUp, t).normalize()
+    controlsRef.current.target.lerpVectors(startTarget.current, endTarget, t)
+
+    camera.lookAt(controlsRef.current.target)
+    controlsRef.current.update()
+
+    if (rawT >= 1.0) {
+      animatingRef.current = false
+      controlsRef.current.saveState()
+    }
+  })
+
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      makeDefault
+      target={[0, 0, 0]}
+      enablePan={false}
+      minDistance={240}
+      maxDistance={380}
+      minPolarAngle={0}
+      maxPolarAngle={Math.PI}
+    />
+  )
+}
+
 export default function App() {
+  const [resetTrigger, setResetTrigger] = useState(0)
+
   const [bpm, setBpm] = useState(60)
   const [isPaused, setIsPaused] = useState(false)
   const [showEpi, setShowEpi] = useState(true)
@@ -24,6 +90,10 @@ export default function App() {
     sagittal: -3,
     shortAxis: -18,
   })
+
+  const handleResetView = () => {
+    setResetTrigger((prev) => prev + 1)
+  }
 
   // tidies up the onClick part of the button to set the preset values of each slicing view
   const handlePresetSelect = (presetKey, p, y) => {
@@ -105,18 +175,7 @@ export default function App() {
           visible={sliceEnabled && showPlaneGuide}
         />
 
-        <OrbitControls
-          makeDefault
-          target={[0, 0, 0]}
-          minDistance={50} // Prevents clipping into the model when zooming in
-          maxDistance={2500} // Limits how far you can zoom out 
-          // if (cam) {
-            //   console.log(
-            //     `camera pos: [${cam.position.x.toFixed(0)}, ${cam.position.y.toFixed(0)}, ${cam.position.z.toFixed(0)}]`
-            //   )
-            // }
-            // old debug options to find out where the camera coordinates should begin
-        />
+        <CameraController resetTrigger={resetTrigger} initialPos={INITIAL_CAMERA_POS} />
       </Canvas>
 
       {/* Floating Control Panel */}
@@ -140,6 +199,28 @@ export default function App() {
           zIndex: 10,
         }}
       >
+
+        {/* Reset View Button */}
+        <button
+          type="button"
+          onClick={handleResetView}
+          style={{
+            padding: '8px 12px',
+            fontSize: '12px',
+            fontWeight: 600,
+            borderRadius: '6px',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: '#2c2c30',
+            color: '#ffffff',
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={(e) => (e.target.style.background = '#3a3a40')}
+          onMouseLeave={(e) => (e.target.style.background = '#2c2c30')}
+        >
+          Reset Camera View
+        </button>
+
         {/* BPM Slider */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
