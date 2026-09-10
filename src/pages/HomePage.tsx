@@ -11,11 +11,13 @@ export default function HomePage() {
         option: "Normal"
     });
 
+    const [graphActive, setGraphActive] = useState<boolean>(true)
+
     return (
         <main className="app">
-            <TopBar />
+            <TopBar setGraphActive={setGraphActive} graphActive={graphActive}/>
             <Content active={active} setActive={setActive} />
-            <GraphBar />
+            {graphActive && <GraphBar />}
         </main>
     )
 }

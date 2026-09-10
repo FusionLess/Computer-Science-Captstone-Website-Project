@@ -2,10 +2,10 @@ import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
 
-function TopBar() {
+function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
     return (
         <header className="topbar">
-            <LeftButtons />
+            <LeftButtons setGraphActive={setGraphActive} graphActive={graphActive}/>
             <div className="logo">
                 [ Project Atrium ]
             </div>
@@ -15,7 +15,7 @@ function TopBar() {
     )
 }
 
-function LeftButtons() {
+function LeftButtons({setGraphActive, graphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -24,7 +24,7 @@ function LeftButtons() {
                 ≡
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} />
+            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive}/>
         </div>
     )
 }
