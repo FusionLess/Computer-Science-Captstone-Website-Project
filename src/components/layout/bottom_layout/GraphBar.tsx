@@ -56,8 +56,11 @@ export default function GraphBar({ active }: GraphBarProps) {
                 return pressureProfiles.decompensated
 
             default:
+                return pressureProfiles.healthy 
+        }
+    }
 
-    const profile = getECGProfile()
+    const profile1 = getECGProfile()
     const profile2 = getPressureProfile()
     return (
         <footer className="graphs">
@@ -65,11 +68,17 @@ export default function GraphBar({ active }: GraphBarProps) {
                 phase={graphPhase}
                 type="ecg"
                 d={generateECGPath(ecgProfiles.healthy)}
-                overlayD={profile.severity !== "healthy"  ? generateECGPath(profile) : undefined}
-                severity={profile.severity !== "healthy" ? profile.severity : undefined}
+                overlayD={profile1.severity !== "healthy"  ? generateECGPath(profile1) : undefined}
+                severity={profile1.severity !== "healthy" ? profile1.severity : undefined}
             />
             <HeartRateContainer bpm={bpm} />
-            <ICUContainer phase={graphPhase} type="pressure" d={generatePressurePath()} />
+            <ICUContainer 
+                phase={graphPhase} 
+                type="pressure" 
+                d={generatePressurePath(pressureProfiles.healthy)} 
+                overlayD={profile2.severity !== "healthy"  ? generatePressurePath(profile2) : undefined}
+                severity={profile2.severity !== "healthy" ? profile2.severity : undefined}
+            />
         </footer>
     )
 }
@@ -97,34 +106,34 @@ function generateECGPath(profile: ECGProfile) {
         const x = i * (VIEWBOX_WIDTH / BEAT_COUNT)
         const w = VIEWBOX_WIDTH / BEAT_COUNT
 
-        const postQrsWobble = 8 * profile.rhythmJitter
+        const postQrsWobble = 8 * profile1.rhythmJitter
 
         const baseline = 117
 
         // Wave amplitudes
-        const pY = baseline - 10 * profile.pAmp
-        const rY = baseline - 104 * profile.qrsAmp 
-        const sY = baseline + 21 * profile.sAmp
+        const pY = baseline - 10 * profile1.pAmp
+        const rY = baseline - 104 * profile1.qrsAmp 
+        const sY = baseline + 21 * profile1.sAmp
 
-        const stY = baseline - 24 * profile.stElevation
-        const elevatedY = baseline - 35 * profile.stElevation
+        const stY = baseline - 24 * profile1.stElevation
+        const elevatedY = baseline - 35 * profile1.stElevation
 
         // T wave
-        const tDirection = profile.tInverted ? 1 : -1
-        const tY = baseline + tDirection * 16 * profile.tAmp 
+        const tDirection = profile1.tInverted ? 1 : -1
+        const tY = baseline + tDirection * 16 * profile1.tAmp 
 
         // QRS timing
-        const qrsStart = 0.30 + profile.qrsOffset
-        const qrsPeak = qrsStart + 0.03 * profile.qrsWidth
-        const qrsEnd = qrsStart + 0.06 * profile.qrsWidth
+        const qrsStart = 0.30 + profile1.qrsOffset
+        const qrsPeak = qrsStart + 0.03 * profile1.qrsWidth
+        const qrsEnd = qrsStart + 0.06 * profile1.qrsWidth
 
         // ST timing changes depending on whether QRS is shown
-        const stStart = profile.qrsStyle === "none" ? 0.33 : qrsEnd + 0.07
-        const stEnd = stStart + 0.16 * profile.stDuration
+        const stStart = profile1.qrsStyle === "none" ? 0.33 : qrsEnd + 0.07
+        const stEnd = stStart + 0.16 * profile1.stDuration
 
         // T wave timing
-        const tPeak = stEnd + 0.09 * profile.tStartOffset
-        const tEnd = stEnd + 0.20 * profile.tWidth
+        const tPeak = stEnd + 0.09 * profile1.tStartOffset
+        const tEnd = stEnd + 0.20 * profile1.tWidth
 
         // P wave
         fullD += `
@@ -134,23 +143,23 @@ function generateECGPath(profile: ECGProfile) {
         `
 
         // QRS complex
-        if (profile.qrsStyle === "normal") {
+        if (profile1.qrsStyle === "normal") {
             fullD += `
                 L ${x + w * qrsStart} ${baseline + 8}
                 L ${x + w * qrsPeak} ${rY}
                 L ${x + w * qrsEnd} ${sY}
                 L ${x + w * (qrsEnd + 0.025)} ${baseline}
-                L ${x + w * (qrsEnd + 0.035)} ${baseline - 3 * profile.postQrsJitter}
-                L ${x + w * (qrsEnd + 0.045)} ${baseline + 2 * profile.postQrsJitter}
-                L ${x + w * (qrsEnd + 0.055)} ${baseline - 2 * profile.postQrsJitter}
+                L ${x + w * (qrsEnd + 0.035)} ${baseline - 3 * profile1.postQrsJitter}
+                L ${x + w * (qrsEnd + 0.045)} ${baseline + 2 * profile1.postQrsJitter}
+                L ${x + w * (qrsEnd + 0.055)} ${baseline - 2 * profile1.postQrsJitter}
                 L ${x + w * (qrsEnd + 0.065)} ${baseline}
     
             `
         }
 
-        if (profile.qrsStyle === "reduced") {
-            const reducedRY = baseline - 45 * profile.qrsAmp
-            const reducedSY = baseline + 10 * profile.qrsAmp
+        if (profile1.qrsStyle === "reduced") {
+            const reducedRY = baseline - 45 * profile1.qrsAmp
+            const reducedSY = baseline + 10 * profile1.qrsAmp
 
             fullD += `
                 L ${x + w * qrsStart} ${baseline + 3}
@@ -159,17 +168,17 @@ function generateECGPath(profile: ECGProfile) {
             `
         }
 
-        if (profile.qrsStyle === "none") {
+        if (profile1.qrsStyle === "none") {
             fullD += `
-                C ${x + w * (qrsStart - 0.08)} ${baseline}, ${x + w * (qrsStart - 0.05)} ${baseline - 8 * profile.stElevation}, ${x + w * (qrsStart - 0.02)} ${baseline - 20 * profile.stElevation}
-                C ${x + w * qrsStart} ${baseline - 30 * profile.stElevation},  ${x + w * (qrsStart + 0.02)} ${elevatedY}, ${x + w * (qrsStart + 0.03)} ${elevatedY}
+                C ${x + w * (qrsStart - 0.08)} ${baseline}, ${x + w * (qrsStart - 0.05)} ${baseline - 8 * profile1.stElevation}, ${x + w * (qrsStart - 0.02)} ${baseline - 20 * profile1.stElevation}
+                C ${x + w * qrsStart} ${baseline - 30 * profile1.stElevation},  ${x + w * (qrsStart + 0.02)} ${elevatedY}, ${x + w * (qrsStart + 0.03)} ${elevatedY}
             `
 
         }   
 
         // ST segment + post-QRS oscillation
         fullD += `
-            C ${x + w * (stStart + 0.015)} ${baseline - 8 * profile.stElevation},  ${x + w * (stStart + 0.035)} ${stY - postQrsWobble}, ${x + w * (stStart + 0.055)} ${stY}
+            C ${x + w * (stStart + 0.015)} ${baseline - 8 * profile1.stElevation},  ${x + w * (stStart + 0.035)} ${stY - postQrsWobble}, ${x + w * (stStart + 0.055)} ${stY}
             C ${x + w * (stStart + 0.075)} ${stY + postQrsWobble}, ${x + w * (stStart + 0.095)} ${stY - postQrsWobble * 0.6}, ${x + w * (stStart + 0.115)} ${stY}
             C ${x + w * (stStart + 0.135)} ${stY + postQrsWobble * 0.7}, ${x + w * (stStart + 0.155)} ${stY - postQrsWobble * 0.5}, ${x + w * stEnd} ${stY}
             C ${x + w * (stEnd + 0.03)} ${baseline + 3}, ${x + w * (tPeak - 0.035)} ${tY}, ${x + w * tPeak} ${tY}
