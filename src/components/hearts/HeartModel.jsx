@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
@@ -10,10 +10,11 @@ const NUM_FRAMES = 25
 // all 25 frames are loaded into gpu memory but only active frame is visible
 function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
   const { scene } = useGLTF(url)
+  const model = useMemo(() => scene.clone(true), [scene]);
   const epiMeshRef = useRef(null)
 
   useEffect(() => {
-    scene.traverse((child) => {
+    model.traverse((child) => {
       if (child.isMesh) {
         const isEpi = child.name === 'mesh0' || child.name.toLowerCase().includes('epi')
         
@@ -42,7 +43,7 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
         }
       }
     })
-  }, [scene])
+  }, [model])
 
   useEffect(() => {
     if (epiMeshRef.current) {
@@ -52,15 +53,15 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
 
   useEffect(() => {
     const planes = clipPlane ? [clipPlane] : []
-    scene.traverse((child) => {
+    model.traverse((child) => {
       if (child.isMesh && child.material) {
         child.material.clippingPlanes = planes
         child.material.needsUpdate = true
       }
     })
-  }, [scene, clipPlane])
+  }, [model, clipPlane])
 
-  return <primitive object={scene} visible={isVisible} />
+  return <primitive object={model} visible={isVisible} />
 }
 
 export function HeartModel({
