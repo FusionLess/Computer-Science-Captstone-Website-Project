@@ -2,7 +2,7 @@ import "./GraphBar.css"
 import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
 import { ecgProfiles, type ECGProfile } from "../../../data/ECGParameters.ts"
 import type { HeartState } from "../../types/states.ts"
-
+import { pressureProfiles, type PressureProfile } from "../../../data/PressureParameters.ts"
 const BEAT_COUNT = GRAPH_BEAT_COUNT
 const VIEWBOX_WIDTH = 500
 
@@ -36,8 +36,29 @@ export default function GraphBar({ active }: GraphBarProps) {
                 return ecgProfiles.healthy
         }
     }
+    const getPressureProfile = () => {
+        switch (active.option) {
+            case "Normal":
+                return pressureProfiles.healthy
+            case "Minor":
+                return pressureProfiles.minorAttack
+
+            case "Severe":
+                return pressureProfiles.severeAttack
+
+            case "Fibrillation":
+                return pressureProfiles.fibrillation
+
+            case "Compensated":
+                return pressureProfiles.compensated
+
+            case "Decompensated":
+                return pressureProfiles.decompensated
+
+            default:
 
     const profile = getECGProfile()
+    const profile2 = getPressureProfile()
     return (
         <footer className="graphs">
             <ICUContainer
@@ -159,20 +180,29 @@ function generateECGPath(profile: ECGProfile) {
     return fullD
 }
 
-function generatePressurePath() {
+function generatePressurePath(profile2: PressureProfile) {
     let fullD = "M 0 115 "
+    const baseline = 115
     for (let i = 0; i < BEAT_COUNT; i++) {
         const x = i * (VIEWBOX_WIDTH / BEAT_COUNT)
         const w = VIEWBOX_WIDTH / BEAT_COUNT
+
+        const peakY = baseline - (baseline - 22) * profile2.pAmp
+        const troughY = 118 + (profile2.tAmp - 1) * 5
+        const fallEnd = 0.72 + 0.14 / profile2.fallSpeed + profile2.pOffset
+        const recoveryEnd = fallEnd + 0.14 / profile2.recoverySpeed
+
         fullD += `
-            C ${x + w * 0.1} 113,  ${x + w * 0.2} 116,   ${x + w * 0.32} 111
-            C ${x + w * 0.38} 107,  ${x + w * 0.40} 75,   ${x + w * 0.46} 66
-            C ${x + w * 0.50} 53,  ${x + w * 0.54} 35,   ${x + w * 0.66} 22
-            C ${x + w * 0.68} 23,  ${x + w * 0.70} 25,   ${x + w * 0.72} 46
-            C ${x + w * 0.76} 71,  ${x + w * 0.80} 99,   ${x + w * 0.86} 118
-            C ${x + w * 0.92} 123,  ${x + w * 0.96} 120,   ${x + w } 118
+            C ${x + w * 0.10} 113, ${x + w * 0.20} 116, ${x + w * (0.32 + profile2.pOffset)} 111
+            C ${x + w * (0.38 + profile2.pOffset)} 107, ${x + w * (0.40 + profile2.pOffset)} 75, ${x + w * (0.46 + profile2.pOffset)} 66
+            C ${x + w * (0.50 + profile2.pOffset)} 53, ${x + w * (0.54 + profile2.pOffset)} 35,  ${x + w * (0.66 + profile2.pOffset)} ${peakY}
+            C ${x + w * (0.66 + 0.02 * profile2.pWidth + profile2.pOffset)} 23, ${x + w * (0.66 + 0.04 * profile2.pWidth + profile2.pOffset)} 25, ${x + w * (0.66 + 0.06 * profile2.pWidth + profile2.pOffset)} 46
+            C ${x + w * (0.72 + 0.04 / profile2.fallSpeed + profile2.pOffset)} 71, ${x + w * (0.72 + 0.08 / profile2.fallSpeed + profile2.pOffset)} 99, ${x + w * fallEnd} ${troughY}
+            C ${x + w * (fallEnd + 0.04 / profile2.recoverySpeed)} ${troughY},  ${x + w * (fallEnd + 0.09 / profile2.recoverySpeed)} ${baseline}, ${x + w * recoveryEnd} ${baseline}
+            L ${x + w} ${baseline}
         `
     }
+
     return fullD
 }
 

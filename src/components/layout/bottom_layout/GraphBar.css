@@ -45,7 +45,7 @@
     fill: none;
     stroke-width: 1.2;
 }
-
+.pressure-waveform,
 .ecg-waveform {
     fill: none;
     stroke-width: 3;
@@ -56,15 +56,13 @@
     fill: none;
     stroke-width: 2.5;
 }
+
 .condition-waveform.minor {
     stroke: rgb(255, 157, 0);
 }
 
 .condition-waveform.major {
     stroke: red;
-}
-.pressure-waveform {
-    stroke: #f5b642;
 }
 
 .pressure-scale {
