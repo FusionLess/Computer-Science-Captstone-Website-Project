@@ -1,15 +1,52 @@
 import "./GraphBar.css"
 import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
+import { ecgProfiles, type ECGProfile } from "../../../data/ECGParameters.ts"
+import type { HeartState } from "../../types/states.ts"
 
 const BEAT_COUNT = GRAPH_BEAT_COUNT
 const VIEWBOX_WIDTH = 500
 
-export default function GraphBar() {
-    const { bpm, graphPhase } = useHeartMonitor()
+type GraphBarProps = {
+    active: HeartState
+}
 
+export default function GraphBar({ active }: GraphBarProps) {
+    const { bpm, graphPhase } = useHeartMonitor()
+    const getECGProfile = () => {
+        switch (active.option) {
+            case "Normal":
+                return ecgProfiles.healthy
+
+            case "Minor":
+                return ecgProfiles.minorAttack
+
+            case "Severe":
+                return ecgProfiles.severeAttack
+
+            case "Fibrillation":
+                return ecgProfiles.fibrillation
+
+            case "Compensated":
+                return ecgProfiles.compensated
+
+            case "Decompensated":
+                return ecgProfiles.decompensated
+
+            default:
+                return ecgProfiles.healthy
+        }
+    }
+
+    const profile = getECGProfile()
     return (
         <footer className="graphs">
-            <ICUContainer phase={graphPhase} type="ecg" d={generateECGPath()} />
+            <ICUContainer
+                phase={graphPhase}
+                type="ecg"
+                d={generateECGPath(ecgProfiles.healthy)}
+                overlayD={profile.severity !== "healthy"  ? generateECGPath(profile) : undefined}
+                severity={profile.severity !== "healthy" ? profile.severity : undefined}
+            />
             <HeartRateContainer bpm={bpm} />
             <ICUContainer phase={graphPhase} type="pressure" d={generatePressurePath()} />
         </footer>
@@ -33,41 +70,90 @@ a = a percentage of progress across that one beat
  */
 
 function generateECGPath() {
+function generateECGPath(profile: ECGProfile) {
     let fullD = "M 0 117 "
     for (let i = 0; i < BEAT_COUNT; i++) {
         const x = i * (VIEWBOX_WIDTH / BEAT_COUNT)
         const w = VIEWBOX_WIDTH / BEAT_COUNT
 
-        /*
-        Segments for waves below
-        P-wave
+        const postQrsWobble = 8 * profile.rhythmJitter
 
-        QRS interval
+        const baseline = 117
 
-        T interval
+        // Wave amplitudes
+        const pY = baseline - 10 * profile.pAmp
+        const rY = baseline - 104 * profile.qrsAmp 
+        const sY = baseline + 21 * profile.sAmp
 
-        TP interval
-         */
+        const stY = baseline - 24 * profile.stElevation
+        const elevatedY = baseline - 35 * profile.stElevation
 
+        // T wave
+        const tDirection = profile.tInverted ? 1 : -1
+        const tY = baseline + tDirection * 16 * profile.tAmp 
+
+        // QRS timing
+        const qrsStart = 0.30 + profile.qrsOffset
+        const qrsPeak = qrsStart + 0.03 * profile.qrsWidth
+        const qrsEnd = qrsStart + 0.06 * profile.qrsWidth
+
+        // ST timing changes depending on whether QRS is shown
+        const stStart = profile.qrsStyle === "none" ? 0.33 : qrsEnd + 0.07
+        const stEnd = stStart + 0.16 * profile.stDuration
+
+        // T wave timing
+        const tPeak = stEnd + 0.09 * profile.tStartOffset
+        const tEnd = stEnd + 0.20 * profile.tWidth
+
+        // P wave
         fullD += `
-            L ${x + w * 0.06} 117
-            C ${x + w * 0.08} 116, ${x + w * 0.12} 107, ${x + w * 0.17} 107
-            C ${x + w * 0.18} 107, ${x + w * 0.20} 117, ${x + w * 0.22} 118
-            C ${x + w * 0.24} 116, ${x + w * 0.25} 119, ${x + w * 0.28} 118
-            
-            L ${x + w * 0.30} 121
-            L ${x + w * 0.33} 13     
-            L ${x + w * 0.36} 138
-            C ${x + w * 0.37} 134, ${x + w * 0.38} 130, ${x + w * 0.39} 121
-            
-            C ${x + w * 0.44} 120, ${x + w * 0.46} 116, ${x + w * 0.52} 116
-            C ${x + w * 0.54} 113, ${x + w * 0.56} 111, ${x + w * 0.57} 110
-            C ${x + w * 0.60} 105, ${x + w * 0.62} 101, ${x + w * 0.63} 101
-            C ${x + w * 0.65} 101, ${x + w * 0.70} 111, ${x + w * 0.74} 117
-            
-            L ${x + w * 0.78} 117
-            C ${x + w * 0.81} 119, ${x + w * 0.83} 115, ${x + w * 0.84} 117
-            C ${x + w * 0.86} 117, ${x + w * 0.94} 117, ${x + w} 115
+            L ${x + w * 0.06} ${baseline}
+            C ${x + w * 0.08} ${baseline - 1},  ${x + w * 0.12} ${pY}, ${x + w * 0.17} ${pY}
+            C ${x + w * 0.18} ${pY},  ${x + w * 0.20} ${baseline},  ${x + w * 0.22} ${baseline + 1}
+        `
+
+        // QRS complex
+        if (profile.qrsStyle === "normal") {
+            fullD += `
+                L ${x + w * qrsStart} ${baseline + 8}
+                L ${x + w * qrsPeak} ${rY}
+                L ${x + w * qrsEnd} ${sY}
+                L ${x + w * (qrsEnd + 0.025)} ${baseline}
+                L ${x + w * (qrsEnd + 0.035)} ${baseline - 3 * profile.postQrsJitter}
+                L ${x + w * (qrsEnd + 0.045)} ${baseline + 2 * profile.postQrsJitter}
+                L ${x + w * (qrsEnd + 0.055)} ${baseline - 2 * profile.postQrsJitter}
+                L ${x + w * (qrsEnd + 0.065)} ${baseline}
+    
+            `
+        }
+
+        if (profile.qrsStyle === "reduced") {
+            const reducedRY = baseline - 45 * profile.qrsAmp
+            const reducedSY = baseline + 10 * profile.qrsAmp
+
+            fullD += `
+                L ${x + w * qrsStart} ${baseline + 3}
+                C ${x + w * (qrsStart + 0.015)} ${baseline - 8}, ${x + w * (qrsPeak - 0.01)} ${reducedRY}, ${x + w * qrsPeak} ${reducedRY}
+                C ${x + w * (qrsPeak + 0.01)} ${reducedRY}, ${x + w * (qrsEnd - 0.01)} ${reducedSY}, ${x + w * qrsEnd} ${reducedSY}
+            `
+        }
+
+        if (profile.qrsStyle === "none") {
+            fullD += `
+                C ${x + w * (qrsStart - 0.08)} ${baseline}, ${x + w * (qrsStart - 0.05)} ${baseline - 8 * profile.stElevation}, ${x + w * (qrsStart - 0.02)} ${baseline - 20 * profile.stElevation}
+                C ${x + w * qrsStart} ${baseline - 30 * profile.stElevation},  ${x + w * (qrsStart + 0.02)} ${elevatedY}, ${x + w * (qrsStart + 0.03)} ${elevatedY}
+            `
+
+        }   
+
+        // ST segment + post-QRS oscillation
+        fullD += `
+            C ${x + w * (stStart + 0.015)} ${baseline - 8 * profile.stElevation},  ${x + w * (stStart + 0.035)} ${stY - postQrsWobble}, ${x + w * (stStart + 0.055)} ${stY}
+            C ${x + w * (stStart + 0.075)} ${stY + postQrsWobble}, ${x + w * (stStart + 0.095)} ${stY - postQrsWobble * 0.6}, ${x + w * (stStart + 0.115)} ${stY}
+            C ${x + w * (stStart + 0.135)} ${stY + postQrsWobble * 0.7}, ${x + w * (stStart + 0.155)} ${stY - postQrsWobble * 0.5}, ${x + w * stEnd} ${stY}
+            C ${x + w * (stEnd + 0.03)} ${baseline + 3}, ${x + w * (tPeak - 0.035)} ${tY}, ${x + w * tPeak} ${tY}
+            C ${x + w * (tPeak + 0.04)} ${tY}, ${x + w * (tEnd - 0.045)} ${baseline}, ${x + w * tEnd} ${baseline}
+            L ${x + w} ${baseline}
         `
     }
     return fullD
@@ -90,7 +176,7 @@ function generatePressurePath() {
     return fullD
 }
 
-function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressure'; d: string }) {
+function ICUContainer({ phase, type, d, overlayD, severity }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major' }) {
     const safePhase = isNaN(phase) ? 0 : phase
     const xPos = safePhase * 100
 
@@ -107,7 +193,8 @@ function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressu
                     <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, overflow: 'hidden' }}>
                         <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
                             <path d={d} className={`${type}-waveform`} />
-                        </svg>
+                            {overlayD && <path d={overlayD} className={`${type}-waveform condition-waveform ${severity === 'minor' ? 'minor' : 'major'}`} />}
+                </svg>
 
                         <div
                             style={{
@@ -133,8 +220,8 @@ function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressu
     )
 }
 
-function HeartRateContainer() {
-    const { bpm, setBpm } = useHeartMonitor()
+function HeartRateContainer({ bpm }: { bpm: number }) {
+    const { setBpm } = useHeartMonitor()
     return (
         <div className="heartrate container">
             <span className="heart-rate-label">HEART RATE</span>

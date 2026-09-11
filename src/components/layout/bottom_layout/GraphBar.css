@@ -41,16 +41,28 @@
     height: 100%;
 }
 
-.ecg-waveform,
 .pressure-waveform {
     fill: none;
     stroke-width: 1.2;
 }
 
 .ecg-waveform {
+    fill: none;
+    stroke-width: 3;
     stroke: #35e87b;
 }
 
+.condition-waveform {
+    fill: none;
+    stroke-width: 2.5;
+}
+.condition-waveform.minor {
+    stroke: rgb(255, 157, 0);
+}
+
+.condition-waveform.major {
+    stroke: red;
+}
 .pressure-waveform {
     stroke: #f5b642;
 }
