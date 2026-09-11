@@ -5,7 +5,6 @@ import { useFrame } from '@react-three/fiber'
 
 const NUM_FRAMES = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
@@ -65,12 +64,14 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
 }
 
 export function HeartModel({
+  frameFolder = "frames",
   bpm = 60,
   showEpi = true,
   clipPlane = null,
   isPaused = false,
   ...props
 }) {
+  const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${i}.glb`)
   const [activeFrame, setActiveFrame] = useState(0)
   const animState = useRef({ elapsed: 0, currentFrame: 0 })
 
@@ -98,7 +99,7 @@ export function HeartModel({
 
   return (
     <group {...props}>
-      {FRAME_PATHS.map((path, idx) => (
+      {framePath.map((path, idx) => (
         <SingleFrame
           key={path}
           url={path}
@@ -111,4 +112,4 @@ export function HeartModel({
   )
 }
 
-FRAME_PATHS.forEach((path) => useGLTF.preload(path))
+// FRAME_PATHS.forEach((path) => useGLTF.preload(path))

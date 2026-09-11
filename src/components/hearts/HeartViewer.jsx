@@ -2,8 +2,8 @@ import React, { Suspense, useState, useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
-import { HeartModel } from './HeartModel'
-import { SlicePlaneHelper } from './SlicePlaneHelper'
+import { HeartModel } from './HeartModel.jsx'
+import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
 
@@ -69,7 +69,7 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
     )
 }
 
-export default function HeartViewer() {
+export default function HeartViewer({ frameFolder }) {
     const [resetTrigger, setResetTrigger] = useState(0)
 
     const [bpm, setBpm] = useState(60)
@@ -147,7 +147,8 @@ export default function HeartViewer() {
 
                 <Suspense fallback={null}>
                     <Center>
-                        <HeartModel
+                            <HeartModel
+                            frameFolder={frameFolder}
                             bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
                             showEpi={showEpi}
                             clipPlane={clipPlane}
@@ -162,7 +163,7 @@ export default function HeartViewer() {
                         opacity={0.65}           // Shadow intensity
                         scale={220}              // Floor shadow spread
                         blur={2.0}               // Softness edge blur
-                        far={120}                // Vertical projection distance
+                        far={300}                // Vertical projection distance
                         resolution={512}
                         color="#050508"
                     />
