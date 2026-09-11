@@ -1,20 +1,87 @@
-import { Suspense, useMemo, useState } from 'react'
+import React, { Suspense, useState, useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
-import { Canvas } from '@react-three/fiber'
-import { Center, OrbitControls } from '@react-three/drei'
-import { HeartModel } from '../components/HeartModel'
-import { useHeartMonitor } from "../components/context/HeartMonitorContext.tsx"
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
+import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
+import { HeartModel } from './HeartModel'
+import { SlicePlaneHelper } from './SlicePlaneHelper'
 
+const INITIAL_CAMERA_POS = [-225, -20, -200]
 
-export default function HeartViewerPage() {
-    const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
+function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
+    const { camera } = useThree()
+    const controlsRef = useRef(null)
+
+    const animatingRef = useRef(false)
+    const startTimeRef = useRef(0)
+    const DURATION = 0.8 // Duration in seconds
+
+    const startPos = useRef(new THREE.Vector3())
+    const endPos = useMemo(() => new THREE.Vector3(...initialPos), [initialPos])
+    const startTarget = useRef(new THREE.Vector3())
+    const endTarget = useMemo(() => new THREE.Vector3(0, 0, 0), [])
+    const startUp = useRef(new THREE.Vector3())
+    const endUp = useMemo(() => new THREE.Vector3(0, 1, 0), [])
+
+    useEffect(() => {
+        if (resetTrigger === 0 || !controlsRef.current) return
+
+        startPos.current.copy(camera.position)
+        startTarget.current.copy(controlsRef.current.target)
+        startUp.current.copy(camera.up)
+
+        startTimeRef.current = performance.now()
+        animatingRef.current = true
+    }, [resetTrigger, camera])
+
+    useFrame(() => {
+        if (!animatingRef.current || !controlsRef.current) return
+
+        const elapsed = (performance.now() - startTimeRef.current) / 1000
+        const rawT = Math.min(elapsed / DURATION, 1.0)
+
+        // Smooth cubic ease-out: t = 1 - (1 - t)^3
+        const t = 1.0 - Math.pow(1.0 - rawT, 3)
+
+        camera.position.lerpVectors(startPos.current, endPos, t)
+        camera.up.lerpVectors(startUp.current, endUp, t).normalize()
+        controlsRef.current.target.lerpVectors(startTarget.current, endTarget, t)
+
+        camera.lookAt(controlsRef.current.target)
+        controlsRef.current.update()
+
+        if (rawT >= 1.0) {
+            animatingRef.current = false
+            controlsRef.current.saveState()
+        }
+    })
+
+    return (
+        <OrbitControls
+            ref={controlsRef}
+            makeDefault
+            target={[0, 0, 0]}
+            enablePan={false}
+            minDistance={240}
+            maxDistance={380}
+            minPolarAngle={0}
+            maxPolarAngle={Math.PI}
+        />
+    )
+}
+
+export default function HeartViewer() {
+    const [resetTrigger, setResetTrigger] = useState(0)
+
+    const [bpm, setBpm] = useState(60)
+    const [isPaused, setIsPaused] = useState(false)
     const [showEpi, setShowEpi] = useState(true)
 
     // sets the preset states you can slice the heart
     const [sliceEnabled, setSliceEnabled] = useState(false)
-    const [pitch, setPitch] = useState(-90) // Points normal downward (-Y) to cut off superior structures
+    const [showPlaneGuide, setShowPlaneGuide] = useState(true)
+    const [pitch, setPitch] = useState(-90) // points the normal downward to cut off superior structures
     const [yaw, setYaw] = useState(0)
-    const [sliceDistance, setSliceDistance] = useState(-20) // Initial height at the atrioventricular junction
+    const [sliceDistance, setSliceDistance] = useState(-20) // initial height at the atrioventricular junction
 
     // sets the preset independent depth slices per selection
     const [activePreset, setActivePreset] = useState('shortAxis')
@@ -23,6 +90,10 @@ export default function HeartViewerPage() {
         sagittal: -3,
         shortAxis: -18,
     })
+
+    const handleResetView = () => {
+        setResetTrigger((prev) => prev + 1)
+    }
 
     // tidies up the onClick part of the button to set the preset values of each slicing view
     const handlePresetSelect = (presetKey, p, y) => {
@@ -61,14 +132,7 @@ export default function HeartViewerPage() {
     }, [sliceEnabled, pitch, yaw, sliceDistance])
 
     return (
-        <div style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            overflow: 'hidden',
-            background: 'var(--background-colour-2)',
-            borderRadius: '20px',
-        }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour-2)' }}>
             <Canvas
                 camera={{ position: [-225, -20, -200], fov: 45 }}
                 gl={{
@@ -89,24 +153,29 @@ export default function HeartViewerPage() {
                             clipPlane={clipPlane}
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
-                            beatInterval={beatInterval}
                         />
                     </Center>
+
+                    {/* Soft contact floor shadow */}
+                    <ContactShadows
+                        position={[0, -90, 0]}   // Sits just beneath the lowest tip of the apex
+                        opacity={0.65}           // Shadow intensity
+                        scale={220}              // Floor shadow spread
+                        blur={2.0}               // Softness edge blur
+                        far={120}                // Vertical projection distance
+                        resolution={512}
+                        color="#050508"
+                    />
                 </Suspense>
 
-                <OrbitControls
-                    makeDefault
-                    target={[0, 0, 0]}
-                    onChange={(e) => {
-                        const cam = e?.target?.object
-                        // if (cam) {
-                        //   console.log(
-                        //     `camera pos: [${cam.position.x.toFixed(0)}, ${cam.position.y.toFixed(0)}, ${cam.position.z.toFixed(0)}]`
-                        //   )
-                        // }
-                        // old debug options to find out where the camera coordinates should begin
-                    }}
+                {/* Rendered at world root to match THREE.Plane world-space coordinate evaluation */}
+                <SlicePlaneHelper
+                    clipPlane={clipPlane}
+                    size={180}
+                    visible={sliceEnabled && showPlaneGuide}
                 />
+
+                <CameraController resetTrigger={resetTrigger} initialPos={INITIAL_CAMERA_POS} />
             </Canvas>
 
             {/* Floating Control Panel */}
@@ -118,7 +187,7 @@ export default function HeartViewerPage() {
                     background: 'rgba(20, 20, 22, 0.9)',
                     padding: '16px 20px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(242, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
                     backdropFilter: 'blur(8px)',
                     color: '#ffffff',
@@ -130,6 +199,28 @@ export default function HeartViewerPage() {
                     zIndex: 10,
                 }}
             >
+
+                {/* Reset View Button */}
+                <button
+                    type="button"
+                    onClick={handleResetView}
+                    style={{
+                        padding: '8px 12px',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        borderRadius: '6px',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        background: '#2c2c30',
+                        color: '#ffffff',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(e) => (e.target.style.background = '#3a3a40')}
+                    onMouseLeave={(e) => (e.target.style.background = '#2c2c30')}
+                >
+                    Reset Camera View
+                </button>
+
                 {/* BPM Slider */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -164,7 +255,7 @@ export default function HeartViewerPage() {
                     </div>
                 </div>
 
-                {/* Epicardium Toggle (outside wall thing) */}
+                {/* Epicardium Toggle */}
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
                     <span>Outer Wall (Epi)</span>
                     <input
@@ -190,6 +281,17 @@ export default function HeartViewerPage() {
 
                 {sliceEnabled && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {/* Guide Plane Visibility Toggle */}
+                        <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: '#a0a0a5' }}>
+                            <span>Show Slice Indicator</span>
+                            <input
+                                type="checkbox"
+                                checked={showPlaneGuide}
+                                onChange={(e) => setShowPlaneGuide(e.target.checked)}
+                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                            />
+                        </label>
+
                         {/* Quick Clinical Views */}
                         <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
                             <button
