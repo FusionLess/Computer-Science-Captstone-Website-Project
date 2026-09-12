@@ -60,8 +60,8 @@ export const pressureProfiles: Record<string, PressureProfile> = {
     },
 
     fibrillation: {
-        pAmp: 1,
-        pWidth: 1,
+        pAmp: 0.5,
+        pWidth: 0.7,
         pOffset: 0,
 
         riseSpeed: 1,
@@ -70,8 +70,8 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         tAmp: 1,
         recoverySpeed: 1,
 
-        waveform: "normal",
-        severity: "healthy",
+        waveform: "fibrillation",
+        severity: "major",
     },
 
     compensated: {

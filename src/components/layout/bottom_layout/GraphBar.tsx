@@ -99,8 +99,46 @@ x y (Destination Point): The exact absolute grid coordinate where the line finis
 a = a percentage of progress across that one beat
  */
 
-function generateECGPath() {
-function generateECGPath(profile: ECGProfile) {
+function generateFibrillationPath(ampScale = 1, widthScale = 1, variation = false) {
+    let fullD = "M 0 117"
+
+    const baseline = 117
+    const oscillations = BEAT_COUNT * 8 / widthScale
+    const high = baseline - 40 * ampScale 
+    const low = baseline + 35 * ampScale
+   
+    for (let i = 0; i < oscillations; i++) {
+        const x = i * (VIEWBOX_WIDTH / oscillations)
+        const w = VIEWBOX_WIDTH / oscillations
+        
+
+        if (variation === true) {
+            const variationScale = Math.sin(i * 2) *5 
+
+            const newHigh = high + variationScale
+            const newLow = low  - variationScale
+
+            fullD += `
+                C ${x + w * 0.15} ${baseline}, ${x + w * 0.20} ${newHigh}, ${x + w * 0.35} ${newHigh}
+                C ${x + w * 0.50} ${newHigh}, ${x + w * 0.55} ${newLow},${x + w * 0.70} ${newLow}
+                C ${x + w * 0.85} ${newLow},${x + w * 0.90} ${baseline}, ${x + w} ${baseline}
+            `
+        } else {
+            fullD += `
+                C ${x + w * 0.15} ${baseline}, ${x + w * 0.20} ${high}, ${x + w * 0.35} ${high}
+                C ${x + w * 0.50} ${high}, ${x + w * 0.55} ${low},${x + w * 0.70} ${low}
+                C ${x + w * 0.85} ${low},${x + w * 0.90} ${baseline}, ${x + w} ${baseline}
+            `
+        }
+    }
+
+    return fullD
+}
+
+function generateECGPath(profile1: ECGProfile) {
+     if (profile1.waveform === "fibrillation") {
+        return generateFibrillationPath(profile1.pAmp, profile1.qrsWidth, true)
+    }
     let fullD = "M 0 117 "
     for (let i = 0; i < BEAT_COUNT; i++) {
         const x = i * (VIEWBOX_WIDTH / BEAT_COUNT)
@@ -190,6 +228,9 @@ function generateECGPath(profile: ECGProfile) {
 }
 
 function generatePressurePath(profile2: PressureProfile) {
+    if (profile2.waveform === "fibrillation") {
+        return generateFibrillationPath(profile2.pAmp, profile2.pWidth, false)
+    }
     let fullD = "M 0 115 "
     const baseline = 115
     for (let i = 0; i < BEAT_COUNT; i++) {

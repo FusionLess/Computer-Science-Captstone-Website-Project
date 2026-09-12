@@ -111,8 +111,8 @@ export const ecgProfiles: Record<string, ECGProfile> = {
         rhythmJitter: 0,
         postQrsJitter: 0,
         qrsStyle: "normal",
-        waveform: "normal",
-        severity: "healthy"
+        waveform: "fibrillation",
+        severity: "major",
     },
     decompensated: {
         pAmp: 0.7,
