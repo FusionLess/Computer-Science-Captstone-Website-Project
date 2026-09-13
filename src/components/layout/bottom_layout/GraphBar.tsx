@@ -241,8 +241,17 @@ function generatePressurePath(profile2: PressureProfile) {
         const troughY = 118 + (profile2.tAmp - 1) * 5
         const fallEnd = 0.72 + 0.14 / profile2.fallSpeed + profile2.pOffset
         const recoveryEnd = fallEnd + 0.14 / profile2.recoverySpeed
-
-        fullD += `
+        if (profile2.waveform === "reduced") {
+            fullD += `
+                L ${x + w * 0.10} ${baseline-9}
+                C ${x + w * (0.20 + 0.03 / profile2.riseSpeed)} ${baseline - 9}, ${x + w * (0.28 + 0.04 / profile2.riseSpeed)} ${baseline - 9}, ${x + w * (0.34 + 0.05 / profile2.riseSpeed)} ${baseline - 22}
+                C ${x + w * 0.39} ${baseline - 25}, ${x + w * 0.50} ${baseline - 35}, ${x + w * 0.56} ${peakY +11}
+                C ${x + w * 0.72} ${peakY-2}, ${x + w * 0.80} ${peakY + 15}, ${x + w * 0.88} ${baseline - 25}
+                C ${x + w * 0.93} ${baseline - 15}, ${x + w * 0.97} ${baseline-14}, ${x + w} ${baseline-13}
+    
+            `
+        } else {
+            fullD += `
             C ${x + w * 0.10} 113, ${x + w * 0.20} 116, ${x + w * (0.32 + profile2.pOffset)} 111
             C ${x + w * (0.38 + profile2.pOffset)} 107, ${x + w * (0.40 + profile2.pOffset)} 75, ${x + w * (0.46 + profile2.pOffset)} 66
             C ${x + w * (0.50 + profile2.pOffset)} 53, ${x + w * (0.54 + profile2.pOffset)} 35,  ${x + w * (0.66 + profile2.pOffset)} ${peakY}
@@ -251,6 +260,7 @@ function generatePressurePath(profile2: PressureProfile) {
             C ${x + w * (fallEnd + 0.04 / profile2.recoverySpeed)} ${troughY},  ${x + w * (fallEnd + 0.09 / profile2.recoverySpeed)} ${baseline}, ${x + w * recoveryEnd} ${baseline}
             L ${x + w} ${baseline}
         `
+        }
     }
 
     return fullD

@@ -9,7 +9,7 @@ export type PressureProfile = {
     tAmp: number
     recoverySpeed: number
 
-    waveform: "normal" | "fibrillation"
+    waveform: "normal" | "reduced" | "fibrillation"
     severity: "healthy" | "minor" | "major"
 }
 
@@ -40,8 +40,8 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         tAmp: 1,
         recoverySpeed: 1,
 
-        waveform: "normal",
-        severity: "healthy",
+        waveform: "reduced",
+        severity: "minor",
     },
 
     severeAttack: {
@@ -55,8 +55,8 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         tAmp: 1,
         recoverySpeed: 1,
 
-        waveform: "normal",
-        severity: "healthy",
+        waveform: "reduced",
+        severity: "major",
     },
 
     fibrillation: {
@@ -90,7 +90,7 @@ export const pressureProfiles: Record<string, PressureProfile> = {
     },
 
     decompensated: {
-        pAmp: 1,
+        pAmp: 0.6,
         pWidth: 1,
         pOffset: 0,
 
@@ -100,7 +100,7 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         tAmp: 1,
         recoverySpeed: 1,
 
-        waveform: "normal",
-        severity: "healthy",
+        waveform: "reduced",
+        severity: "major",
     },
 }
