@@ -4,6 +4,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
+import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
@@ -70,7 +71,7 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
     )
 }
 
-export default function HeartViewer({ frameFolder }) {
+export default function HeartViewer({ frameFolder, setSelectedPart }) {
     const [resetTrigger, setResetTrigger] = useState(0)
 
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
@@ -112,6 +113,8 @@ export default function HeartViewer({ frameFolder }) {
             }))
         }
     }
+    const [hoverInfo, setHoverInfo] = useState(null)
+    const [selectedMesh, setSelectedMeshState] = useState(null)
 
     // compute arbitrary 3d normal vector from pitch and yaw
     const clipPlane = useMemo(() => {
@@ -130,6 +133,46 @@ export default function HeartViewer({ frameFolder }) {
         // slices everything on the side the normal points towards
         return new THREE.Plane(normal, sliceDistance)
     }, [sliceEnabled, pitch, yaw, sliceDistance])
+    const [infoPosition, setInfoPosition] = useState({
+        x: 20,
+        y: 20,
+    })
+
+    const [isDragging, setIsDragging] = useState(false)
+
+    const dragOffset = useRef({
+        x: 0,
+        y: 0,
+    })
+    const handlePointerDown = (event) => {
+        setIsDragging(true)
+
+        dragOffset.current = {
+            x: event.clientX - infoPosition.x,
+            y: event.clientY - infoPosition.y,
+        }
+
+        event.currentTarget.setPointerCapture(event.pointerId)
+    }
+
+    const handlePointerMove = (event) => {
+        if (!isDragging) return
+
+        setInfoPosition({
+            x: event.clientX - dragOffset.current.x,
+            y: event.clientY - dragOffset.current.y,
+        })
+    }
+
+    const handlePointerUp = (event) => {
+        setIsDragging(false)
+        event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    
+    function setSelectedMesh(part) {
+        const partName = typeof part === 'string' ? part : part?.name
+        setSelectedMeshState(partName ?? null)
+    }
 
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour-2)' }}>
@@ -154,6 +197,9 @@ export default function HeartViewer({ frameFolder }) {
                             clipPlane={clipPlane}
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
+                            onSelect={setSelectedPart}
+                            onHover={setHoverInfo}
+                            
                             beatInterval={beatInterval}
                         />
                     </Center>
@@ -179,6 +225,26 @@ export default function HeartViewer({ frameFolder }) {
 
                 <CameraController resetTrigger={resetTrigger} initialPos={INITIAL_CAMERA_POS} />
             </Canvas>
+            
+            {/* Hover popup */}
+            {hoverInfo && (
+            <div
+                style={{
+                position: 'fixed',
+                left: hoverInfo.x + 12,
+                top: hoverInfo.y + 12,
+                background: 'rgba(0, 0, 0, 0.85)',
+                color: 'white',
+                padding: '6px 10px',
+                borderRadius: '5px',
+                fontSize: '14px',
+                zIndex: 99999,
+                pointerEvents: 'none',
+                }}
+            >
+                {HeartParts[hoverInfo.name]?.name ?? hoverInfo.name}
+            </div>
+            )}
 
             {/* Floating Control Panel */}
             <div

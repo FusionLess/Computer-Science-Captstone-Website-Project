@@ -12,9 +12,9 @@
 
 function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
     const [isComparing, setIsComparing] = useState<boolean>(false);
-    const [selection1, chooseSelection1] = useState<HeartOption>(null)
-    const [selection2, chooseSelection2] = useState<HeartOption>(null)
-
+    const [selection1, chooseSelection1] = useState<HeartOption | null>(null); 
+    const [selection2, chooseSelection2] = useState<HeartOption | null>(null);
+    const [selectedPart, setSelectedPart] = useState<string | null>(null);
     const compareState: CompareState = {
         selection1,
         selection2,
@@ -27,14 +27,14 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
     return (
         <main className="content">
             <LeftBox active={active} setActive={setActive} compareState={compareState}/>
-            <MiddleBox active={active} compareState={compareState}/>
-            <RightBox />
+            <MiddleBox active={active} compareState={compareState} setSelectedPart={setSelectedPart}/>
+            <RightBox selectedPart={selectedPart} />
         </main>
     )
 }
 
 
-function MiddleBox({active, compareState} : {active: HeartState, compareState: CompareState}) {
+function MiddleBox({active, compareState, setSelectedPart} : {active: HeartState, compareState: CompareState, setSelectedPart: (part: string | null) => void}) {
 
     const {selection1, selection2, isComparing,} = compareState;
 
@@ -47,7 +47,7 @@ function MiddleBox({active, compareState} : {active: HeartState, compareState: C
 
                 return (
                     <aside className="middle box" key={`${option}-${index}`}>
-                        <HeartViewerPage frameFolder={FRAMES[option]} />
+                        <HeartViewerPage frameFolder={FRAMES[option]} setSelectedPart={setSelectedPart} />
                     </aside>
                 );
             })}

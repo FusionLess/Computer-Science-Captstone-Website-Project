@@ -8,7 +8,7 @@ const NUM_FRAMES = 25
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
-function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
+function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect}) {
   const { scene } = useGLTF(url)
   const model = useMemo(() => scene.clone(true), [scene]);
   const epiMeshRef = useRef(null)
@@ -49,6 +49,9 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
     if (epiMeshRef.current) {
       epiMeshRef.current.visible = showEpi
     }
+    epiMeshRef.current.raycast = showEpi
+      ? THREE.Mesh.prototype.raycast
+      : () => {}
   }, [showEpi])
 
   useEffect(() => {
@@ -61,7 +64,39 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
     })
   }, [model, clipPlane])
 
-  return <primitive object={model} visible={isVisible} />
+  return  (
+    <primitive object={model} visible={isVisible}
+      onPointerMove={(event) => {
+      event.stopPropagation()
+
+      const meshName = event.object.name
+
+      if (!showEpi && meshName === 'mesh0') {
+        return
+      }
+
+      onHover?.({
+        name: meshName,
+        x: event.clientX,
+        y: event.clientY
+      })
+    }}
+
+    onPointerOut={(event) => {
+      event.stopPropagation()
+      onHover?.(null)
+    }}
+
+    onClick={(event) => {
+      event.stopPropagation()
+      const meshName = event.object.name
+      if (!showEpi && meshName === 'mesh0') {
+        return
+      }
+      onSelect?.(meshName)
+    }}
+    />
+  )
 }
 
 export function HeartModel({
@@ -71,11 +106,14 @@ export function HeartModel({
   clipPlane = null,
   isPaused = false,
   beatInterval,
+  onHover,
+  onSelect,
   ...props
 }) {
   const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${(i+18) % NUM_FRAMES}.glb`)
   const [activeFrame, setActiveFrame] = useState(0)
   const animState = useRef({ elapsed: 0, currentFrame: 0 })
+
 
   useFrame((_, delta) => {
     // stop advancing the animation timeline if paused
@@ -109,6 +147,10 @@ export function HeartModel({
           isVisible={idx === activeFrame}
           showEpi={showEpi}
           clipPlane={clipPlane}
+
+          onHover={onHover}
+          onSelect={onSelect}
+      
         />
       ))}
     </group>
