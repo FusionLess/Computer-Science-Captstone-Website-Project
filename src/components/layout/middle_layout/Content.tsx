@@ -1,15 +1,14 @@
     import "./Content.css"
-    import LeftBox from "./LeftPanel.tsx"
+
     import type {HeartOption, HeartState} from "../../types/states.ts";
-    import HealthyHeart from "../../hearts/HealthyHeart.tsx";
-    import MinorAttack from "../../hearts/MinorAttack.tsx";
-    import SevereAttack from "../../hearts/SevereAttack.tsx"
-    import FibrillatingHeart from "../../hearts/FibrillatingHeart.tsx";
-    import RightBox from "./RightPanel.tsx";
-    import CompensatedHeart from "../../hearts/CompensatedHeart.tsx";
-    import DecompensatedHeart from "../../hearts/DecompensatedHeart.tsx";
-    import { useState } from "react";
     import type { CompareState } from "../../types/compare.ts"
+
+    import { FRAMES } from "../../types/FRAMES.ts"
+    import { useState } from "react";
+
+    import HeartViewerPage from "../../hearts/HeartViewer.jsx"
+    import LeftBox from "./LeftPanel.tsx"
+    import RightBox from "./RightPanel.tsx";
 
 function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
     const [isComparing, setIsComparing] = useState<boolean>(false);
@@ -34,44 +33,24 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
     )
 }
 
-function MiddleBox({active, compareState, setSelectedPart} : {active: HeartState, compareState: CompareState, setSelectedPart: (part: string) => void}) {
 
-    const {
-        selection1,
-        selection2,
-        isComparing,
-    } = compareState;
-    const views = (option: HeartOption) => {
-        switch (option) {
-            case "Normal":
-                return <HealthyHeart onSelectPart={setSelectedPart} />
-            case "Minor":
-                return <MinorAttack />
-            case "Severe":
-                return <SevereAttack />
-            case "Fibrillation":
-                return <FibrillatingHeart />
-            case "Compensated":
-                return <CompensatedHeart />
-            case "Decompensated":
-                return <DecompensatedHeart />
-            default:
-                return null
-        }
-    }
-    
+function MiddleBox({active, compareState, setSelectedPart} : {active: HeartState, compareState: CompareState, setSelectedPart: (part: string | null) => void}) {
+
+    const {selection1, selection2, isComparing,} = compareState;
+
+    const heartsToShow = isComparing ? [selection1, selection2] : [active.option]
+
     return (
         <>
-            <aside className="middle box">
-                {!isComparing && views(active.option)}
-                {isComparing && views(selection1)}
-            </aside>
+            {heartsToShow.map((option, index) => {
+                if (!option) return null;
 
-            {isComparing && (
-                <aside className="middle box">
-                    {views(selection2)}
-                </aside>
-            )}
+                return (
+                    <aside className="middle box" key={`${option}-${index}`}>
+                        <HeartViewerPage frameFolder={FRAMES[option]} setSelectedPart={setSelectedPart} />
+                    </aside>
+                );
+            })}
         </>
     )
 }
