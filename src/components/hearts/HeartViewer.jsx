@@ -4,6 +4,7 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
+import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
 
@@ -72,8 +73,7 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
 export default function HeartViewer({ frameFolder }) {
     const [resetTrigger, setResetTrigger] = useState(0)
 
-    const [bpm, setBpm] = useState(60)
-    const [isPaused, setIsPaused] = useState(false)
+    const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
     const [showEpi, setShowEpi] = useState(true)
 
     // sets the preset states you can slice the heart
@@ -154,6 +154,7 @@ export default function HeartViewer({ frameFolder }) {
                             clipPlane={clipPlane}
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
+                            beatInterval={beatInterval}
                         />
                     </Center>
 
