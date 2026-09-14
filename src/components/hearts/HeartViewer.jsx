@@ -5,6 +5,7 @@ import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import { HeartParts } from '../../data/HeartParts.ts'
+import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
 
@@ -73,8 +74,7 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
 export default function HeartViewer({ frameFolder, setSelectedPart }) {
     const [resetTrigger, setResetTrigger] = useState(0)
 
-    const [bpm, setBpm] = useState(60)
-    const [isPaused, setIsPaused] = useState(false)
+    const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
     const [showEpi, setShowEpi] = useState(true)
 
     // sets the preset states you can slice the heart
@@ -200,6 +200,7 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                             onSelect={setSelectedPart}
                             onHover={setHoverInfo}
                             
+                            beatInterval={beatInterval}
                         />
                     </Center>
 

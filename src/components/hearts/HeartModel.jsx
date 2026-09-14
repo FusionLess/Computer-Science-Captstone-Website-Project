@@ -110,7 +110,7 @@ export function HeartModel({
   onSelect,
   ...props
 }) {
-  const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${i}.glb`)
+  const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${(i+18) % NUM_FRAMES}.glb`)
   const [activeFrame, setActiveFrame] = useState(0)
   const animState = useRef({ elapsed: 0, currentFrame: 0 })
 
@@ -124,6 +124,7 @@ export function HeartModel({
     const frameInterval = cycleDuration / NUM_FRAMES
 
     animState.current.elapsed += delta
+    beatInterval?.(animState.current.elapsed)
 
     const targetFrame = Math.floor(
       (animState.current.elapsed % cycleDuration) / frameInterval
