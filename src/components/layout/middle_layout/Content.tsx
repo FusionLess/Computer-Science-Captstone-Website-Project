@@ -3,8 +3,8 @@
     import type {HeartOption, HeartState} from "../../types/states.ts";
     import type { CompareState } from "../../types/compare.ts"
 
-    import { FRAMES } from "../../types/FRAMES.ts"
-    import { useState } from "react";
+    import { FRAMES } from "../../types/frames.ts"
+    import { useEffect, useState } from "react";
 
     import HeartViewerPage from "../../hearts/HeartViewer.jsx"
     import LeftBox from "./LeftPanel.tsx"
@@ -23,6 +23,10 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
         isComparing,
         setIsComparing
     };
+
+    useEffect(() => {
+        setSelectedPart(null);
+    }, [active.category, active.option]);
 
     return (
         <main className="content">

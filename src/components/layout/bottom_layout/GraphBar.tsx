@@ -108,7 +108,10 @@ function ICUContainer({ phase, type, d }: { phase: number; type: 'ecg' | 'pressu
                         <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
                             <path d={d} className={`${type}-waveform`} />
                         </svg>
-
+                        <div
+                            className="graph-marker"
+                            style={{ left: `${xPos}%` }}
+                        />
                         <div
                             style={{
                                 position: 'absolute',

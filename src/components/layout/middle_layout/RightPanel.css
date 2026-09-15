@@ -8,7 +8,7 @@
     width: var(--right-panel-width);
     height: 100%;
 
-    border-left: 1px solid var(--box-border);
+
     background: var(--background-colour-3);
 
     display: flex;
@@ -24,11 +24,6 @@
     padding: 20px;
 }
 
-.heart_part_info {
-    flex: 1;
-    padding: 20px;
-    border-top: 1px solid var(--box-border);
-}
 
 .right button {
     position: absolute;

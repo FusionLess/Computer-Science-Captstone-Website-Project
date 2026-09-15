@@ -7,6 +7,19 @@
     grid-template-columns: 1fr 148px 1fr;
 }
 
+
+.graph-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.25%;
+    border-radius: 20px;
+    background: var(--colour-accent1);
+    opacity: 0.98;
+    pointer-events: none;
+    transition: none;
+}
+
 .container {
     display: flex;
     flex: 1;
@@ -95,7 +108,7 @@
 }
 
 .heart-rate-value {
-    color: #b8362a;
+    color: var(--colour-accent1);
     font-size: 28px;
     line-height: 1;
 }
@@ -117,7 +130,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #b8362a;
+    background: var(--colour-accent1);
     box-shadow: 0 0 1px;
     cursor: pointer;
 }
@@ -126,7 +139,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #b8362a;
+    background: var(--colour-accent1);
     border: none;
     cursor: pointer;
 }

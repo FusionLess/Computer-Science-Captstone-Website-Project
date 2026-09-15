@@ -4,14 +4,16 @@
     height: var(--bar-height);
     box-sizing: border-box;
     padding: 10px;
-    border-bottom: 1px var(--box-border) solid;
-    background: var(--selector-colour);
+    background: var(--background-colour);
 }
 
-.left_buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.left_buttons{
+    margin:  0 15px;
+}
+
+.left_buttons svg{
+    width: 20px;
+    height: 20px;
 }
 
 .logo {
@@ -20,13 +22,22 @@
     justify-content: center;
     font-weight : 800;
     font-family: Helvetica Neue, sans-serif;
-    color: darkred;
+    color: var(--colour-accent1);
 }
 
 .right_buttons {
     display: flex;
     justify-content: right;
     align-items: center;
+}
+
+.right_buttons button{
+    display: flex;
+}
+
+.right_buttons button svg {
+    display: block;
+    padding-right: 3px;
 }
 
 button {
@@ -41,17 +52,13 @@ button {
     cursor: pointer;
     font-weight: bolder;
 
-    background: var(--button-inactive-bg);
-    color: var(--button-inactive-text);
+    background: var(--background-colour);
 }
 
-.topbar button.inactive {
-    background: var(--button-inactive-bg);
-    color: var(--button-inactive-text);
-}
+
 
 .topbar .active {
-    background: var(--button-active-bg);
+    background: var(--button-bg);
     color: var(--button-active-text);
     border: 2px solid var(--button-border);
 }

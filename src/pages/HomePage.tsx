@@ -8,7 +8,7 @@ import type {HeartState} from "../components/types/states.ts";
 export default function HomePage() {
     const [active, setActive] = useState<HeartState>({
         category: "healthy",
-        option: "Normal"
+        option: "Healthy"
     });
 
     const [graphActive, setGraphActive] = useState<boolean>(true)

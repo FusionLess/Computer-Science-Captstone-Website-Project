@@ -19,29 +19,39 @@ function LeftBox({active, setActive, compareState} :
 function HeartButtons({active, setActive} :
                       {active: HeartState, setActive: (v: HeartState) => void}) {
     const toggles: { id: HeartCategory; label: string }[] = [
-        {id:"healthy", label:"Healthy"},
-        {id:"attack", label:"Heart Attack"},
+        {id:"healthy", label:"The Heart"},
+        {id:"attack", label:"Attack"},
         {id:"electricity", label:"Electricity"},
         {id:"failure", label:"Failure"}
     ]
 
     const defaultOptions: Record<HeartCategory, HeartOption> = {
-        healthy: "Normal",
-        attack: "Minor",
-        electricity: "Fibrillation",
-        failure: "Compensated"
+        healthy: "Healthy",
+        attack: "Healthy",
+        electricity: "Healthy",
+        failure: "Healthy"
     };
 
     const options: Record<HeartCategory, HeartOption[]> = {
-        healthy: ["Normal"],
-        attack: ["Minor", "Severe"],
-        electricity: ["Fibrillation"],
-        failure: ["Compensated", "Decompensated"]
+        healthy: ["Healthy"],
+        attack: ["Healthy", "Minor", "Severe"],
+        electricity: ["Healthy", "Fibrillation"],
+        failure: ["Healthy", "Compensated", "Decompensated"]
+    };
+
+    // Colors for each option
+    const optionTone: Record<HeartOption, string> = {
+        Healthy: "green",
+        Minor: "amber",
+        Severe: "red",
+        Fibrillation: "red",
+        Compensated: "amber",
+        Decompensated: "red",
     };
 
     return (
         <>
-            <h5 className="left_heading">Heart States</h5>
+            <h5 className="left_heading">Heart Conditions</h5>
             <div className="toggle_buttons">
                 {toggles.map(opt => (
                     <div className = "options">
@@ -54,17 +64,19 @@ function HeartButtons({active, setActive} :
                                 })}>
                             {opt.label}
                         </button>
-                        <div className={`dropdown ${active.category === opt.id ? "open" : "closing"}`}>
-                            {options[opt.id].map(option => (
-                                <button
-                                    key={option}
-                                    className={active.option === option ? "selected" : ""}
-                                    onClick={() => setActive({ category: opt.id, option })}
-                                >
-                                    {option}
-                                </button>
-                            ))}
-                        </div>
+                        {options[opt.id].length > 1 && (
+                            <div className={`dropdown ${active.category === opt.id ? "open" : "closing"}`}>
+                                {options[opt.id].map(option => (
+                                    <button
+                                        key={option}
+                                        className={`${optionTone[option]} ${active.option === option ? "selected" : ""}`}
+                                        onClick={() => setActive({ category: opt.id, option })}
+                                    >
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
