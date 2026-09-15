@@ -10,16 +10,14 @@ export default function HomePage() {
         category: "healthy",
         option: "Normal"
     });
-    const [selectedPart, setSelectedPart] = useState<string | null>(null)
+
+    const [graphActive, setGraphActive] = useState<boolean>(true)
+
     return (
         <main className="app">
-            <TopBar />
-            <Content active={active} 
-            setActive={setActive} 
-            selectedPart={selectedPart} 
-            setSelectedPart={setSelectedPart}  
-            />
-            <GraphBar />
+            <TopBar setGraphActive={setGraphActive} graphActive={graphActive}/>
+            <Content active={active} setActive={setActive} />
+            {graphActive && <GraphBar />}
         </main>
     )
 }
