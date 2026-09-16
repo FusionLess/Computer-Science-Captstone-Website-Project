@@ -2,6 +2,7 @@
     position: relative;
     display: flex;
     padding: 10px;
+    padding-right: 0;
 }
 
 .right_content {
@@ -64,8 +65,4 @@
     box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.08);
 
     cursor: pointer;
-}
-
-.right .right_open {
-    left: 0;
 }
