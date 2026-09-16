@@ -32,7 +32,7 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
         <main className="content">
             <LeftBox active={active} setActive={setActive} compareState={compareState}/>
             <MiddleBox active={active} compareState={compareState} setSelectedPart={setSelectedPart}/>
-            <RightBox selectedPart={selectedPart} />
+            <RightBox active={active} compareState={compareState} selectedPart={selectedPart} />
         </main>
     )
 }
@@ -46,7 +46,7 @@ function MiddleBox({active, compareState, setSelectedPart} : {active: HeartState
 
     return (
         <>
-            {heartsToShow.map((option, index) => {
+            {heartsToShow.map((option : HeartOption, index) => {
                 if (!option) return null;
 
                 return (
