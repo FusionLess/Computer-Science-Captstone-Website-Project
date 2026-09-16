@@ -1,13 +1,14 @@
 import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
+import type { CompareState } from "../../types/compare.ts"
 
-function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
+function TopBar({graphActive, setGraphActive, compareState}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, compareState: CompareState}) {
     return (
         <header className="topbar">
-            <LeftButtons setGraphActive={setGraphActive} graphActive={graphActive}/>
+            <SettingsButton setGraphActive={setGraphActive} graphActive={graphActive} compareState={compareState}/>
             <div className="logo">
-                [ Project Atrium ]
+                <img src='images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
             <div className="right_buttons">
                 <HomeButton />
@@ -18,11 +19,11 @@ function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActi
     )
 }
 
-function LeftButtons({setGraphActive, graphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
+function SettingsButton({setGraphActive, graphActive, compareState}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, compareState: CompareState}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
-        <div className = "left_buttons">
+        <div className = "settings_button">
             <button
                 onClick={() => setOpen(!isOpen)}
                 className={(isOpen ? "active" : "inactive")}
@@ -38,7 +39,7 @@ function LeftButtons({setGraphActive, graphActive}:{graphActive:boolean, setGrap
                 </svg>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive}/>
+            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} compareState={compareState}/>
         </div>
     )
 }

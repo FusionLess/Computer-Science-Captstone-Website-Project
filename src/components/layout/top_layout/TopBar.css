@@ -5,24 +5,27 @@
     box-sizing: border-box;
     padding: 10px;
     background: var(--background-colour);
+    align-items: center;
 }
 
-.left_buttons{
+.settings_button{
     margin:  0 15px;
 }
 
-.left_buttons svg{
+.settings_button svg{
     width: 20px;
     height: 20px;
 }
 
 .logo {
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-weight : 800;
-    font-family: Helvetica Neue, sans-serif;
-    color: var(--colour-accent1);
+    align-items: center;
+}
+
+.logo img{
+    height: calc(var(--bar-height) - 2px);
+    width: auto;
 }
 
 .right_buttons {
@@ -55,23 +58,23 @@ button {
     background: var(--background-colour);
 }
 
-
-
 .topbar .active {
     background: var(--button-bg);
-    color: var(--button-active-text);
-    border: 2px solid var(--button-border);
+    color: var(--colour-accent1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
 }
 
 .topbar button:active {
-    transform: scale(0.95);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
     z-index: 10;
 }
 
 .topbar button:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
-    z-index: 1;
+    z-index: 10;
 }
 
 .backdrop {

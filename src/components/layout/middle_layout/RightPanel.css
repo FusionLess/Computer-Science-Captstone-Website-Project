@@ -1,16 +1,19 @@
 .right {
     position: relative;
     display: flex;
-    padding: 0;
+    padding: 10px;
 }
 
 .right_content {
     width: var(--right-panel-width);
     height: 100%;
-
-
+    box-sizing: border-box;
+    padding: 10px 0 10px 10px;
+    border: 1px solid var(--box-border);
+    border-right: 0;
+    border-radius: 12px 0 0 12px;
     background: var(--background-colour-3);
-
+    box-shadow: -6px 0 12px -6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
 }
@@ -38,19 +41,31 @@
     );
 }
 
+.right button svg {
+    width: 14px;
+    height: 14px;
+}
 
 .right button {
     position: absolute;
-    left: -45px;
-    top: 10px;
+    left: -8.8px;
+    top: 26px;
+
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 44px;
+    padding: 0;
+
+    border: 1px solid var(--box-border);
+    border-right: 0;
+    border-radius: 12px 0 0 12px;
+    background: var(--background-colour);
+    box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.08);
+
     cursor: pointer;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    outline: 1px solid var(--box-border);
-    z-index: 10;
 }
 
 .right .right_open {
-    left: -45px;
+    left: 0;
 }

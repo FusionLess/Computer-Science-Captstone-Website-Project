@@ -10,19 +10,8 @@
     import LeftBox from "./LeftPanel.tsx"
     import RightBox from "./RightPanel.tsx";
 
-function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
-    const [isComparing, setIsComparing] = useState<boolean>(false);
-    const [selection1, chooseSelection1] = useState<HeartOption | null>(null); 
-    const [selection2, chooseSelection2] = useState<HeartOption | null>(null);
+function Content({active, setActive, compareState} : {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState}) {
     const [selectedPart, setSelectedPart] = useState<string | null>(null);
-    const compareState: CompareState = {
-        selection1,
-        selection2,
-        chooseSelection1,
-        chooseSelection2,
-        isComparing,
-        setIsComparing
-    };
 
     useEffect(() => {
         setSelectedPart(null);

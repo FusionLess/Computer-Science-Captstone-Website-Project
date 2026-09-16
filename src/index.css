@@ -1,18 +1,19 @@
 :root {
-  --bar-height: 60px;
+  --bar-height: 67px;
   --graph-height: 150px;
-  --left-panel-width: 300px;
-  --right-panel-width: 500px;
+  --left-panel-width: 250px;
+  --right-panel-width: 350px;
 
   --background-colour: #FAFAFA;
-  --background-colour-2: #FAFAFA;
-  --background-colour-3: #FAFAFA;
 
   --colour-accent1: #b8362a;
 
-  --selector-colour: #F4F1EE;
 
-  --button-inactive-bg: #ffffff;
+
+
+  --secondary-text-colour: #808080;
+  --contrast-text-colour: white;
+
 
   --button-bg: #ece8e4;
   --button-text: #3d3531;

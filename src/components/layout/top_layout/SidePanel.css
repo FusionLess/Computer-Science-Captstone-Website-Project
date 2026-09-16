@@ -21,14 +21,116 @@
     transform: translateX(0);
 }
 
-.complexity_selector {
+.compare {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    justify-content: end;
+    flex-shrink: 0;
+}
 
+.compare_heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.clear_compare_button {
+    all: unset;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--secondary-text-colour);
+}
+
+.clear_compare_button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+}
+
+.topbar button.clear_compare_button:hover {
+    all: unset;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    color: var(--secondary-text-colour);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.compare_options button {
+    width: 100%;
+    border: 1px solid var(--box-border);
+    border-radius: 20px;
+}
+
+.compare_options button:hover {
+    box-shadow: none;
+    background: var(--button-bg);
+    cursor: pointer;
+}
+
+.compare_options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.settings_section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--box-border);
+}
+
+.settings_section h4 {
+    margin: 0 0 10px;
+}
+
+.selector_section {
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--box-border);
+    border-radius: 20px;
+}
+
+.sidebar .selector_section button {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 4px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--button-text);
+    font-size: 12px;
+}
+
+.selector_section button + button {
+    border-left: 1px solid var(--box-border);
+}
+
+.sidebar .selector_section button.active,
+.sidebar .selector_section button.active:hover {
+    background: var(--colour-accent1);
+    color: var(--contrast-text-colour);
+    box-shadow: none;
+    transform: none;
+}
+
+.sidebar .segmented_control button:hover {
+    background: var(--button-bg);
+    box-shadow: none;
+    transform: none;
 }
 
 .sidebar h4 {
-    margin: 0 10px 10px 10px;
+    margin: 0;
+    margin-bottom: 5px;
     font-size: 14px;
 }
 
