@@ -15,7 +15,7 @@ function SelectPanel({setSelecting, chooseSelection}:
     ]
 
     const options: Record<HeartCategory, HeartOption[]> = {
-        healthy: ["Normal"],
+        healthy: ["Healthy"],
         attack: ["Minor", "Severe"],
         electricity: ["Fibrillation"],
         failure: ["Compensated", "Decompensated"]

@@ -1,22 +1,18 @@
 .left.box {
     display: flex;
     width: var(--left-panel-width);
-    border-right: 1px solid var(--box-border);
     background: var(--background-colour-3);
     flex-direction: column;
     height: 100%;
     padding: 0 10px 10px 10px;
 }
 
-.toggle_buttons, .compare_options button:hover {
-    box-shadow: none;
-    background: #ededed;
-    cursor: pointer;
-}
-
 .left_heading {
-    align-self: start;
-    margin: 10px 0 10px 0;
+    margin: 30px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
 }
 
 .toggle_buttons {
@@ -25,110 +21,106 @@
     gap: 10px;
     flex: 1;
     overflow-y: auto;
-    background: var(--background-colour-3);
-
-    -webkit-mask-image: linear-gradient(
-            to bottom,
-            black 80%,
-            transparent 100%
-    );
-    mask-image: linear-gradient(
-            to bottom,
-            black 80%,
-            transparent 100%
-    );
-}
-
-.left button {
-    width: 100%;
-    border-radius: 10px;
 }
 
 .options {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+}
+
+.options > button {
+    font-size: 18px;
+    font-weight: 500;
+    position: relative;
     width: 100%;
-    gap: 0;
-    background: white;
-    border-radius: 10px;
-    box-sizing: border-box;
-    border: 1px solid var(--box-border);
+    min-height: 44px;
+    padding: 0 30px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 8px;
+    transition: background 160ms ease, color 160ms ease;
 }
 
-.toggle_buttons button.healthy.active {
-    background: rgba(0,125,15,0.2);
+.options > button:hover {
+    border-radius: 8px;
+    background: var(--button-bg);
 }
 
-.toggle_buttons button.attack.active {
-    background: rgba(125,0,0,0.2);
-}
-
-.toggle_buttons button.electricity.active {
-    background: rgba(232,209,0,0.2);
-}
-
-.toggle_buttons button.failure.active {
-    background: rgba(60,0,115,0.2);
+.options > button.active {
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--button-active-text);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
 }
 
 .dropdown {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    background: white;
-    border-radius: 10px;
-    box-sizing: border-box;
-
-    overflow: hidden;
+    gap: 2px;
     max-height: 0;
+    margin-left: 40px;
+    overflow: hidden;
     opacity: 0;
-    transition: max-height 0.25s ease, opacity 0.2s ease;
+    transition: max-height 200ms ease, opacity 160ms ease;
+}
+
+.dropdown.open {
+    max-height: 160px;
+    padding: 4px 0;
+    opacity: 1;
 }
 
 .dropdown button {
     width: 100%;
-    box-sizing: border-box;
-    border-radius: 10px;
+    min-height: 40px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    transition: background 160ms ease, color 160ms ease;
 }
 
-.dropdown.open {
-    display: flex;
-    padding: 5px;
-    gap: 5px;
-    max-height: 200px;
-    opacity: 1;
-}
-
-.dropdown.closing {
-    transition: max-height 0.1s ease;
+.dropdown button:hover {
+    background: var(--button-bg);
+    color: var(--button-text);
 }
 
 .dropdown button.selected {
-    background: #ededed;
+    font-weight: 700;
 }
 
-.compare {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    flex-shrink: 0;
-    border-top: 1px solid var(--box-border);
+.dropdown button.selected.green {
+    background: linear-gradient(
+            to right,
+            var(--green-gradient-start),
+            var(--green-gradient-end) 85%
+    );
+    color: var(--green-text);
 }
 
-.compare_options {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.dropdown button.selected.amber {
+    background: linear-gradient(
+            to right,
+            var(--amber-gradient-start),
+            var(--amber-gradient-end) 85%
+    );
+    color: var(--amber-text);
 }
 
-.compare_options button {
-    border: 1px solid var(--box-border);
-}
-
-button.compare_button {
-    width: fit-content;
+.dropdown button.selected.red {
+    background: linear-gradient(
+            to right,
+            var(--red-gradient-start),
+            var(--red-gradient-end) 85%
+    );
+    color: var(--red-text);
 }
 
 .toggle_buttons::-webkit-scrollbar {

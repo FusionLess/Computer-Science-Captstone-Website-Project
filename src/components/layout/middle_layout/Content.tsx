@@ -3,26 +3,19 @@
     import type {HeartOption, HeartState} from "../../types/states.ts";
     import type { CompareState } from "../../types/compare.ts"
 
-    import { FRAMES } from "../../types/FRAMES.ts"
-    import { useState } from "react";
+    import { FRAMES } from "../../types/frames.ts"
+    import { useEffect, useState } from "react";
 
     import HeartViewerPage from "../../hearts/HeartViewer.jsx"
     import LeftBox from "./LeftPanel.tsx"
     import RightBox from "./RightPanel.tsx";
 
-function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
-    const [isComparing, setIsComparing] = useState<boolean>(false);
-    const [selection1, chooseSelection1] = useState<HeartOption | null>(null); 
-    const [selection2, chooseSelection2] = useState<HeartOption | null>(null);
+function Content({active, setActive, compareState} : {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState}) {
     const [selectedPart, setSelectedPart] = useState<string | null>(null);
-    const compareState: CompareState = {
-        selection1,
-        selection2,
-        chooseSelection1,
-        chooseSelection2,
-        isComparing,
-        setIsComparing
-    };
+
+    useEffect(() => {
+        setSelectedPart(null);
+    }, [active.category, active.option]);
 
     return (
         <main className="content">

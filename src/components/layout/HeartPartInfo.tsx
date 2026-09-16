@@ -14,7 +14,7 @@ function HeartPartInfo({
 
     return (
         <section className="heart_part_info">
-            <h3>Heart Part Info</h3>
+            <h3>Heart Anatomy</h3>
 
             {info ? (
                 <div className="heart_part_description">
@@ -22,7 +22,7 @@ function HeartPartInfo({
 
                     <p>{info.description}</p>
 
-                    <strong>Function</strong>
+                    <h4>Function</h4>
 
                     <p>{info.function}</p>
                 </div>
