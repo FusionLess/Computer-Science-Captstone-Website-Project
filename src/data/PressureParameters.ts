@@ -9,6 +9,9 @@ export type PressureProfile = {
     tAmp: number
     recoverySpeed: number
 
+    startOffset: number
+    endOffset: number
+
     waveform: "normal" | "reduced" | "fibrillation"
     severity: "healthy" | "minor" | "major"
 }
@@ -25,12 +28,14 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         tAmp: 1,
         recoverySpeed: 1,
 
+        startOffset: 0,
+        endOffset: 0,
         waveform: "normal",
         severity: "healthy",
     },
 
     minorAttack: {
-        pAmp: 1,
+        pAmp: 0.9,
         pWidth: 1,
         pOffset: 0,
 
@@ -39,22 +44,27 @@ export const pressureProfiles: Record<string, PressureProfile> = {
 
         tAmp: 1,
         recoverySpeed: 1,
+        
+        startOffset: 0,
+        endOffset: 0,
 
         waveform: "reduced",
         severity: "minor",
     },
 
     severeAttack: {
-        pAmp: 1,
-        pWidth: 1,
+        pAmp: 0.6,
+        pWidth: 0.8,
         pOffset: 0,
 
-        riseSpeed: 1,
-        fallSpeed: 0.9,
+        riseSpeed: 1.5,
+        fallSpeed: 0,
 
         tAmp: 1,
         recoverySpeed: 1,
 
+        startOffset: 0,
+        endOffset: 0,
         waveform: "reduced",
         severity: "major",
     },
@@ -69,6 +79,9 @@ export const pressureProfiles: Record<string, PressureProfile> = {
 
         tAmp: 1,
         recoverySpeed: 1,
+
+        startOffset: 0,
+        endOffset: 0,
 
         waveform: "fibrillation",
         severity: "major",
@@ -85,6 +98,9 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         tAmp: 0.2,
         recoverySpeed: 0.8,
 
+        startOffset: 0,
+        endOffset: 0,
+
         waveform: "normal",
         severity: "minor",
     },
@@ -94,11 +110,14 @@ export const pressureProfiles: Record<string, PressureProfile> = {
         pWidth: 1,
         pOffset: 0,
 
-        riseSpeed: 1,
+        riseSpeed: 1.3,
         fallSpeed: 0.9,
 
         tAmp: 1,
         recoverySpeed: 1,
+
+        startOffset: 9,
+        endOffset: 13,
 
         waveform: "reduced",
         severity: "major",
