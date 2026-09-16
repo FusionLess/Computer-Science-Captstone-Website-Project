@@ -35,12 +35,12 @@ export const pressureProfiles: Record<string, PressureProfile> = {
     },
 
     minorAttack: {
-        pAmp: 0.9,
-        pWidth: 1,
+        pAmp: 0.7,
+        pWidth: 1.1,
         pOffset: 0,
 
-        riseSpeed: 1,
-        fallSpeed: 0.9,
+        riseSpeed: 1.3,
+        fallSpeed: 1,
 
         tAmp: 1,
         recoverySpeed: 1,
