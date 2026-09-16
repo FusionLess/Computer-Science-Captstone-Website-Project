@@ -79,6 +79,7 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
 
     // sets the preset states you can slice the heart
     const [sliceEnabled, setSliceEnabled] = useState(false)
+    const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
     const [showPlaneGuide, setShowPlaneGuide] = useState(true)
     const [pitch, setPitch] = useState(-90) // points the normal downward to cut off superior structures
     const [yaw, setYaw] = useState(0)
@@ -252,13 +253,13 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                     position: 'absolute',
                     bottom: '24px',
                     left: '24px',
-                    background: 'rgba(20, 20, 22, 0.9)',
-                    padding: '16px 20px',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
-                    backdropFilter: 'blur(8px)',
-                    color: '#ffffff',
+                    // background: 'rgba(20, 20, 22, 0.9)',
+                    // padding: '16px 20px',
+                    // borderRadius: '12px',
+                    // border: '1px solid rgba(255, 255, 255, 0.1)',
+                    // boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+                    // backdropFilter: 'blur(8px)',
+                    // color: '#ffffff',
                     fontFamily: 'system-ui, -apple-system, sans-serif',
                     display: 'flex',
                     flexDirection: 'column',
@@ -273,196 +274,255 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                     type="button"
                     onClick={handleResetView}
                     style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         padding: '8px 12px',
-                        fontSize: '12px',
-                        fontWeight: 600,
+                        fontSize: '8px',
+                        fontWeight: 200,
                         borderRadius: '6px',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        background: '#2c2c30',
-                        color: '#ffffff',
+                        height: '50px',
+                        width: '50px',
+                        boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
+                        background: '#f2ece4',
+                        color: 'grey',
                         cursor: 'pointer',
-                        transition: 'background 0.2s',
+                        paddingTop: 5,
+                        transition: 'transform 0.1s ease, background 0.2s',
                     }}
-                    onMouseEnter={(e) => (e.target.style.background = '#3a3a40')}
-                    onMouseLeave={(e) => (e.target.style.background = '#2c2c30')}
+                    onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
+                    onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                    onMouseEnter={(e) => (e.target.style.background = '#ebe5dd')}
+                    onMouseLeave={(e) => (e.target.style.background = '#f2ece4',
+                        e.currentTarget.style.transform = 'scale(1)')}
                 >
-                    Reset Camera View
+                    <p style={{fontSize: '20px', fontWeight: 500, margin: '0'}}>
+                        ⭮
+                    </p>
+                    RESET
                 </button>
 
-                {/* BPM Slider */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#a0a0a5' }}>HEART RATE</span>
-                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#e74c3c' }}>{bpm} BPM</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <input
-                            type="range"
-                            min="30"
-                            max="180"
-                            value={bpm}
-                            onChange={(e) => setBpm(Number(e.target.value))}
-                            style={{ cursor: 'pointer', accentColor: '#e74c3c', flex: 1 }}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setIsPaused((prev) => !prev)}
-                            style={{
-                                padding: '4px 10px',
-                                fontSize: '11px',
-                                fontWeight: 600,
-                                borderRadius: '6px',
-                                border: 'none',
-                                cursor: 'pointer',
-                                background: isPaused ? '#e74c3c' : '#2c2c30',
-                                color: '#ffffff',
-                            }}
-                        >
-                            {isPaused ? 'Resume' : 'Pause'}
-                        </button>
-                    </div>
-                </div>
+                {/* Pause Button */}
+                <button
+                    type="button"
+                    onClick={() => setIsPaused((prev) => !prev)}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingTop: 5,
+                        fontSize: '8px',
+                        fontWeight: 200,
+                        borderRadius: '6px',
+                        border: 'none',
+                        height: '50px',
+                        width: '50px',
+                        boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
+                        color: isPaused ? '#f2ece4' :  'grey',
+                        cursor: 'pointer',
+                        background: isPaused ? '#e74c3c' : '#f2ece4',
+                    }}
+                >
+                    <p style={{fontSize: '20px', fontWeight: 500, margin: '0', paddingBottom: '2px'}}>
+                        {isPaused ? '▶' : '⏸'}
+                    </p>
+                    {isPaused ? 'RESUME' : 'PAUSE'}
+                </button>
 
                 {/* Epicardium Toggle */}
-                <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
-                    <span>Outer Wall (Epi)</span>
-                    <input
-                        type="checkbox"
-                        checked={showEpi}
-                        onChange={(e) => setShowEpi(e.target.checked)}
-                        style={{ cursor: 'pointer', accentColor: '#e74c3c' }}
-                    />
-                </label>
+                <button
+                    onClick={() => setShowEpi(showEpi => !showEpi)}
+                    style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '8px',
+                    fontWeight: 200,
+                    borderRadius: '6px',
+                    border: 'none',
+                    height: '50px',
+                    width: '50px',
+                    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
+                    color: showEpi ? '#f2ece4' :  'grey',
+                    cursor: 'pointer',
+                    background: showEpi ? '#e74c3c' : '#f2ece4',
+                }}>
+                    <p style={{fontSize: '20px', fontWeight: 500, margin: '0'}}>
+                        {showEpi ? '●' : '◉'}
+                    </p>
+                    {showEpi ? 'HIDE EPI' : 'SHOW EPI'}
+                </button>
+            </div>
 
-                <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.1)', margin: '2px 0' }} />
+            <div
+                style={{
+                    position: 'absolute',
+                    bottom: '24px',
+                    right: '24px',
+                    padding: '0',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    width: '200px',
+                    zIndex: 10,
+                }}
+            >
+                <button onClick={() => setSliceControlEnabled(!sliceControlEnabled)}
+                style={{
+                    width: "100%",
+                    background: 'rgba(235, 229, 221, 0.75)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(8px)',
+                }}>
+                    {sliceControlEnabled ?  "Hide Slice Control" : "Show Slice Control"}
+                </button>
 
                 {/* Slicing Controls */}
-                <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
-                    <span style={{ fontWeight: 600 }}>Enable Oblique Slice</span>
-                    <input
-                        type="checkbox"
-                        checked={sliceEnabled}
-                        onChange={(e) => setSliceEnabled(e.target.checked)}
-                        style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                    />
-                </label>
+                {sliceControlEnabled && (
+                <div style={{
+                    width: "100%",
+                    background: 'rgba(235, 229, 221, 0.5)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+                    backdropFilter: 'blur(8px)',
+                    padding: '8px',
+                    boxSizing: 'border-box',
+                }}>
+                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
+                        <span style={{ fontWeight: 600 }}>Enable Oblique Slice</span>
+                        <input
+                            type="checkbox"
+                            checked={sliceEnabled}
+                            onChange={(e) => setSliceEnabled(e.target.checked)}
+                            style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                        />
+                    </label>
 
-                {sliceEnabled && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {/* Guide Plane Visibility Toggle */}
-                        <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: '#a0a0a5' }}>
-                            <span>Show Slice Indicator</span>
-                            <input
-                                type="checkbox"
-                                checked={showPlaneGuide}
-                                onChange={(e) => setShowPlaneGuide(e.target.checked)}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </label>
+                    {sliceEnabled && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {/* Guide Plane Visibility Toggle */}
+                            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: 'black' }}>
+                                <span>Show Slice Indicator</span>
+                                <input
+                                    type="checkbox"
+                                    checked={showPlaneGuide}
+                                    onChange={(e) => setShowPlaneGuide(e.target.checked)}
+                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                                />
+                            </label>
 
-                        {/* Quick Clinical Views */}
-                        <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
-                            <button
-                                type="button"
-                                onClick={() => handlePresetSelect('frontal', 0, 40)}
-                                style={{
-                                    padding: '4px 6px',
-                                    fontSize: '10px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: activePreset === 'frontal' ? '#3498db' : '#2c2c30',
-                                    color: '#fff',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Frontal
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handlePresetSelect('sagittal', 0, 130)}
-                                style={{
-                                    padding: '4px 6px',
-                                    fontSize: '10px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: activePreset === 'sagittal' ? '#3498db' : '#2c2c30',
-                                    color: '#fff',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Sagittal
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handlePresetSelect('shortAxis', -90, 0)}
-                                style={{
-                                    padding: '4px 6px',
-                                    fontSize: '10px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: activePreset === 'shortAxis' ? '#3498db' : '#2c2c30',
-                                    color: '#fff',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Short-Axis
-                            </button>
-                        </div>
-
-                        {/* Pitch / Elevation */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#a0a0a5' }}>
-                                <span>PITCH (TILT)</span>
-                                <span>{pitch}°</span>
+                            {/* Quick Clinical Views */}
+                            <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => handlePresetSelect('frontal', 0, 40)}
+                                    style={{
+                                        padding: '4px 6px',
+                                        fontSize: '10px',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                        background: activePreset === 'frontal' ? '#3498db' : '#2c2c30',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Frontal
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handlePresetSelect('sagittal', 0, 130)}
+                                    style={{
+                                        padding: '4px 6px',
+                                        fontSize: '10px',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                        background: activePreset === 'sagittal' ? '#3498db' : '#2c2c30',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Sagittal
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handlePresetSelect('shortAxis', -90, 0)}
+                                    style={{
+                                        padding: '4px 6px',
+                                        fontSize: '10px',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                        background: activePreset === 'shortAxis' ? '#3498db' : '#2c2c30',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Short-Axis
+                                </button>
                             </div>
-                            <input
-                                type="range"
-                                min="-90"
-                                max="90"
-                                value={pitch}
-                                onChange={(e) => {
-                                    setPitch(Number(e.target.value))
-                                    setActivePreset(null)
-                                }}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </div>
 
-                        {/* Yaw / Rotation */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#a0a0a5' }}>
-                                <span>YAW (ROTATION)</span>
-                                <span>{yaw}°</span>
+                            {/* Pitch / Elevation */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
+                                    <span>PITCH (TILT)</span>
+                                    <span>{pitch}°</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="-90"
+                                    max="90"
+                                    value={pitch}
+                                    onChange={(e) => {
+                                        setPitch(Number(e.target.value))
+                                        setActivePreset(null)
+                                    }}
+                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                                />
                             </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="360"
-                                value={yaw}
-                                onChange={(e) => {
-                                    setYaw(Number(e.target.value))
-                                    setActivePreset(null)
-                                }}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </div>
 
-                        {/* Depth Distance */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#a0a0a5' }}>
-                                <span>PLANE DEPTH</span>
-                                <span>{sliceDistance} mm</span>
+                            {/* Yaw / Rotation */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
+                                    <span>YAW (ROTATION)</span>
+                                    <span>{yaw}°</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="360"
+                                    value={yaw}
+                                    onChange={(e) => {
+                                        setYaw(Number(e.target.value))
+                                        setActivePreset(null)
+                                    }}
+                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                                />
                             </div>
-                            <input
-                                type="range"
-                                min="-100"
-                                max="100"
-                                value={sliceDistance}
-                                onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
+
+                            {/* Depth Distance */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
+                                    <span>PLANE DEPTH</span>
+                                    <span>{sliceDistance} mm</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="-100"
+                                    max="100"
+                                    value={sliceDistance}
+                                    onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
+                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
+                </div>
                 )}
             </div>
         </div>
