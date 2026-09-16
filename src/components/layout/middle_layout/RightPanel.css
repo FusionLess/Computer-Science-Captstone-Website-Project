@@ -22,6 +22,20 @@
 .heart_state_info {
     flex: 1.4;
     padding: 20px;
+    padding-top: 0;
+    white-space: pre-line;
+    overflow-y: auto;
+
+    -webkit-mask-image: linear-gradient(
+            to bottom,
+            black 90%,
+            transparent 100%
+    );
+    mask-image: linear-gradient(
+            to bottom,
+            black 90%,
+            transparent 100%
+    );
 }
 
 .heart_part_info {
@@ -32,7 +46,7 @@
 
 .right button {
     position: absolute;
-    left: 10px;
+    left: -45px;
     top: 10px;
     cursor: pointer;
     border-radius: 50%;
