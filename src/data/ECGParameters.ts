@@ -46,50 +46,51 @@ export const ecgProfiles: Record<string, ECGProfile> = {
     },
 
     minorAttack: {
-        pAmp: 1,
+        pAmp: 0.5,
 
-        qrsAmp: 1,
+        qrsAmp: 0.45,
         qrsWidth: 1,
-        sAmp: 1,
+        sAmp: 0.5,
         qrsOffset: 0,
-        
-        stElevation: 0,
-        stDuration: 1,
 
-        tAmp: 1,
+        stElevation: 0.1,
+        stDuration: 0.8,
+
+        tAmp: 0.25,
         tWidth: 1,
         tStartOffset: 1,
         tInverted: false,
 
         rhythmJitter: 0,
         postQrsJitter: 0,
-        qrsStyle: "normal",
-        waveform: "normal",
-        severity: "healthy"
 
+        qrsStyle: "reduced",
+        waveform: "normal",
+        severity: "minor",
     },
 
     severeAttack: {
-        pAmp: 1,
+        pAmp: 0.7,
 
-        qrsAmp: 1,
+        qrsAmp: 0,
         qrsWidth: 1,
-        sAmp: 1,
-        qrsOffset: 0,
-        
-        stElevation: 0,
+        sAmp: 0,
+        qrsOffset: 0.05,
+
+        stElevation: 1.15,
         stDuration: 1,
 
-        tAmp: 1,
-        tWidth: 1,
-        tStartOffset: 1,
-        tInverted: false,
+        tAmp: 1.7,
+        tWidth: 0.8,
+        tStartOffset: 1.2,
+        tInverted: true,
 
         rhythmJitter: 0,
         postQrsJitter: 0,
-        qrsStyle: "normal",
+
+        qrsStyle: "none",
         waveform: "normal",
-        severity: "healthy"
+        severity: "major",
     },
 
     fibrillation: {

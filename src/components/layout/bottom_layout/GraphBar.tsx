@@ -208,21 +208,42 @@ function generateECGPath(profile1: ECGProfile) {
 
         if (profile1.qrsStyle === "none") {
             fullD += `
-                C ${x + w * (qrsStart - 0.08)} ${baseline}, ${x + w * (qrsStart - 0.05)} ${baseline - 8 * profile1.stElevation}, ${x + w * (qrsStart - 0.02)} ${baseline - 20 * profile1.stElevation}
-                C ${x + w * qrsStart} ${baseline - 30 * profile1.stElevation},  ${x + w * (qrsStart + 0.02)} ${elevatedY}, ${x + w * (qrsStart + 0.03)} ${elevatedY}
+                C ${x + w * 0.25} ${baseline},
+                ${x + w * 0.3} ${baseline - 5 * profile1.stElevation},
+                ${x + w * 0.34} ${baseline}
+
+                C ${x + w * (0.33 + profile1.qrsOffset)} ${baseline}, ${x + w * (0.35 + profile1.qrsOffset)} ${baseline - 30 * profile1.stElevation}, ${x + w * (0.37 + profile1.qrsOffset)} ${elevatedY}
+
+                C ${x + w * (0.385 + profile1.qrsOffset)} ${elevatedY + 7} ${x + w * (0.395 + profile1.qrsOffset)} ${elevatedY + 10},  ${x + w * (0.405 + profile1.qrsOffset)} ${elevatedY + 6}
+
+                C ${x + w * (0.415 + profile1.qrsOffset)} ${elevatedY + 3},  ${x + w * (0.425 + profile1.qrsOffset)} ${elevatedY + 9}, ${x + w * (0.435 + profile1.qrsOffset)} ${elevatedY + 6}
+
+                C ${x + w * (0.45 + profile1.qrsOffset)} ${elevatedY + 8}, ${x + w * (0.46 + profile1.qrsOffset)} ${stY}, ${x + w * (0.48 + profile1.qrsOffset)} ${baseline + 16}
+
+                C ${x + w * (0.51 + profile1.qrsOffset)} ${baseline + 22}, ${x + w * (0.51 + 0.06 * profile1.tWidth + profile1.qrsOffset)} ${baseline + 24}, ${x + w * (0.51 + 0.12 * profile1.tWidth + profile1.qrsOffset)} ${tY}
+
+                C ${x + w * (0.51 + 0.16 * profile1.tWidth + profile1.qrsOffset)} ${tY}, ${x + w * (0.51 + 0.19 * profile1.tWidth + profile1.qrsOffset)} ${tY}, ${x + w * (0.51 + 0.22 * profile1.tWidth + profile1.qrsOffset)} ${baseline + 6}
+
+                C ${x + w * (0.51 + 0.24 * profile1.tWidth + profile1.qrsOffset)} ${baseline}, ${x + w * (0.51 + 0.27 * profile1.tWidth + profile1.qrsOffset)} ${baseline}, ${x + w * (0.51 + 0.31 * profile1.tWidth + profile1.qrsOffset)} ${baseline}
+
+                C ${x + w * (0.75 + profile1.qrsOffset)} ${baseline}, ${x + w * (0.78 + profile1.qrsOffset)} ${baseline},  ${x + w * (0.82 + profile1.qrsOffset)} ${baseline}
+
+                L ${x + w} ${baseline}
             `
+        }
+        
+        if (profile1.qrsStyle !== "none") {
+            fullD += `
+                C ${x + w * (stStart + 0.015)} ${baseline - 8 * profile1.stElevation}, ${x + w * (stStart + 0.035)} ${stY - postQrsWobble},  ${x + w * (stStart + 0.055)} ${stY}
+                C ${x + w * (stStart + 0.075)} ${stY + postQrsWobble},  ${x + w * (stStart + 0.095)} ${stY - postQrsWobble * 0.6}, ${x + w * (stStart + 0.115)} ${stY}
+                C ${x + w * (stStart + 0.135)} ${stY + postQrsWobble * 0.7}, ${x + w * (stStart + 0.155)} ${stY - postQrsWobble * 0.5}, ${x + w * stEnd} ${stY}
+                C ${x + w * (stEnd + 0.03)} ${baseline + 3}, ${x + w * (tPeak - 0.035)} ${tY},  ${x + w * tPeak} ${tY}
+                C ${x + w * (tPeak + 0.04)} ${tY},  ${x + w * (tEnd - 0.045)} ${baseline},  ${x + w * tEnd} ${baseline}
+                L ${x + w} ${baseline}
+            `
+        }
 
-        }   
-
-        // ST segment + post-QRS oscillation
-        fullD += `
-            C ${x + w * (stStart + 0.015)} ${baseline - 8 * profile1.stElevation},  ${x + w * (stStart + 0.035)} ${stY - postQrsWobble}, ${x + w * (stStart + 0.055)} ${stY}
-            C ${x + w * (stStart + 0.075)} ${stY + postQrsWobble}, ${x + w * (stStart + 0.095)} ${stY - postQrsWobble * 0.6}, ${x + w * (stStart + 0.115)} ${stY}
-            C ${x + w * (stStart + 0.135)} ${stY + postQrsWobble * 0.7}, ${x + w * (stStart + 0.155)} ${stY - postQrsWobble * 0.5}, ${x + w * stEnd} ${stY}
-            C ${x + w * (stEnd + 0.03)} ${baseline + 3}, ${x + w * (tPeak - 0.035)} ${tY}, ${x + w * tPeak} ${tY}
-            C ${x + w * (tPeak + 0.04)} ${tY}, ${x + w * (tEnd - 0.045)} ${baseline}, ${x + w * tEnd} ${baseline}
-            L ${x + w} ${baseline}
-        `
+        
     }
     return fullD
 }
