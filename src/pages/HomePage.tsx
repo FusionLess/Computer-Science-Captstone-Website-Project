@@ -19,7 +19,7 @@ export default function HomePage() {
             selectedPart={selectedPart} 
             setSelectedPart={setSelectedPart}  
             />
-            <GraphBar />
+            <GraphBar active={active} />
         </main>
     )
 }
