@@ -3,14 +3,19 @@ import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorCon
 import { ecgProfiles, type ECGProfile } from "../../../data/ECGParameters.ts"
 import type { HeartState } from "../../types/states.ts"
 import { pressureProfiles, type PressureProfile } from "../../../data/PressureParameters.ts"
+import { useState } from "react"
 const BEAT_COUNT = GRAPH_BEAT_COUNT
 const VIEWBOX_WIDTH = 500
+
 
 type GraphBarProps = {
     active: HeartState
 }
 
 export default function GraphBar({ active }: GraphBarProps) {
+    const [showVolume, setShowVolume] = useState(true)
+    const [showPressure, setShowPressure] = useState(true)
+    const [showHealthyPressure, setShowHealthyPressure] = useState(true)
     const { bpm, graphPhase } = useHeartMonitor()
     const getECGProfile = () => {
         switch (active.option) {
@@ -78,6 +83,23 @@ export default function GraphBar({ active }: GraphBarProps) {
                 d={generatePressurePath(pressureProfiles.healthy)} 
                 overlayD={profile2.severity !== "healthy"  ? generatePressurePath(profile2) : undefined}
                 severity={profile2.severity !== "healthy" ? profile2.severity : undefined}
+                volumeD={active.option === "Fibrillation"
+                    ? generateFibrillationPath(
+                        profile2.pAmp,
+                        profile2.pWidth,
+                        true,
+                        20, 10
+                    )
+                    : generatePressurePath(profile2)}
+                isFibrillation={active.option === "Fibrillation"}
+
+                showVolume={showVolume}
+                showPressure={showPressure}
+                showHealthyPressure={showHealthyPressure}
+
+                onTogglePressure={() => setShowPressure(prev => !prev)}
+                onToggleVolume={() => setShowVolume(prev => !prev)}
+                onToggleHealthyPressure={() => setShowHealthyPressure(prev => !prev)}
             />
         </footer>
     )
@@ -99,10 +121,10 @@ x y (Destination Point): The exact absolute grid coordinate where the line finis
 a = a percentage of progress across that one beat
  */
 
-function generateFibrillationPath(ampScale = 1, widthScale = 1, variation = false) {
-    let fullD = "M 0 117"
+function generateFibrillationPath(ampScale = 1, widthScale = 1, variation = false, baselineAlt= 0, variationScaleAmt = 5) {
+    let fullD = "M 0 100"
 
-    const baseline = 117
+    const baseline = 117 + baselineAlt
     const oscillations = BEAT_COUNT * 8 / widthScale
     const high = baseline - 40 * ampScale 
     const low = baseline + 35 * ampScale
@@ -113,7 +135,7 @@ function generateFibrillationPath(ampScale = 1, widthScale = 1, variation = fals
         
 
         if (variation === true) {
-            const variationScale = Math.sin(i * 2) *5 
+            const variationScale = Math.sin(i * 2) * variationScaleAmt 
 
             const newHigh = high + variationScale
             const newLow = low  - variationScale
@@ -250,7 +272,7 @@ function generateECGPath(profile1: ECGProfile) {
 
 function generatePressurePath(profile2: PressureProfile) {
     if (profile2.waveform === "fibrillation") {
-        return generateFibrillationPath(profile2.pAmp, profile2.pWidth, false)
+        return generateFibrillationPath(profile2.pAmp, profile2.pWidth, true)
     }
     let fullD = "M 0 115 "
     const baseline = 115
@@ -290,7 +312,7 @@ function generatePressurePath(profile2: PressureProfile) {
     return fullD
 }
 
-function ICUContainer({ phase, type, d, overlayD, severity }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major' }) {
+function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume, onToggleVolume, showPressure, onTogglePressure, showHealthyPressure, onToggleHealthyPressure, isFibrillation }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major', volumeD?: string, showVolume?: boolean, onToggleVolume?: () => void, showPressure?: boolean, onTogglePressure?: () => void, showHealthyPressure?: boolean, onToggleHealthyPressure?: () => void, isFibrillation?: boolean }) {
     const safePhase = isNaN(phase) ? 0 : phase
     const xPos = safePhase * 100
 
@@ -299,16 +321,49 @@ function ICUContainer({ phase, type, d, overlayD, severity }: { phase: number; t
             <div className="container-content-wrapper">
                 <div className="waveform-main-area">
                     {type === 'pressure' && (
-                        <div className="pressure-scale">
-                            <span>120</span>
-                            <span>0</span>
-                        </div>
+                        <>
+                            {(showPressure || (overlayD? showHealthyPressure: showPressure))&& (
+                                <div className="pressure-scale">
+                                    <span>120</span>
+                                    <span className="scale-unit">mmHg</span>
+                                    <span>0</span>
+                                </div>
+                            )}
+                            {showVolume && (
+                                <div className="volume-scale">
+                                    <span>120</span>
+                                    <span className="scale-unit">mL</span>
+                                    <span>0</span>
+                                </div>
+                            )}
+                        </>
                     )}
-                    <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, overflow: 'hidden' }}>
+                    
+                    <div style={{
+                        position: 'relative', width: '100%', height: '100%', flex: 1, overflow: 'hidden', marginLeft: type === "pressure" ? "55px" : "0",
+                        marginRight: type === "pressure" ? "35px" : "0" }}>
                         <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
-                            <path d={d} className={`${type}-waveform`} />
-                            {overlayD && <path d={overlayD} className={`${type}-waveform condition-waveform ${severity === 'minor' ? 'minor' : 'major'}`} />}
-                </svg>
+                            {/* ECG */}
+                            {type === "ecg" && (
+                                <>
+                                    <path d={d} className="ecg-waveform"/>
+                                    {overlayD && ( <path d={overlayD}className={`ecg-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`}/>)}
+                                </>
+                            )}
+
+                            {/* Healthy pressure */}
+                            {type === "pressure" && (overlayD? showHealthyPressure : showPressure) && (
+                                <path d={d}className="pressure-waveform"/>
+                            )}
+                            {/* Selected condition pressure */}
+                            {type === "pressure" && showPressure && overlayD && (
+                                <path d={overlayD} className={`pressure-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`}/>
+                            )}
+                            {/* Volume */}
+                            {type === "pressure" && showVolume && volumeD && (
+                                <path d={volumeD} className="volume-waveform" transform={ isFibrillation? undefined : "translate(0 150) scale(1 -1)"}/>
+                            )}
+                        </svg>
 
                         <div
                             style={{
@@ -327,8 +382,45 @@ function ICUContainer({ phase, type, d, overlayD, severity }: { phase: number; t
                     </div>
                 </div>
                 <div className="graph-description">
-                    {type === "ecg" ? "Electrocardiogram (ECG)" : "Pressure (mmHg)"}
-                </div>
+                    {type === "ecg" ? (
+                        "Electrocardiogram (ECG)"
+                    ) : (
+                        <>
+                            {overlayD && (
+                                <button
+                                    className={`graph-toggle ${showHealthyPressure ? "active" : ""}`}
+                                    onClick={onToggleHealthyPressure}
+                                    aria-pressed={showHealthyPressure}
+                                >
+                                    <span className="legend-line healthy-line" />
+                                    Healthy
+                                </button>
+                            )}
+                            <button 
+                                className={`graph-toggle ${showPressure ? "active" : ""}`} 
+                                onClick={onTogglePressure} 
+                                aria-pressed={showPressure}>
+                                <span 
+                                    className={`legend-line pressure-line ${severity === "minor"
+                                    ? "minor"
+                                    : severity === "major"
+                                        ? "major"
+                                        : "healthy"
+                                    }`} 
+                                />
+                                Pressure (mmhg)
+                            </button>
+                            <button 
+                                className={`graph-toggle ${showVolume ? "active" : ""}`} 
+                                onClick={onToggleVolume} 
+                                aria-pressed={showVolume}>
+                                <span 
+                                    className="legend-line volume-line"/>
+                                    Volume (ml)
+                            </button>
+                        </>
+                    )}
+                </div> 
             </div>
         </div>
     )
