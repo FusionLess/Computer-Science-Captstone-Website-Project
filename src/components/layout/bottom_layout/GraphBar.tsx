@@ -364,7 +364,10 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                 <path d={volumeD} className="volume-waveform" transform={ isFibrillation? undefined : "translate(0 150) scale(1 -1)"}/>
                             )}
                         </svg>
-
+                        <div
+                            className="graph-marker"
+                            style={{ left: `${xPos}%` }}
+                        />
                         <div
                             style={{
                                 position: 'absolute',

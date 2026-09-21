@@ -4,29 +4,43 @@
     height: var(--bar-height);
     box-sizing: border-box;
     padding: 10px;
-    border-bottom: 1px var(--box-border) solid;
-    background: var(--selector-colour);
+    background: var(--background-colour);
+    align-items: center;
 }
 
-.left_buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.settings_button{
+    margin:  0 15px;
+}
+
+.settings_button svg{
+    width: 20px;
+    height: 20px;
 }
 
 .logo {
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-weight : 800;
-    font-family: Helvetica Neue, sans-serif;
-    color: darkred;
+    align-items: center;
+}
+
+.logo img{
+    height: calc(var(--bar-height) - 2px);
+    width: auto;
 }
 
 .right_buttons {
     display: flex;
     justify-content: right;
     align-items: center;
+}
+
+.right_buttons button{
+    display: flex;
+}
+
+.right_buttons button svg {
+    display: block;
+    padding-right: 3px;
 }
 
 button {
@@ -41,30 +55,26 @@ button {
     cursor: pointer;
     font-weight: bolder;
 
-    background: var(--button-inactive-bg);
-    color: var(--button-inactive-text);
-}
-
-.topbar button.inactive {
-    background: var(--button-inactive-bg);
-    color: var(--button-inactive-text);
+    background: var(--background-colour);
 }
 
 .topbar .active {
-    background: var(--button-active-bg);
-    color: var(--button-active-text);
-    border: 2px solid var(--button-border);
+    background: var(--button-bg);
+    color: var(--colour-accent1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
 }
 
 .topbar button:active {
-    transform: scale(0.95);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
     z-index: 10;
 }
 
 .topbar button:hover {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
-    z-index: 1;
+    z-index: 10;
 }
 
 .backdrop {

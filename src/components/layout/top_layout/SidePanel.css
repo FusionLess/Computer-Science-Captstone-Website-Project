@@ -1,6 +1,7 @@
 .sidebar {
     position: fixed;
     display: flex;
+    flex-direction: column;
     top: calc(var(--bar-height) + 10px);
     width: 300px;
     height: calc(100vh - var(--bar-height) - 20px);
@@ -8,6 +9,8 @@
     left: 10px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
     border-radius: 30px;
+    padding: 20px;
+    box-sizing: border-box;
 
     transform: translateX(-120%);
     transition: transform 0.3s ease;
@@ -16,4 +19,134 @@
 
 .sidebar.open {
     transform: translateX(0);
+}
+
+.compare {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    flex-shrink: 0;
+}
+
+.compare_heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.clear_compare_button {
+    all: unset;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--secondary-text-colour);
+}
+
+.clear_compare_button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+}
+
+.topbar button.clear_compare_button:hover {
+    all: unset;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    color: var(--secondary-text-colour);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.compare_options button {
+    width: 100%;
+    border: 1px solid var(--box-border);
+    border-radius: 20px;
+}
+
+.compare_options button:hover {
+    box-shadow: none;
+    background: var(--button-bg);
+    cursor: pointer;
+}
+
+.compare_options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.settings_section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--box-border);
+}
+
+.settings_section h4 {
+    margin: 0 0 10px;
+}
+
+.selector_section {
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--box-border);
+    border-radius: 20px;
+}
+
+.sidebar .selector_section button {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 4px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--button-text);
+    font-size: 12px;
+}
+
+.selector_section button + button {
+    border-left: 1px solid var(--box-border);
+}
+
+.sidebar .selector_section button.active,
+.sidebar .selector_section button.active:hover {
+    background: var(--colour-accent1);
+    color: var(--contrast-text-colour);
+    box-shadow: none;
+    transform: none;
+}
+
+.sidebar .segmented_control button:hover {
+    background: var(--button-bg);
+    box-shadow: none;
+    transform: none;
+}
+
+.sidebar h4 {
+    margin: 0;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.theme_selector {
+    display: flex;
+    flex: 1;
+    align-items: end;
+}
+
+.theme_selector button {
+    background: whitesmoke;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
 }
