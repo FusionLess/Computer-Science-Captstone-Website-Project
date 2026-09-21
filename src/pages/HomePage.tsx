@@ -31,9 +31,8 @@ export default function HomePage() {
         <main className="app">
             <TopBar />
             <Content active={active} 
-            setActive={setActive} 
-            selectedPart={selectedPart} 
-            setSelectedPart={setSelectedPart}  
+            setActive={setActive}
+            compareState={compareState}
             />
             <GraphBar active={active} />
         </main>
