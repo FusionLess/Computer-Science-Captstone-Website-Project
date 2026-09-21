@@ -1,12 +1,11 @@
 import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
-import type { CompareState } from "../../types/compare.ts"
 
-function TopBar({graphActive, setGraphActive, compareState}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, compareState: CompareState}) {
+function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
     return (
         <header className="topbar">
-            <SettingsButton setGraphActive={setGraphActive} graphActive={graphActive} compareState={compareState}/>
+            <SettingsButton setGraphActive={setGraphActive} graphActive={graphActive} />
             <div className="logo">
                 <img src='images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
@@ -19,7 +18,7 @@ function TopBar({graphActive, setGraphActive, compareState}:{graphActive:boolean
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, compareState}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, compareState: CompareState}) {
+function SettingsButton({setGraphActive, graphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -39,7 +38,7 @@ function SettingsButton({setGraphActive, graphActive, compareState}:{graphActive
                 </svg>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} compareState={compareState}/>
+            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} />
         </div>
     )
 }
