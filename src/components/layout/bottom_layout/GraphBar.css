@@ -40,12 +40,17 @@
     flex: 1;
     width: 100%;
     min-height: 0;
+    position: relative;
 }
 
 .graph-description {
     color: #8f969d;
     font-size: 12px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .monitor-svg {
@@ -54,37 +59,120 @@
     height: 100%;
 }
 
-.ecg-waveform,
-.pressure-waveform {
-    fill: none;
-    stroke-width: 1.2;
-}
-
+.pressure-waveform,
 .ecg-waveform {
+    fill: none;
+    stroke-width: 3;
     stroke: #35e87b;
 }
 
-.pressure-waveform {
-    stroke: #f5b642;
+.condition-waveform {
+    fill: none;
+    stroke-width: 2.5;
 }
 
-.pressure-scale {
+.condition-waveform.minor {
+    stroke: rgb(255, 157, 0);
+}
+
+.condition-waveform.major {
+    stroke: red;
+}
+.volume-waveform {
+    fill: none;
+    stroke: #003f73;
+    stroke-width: 2;
+    stroke-dasharray: 6 3;
+}
+
+.pressure-scale,
+.volume-scale {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+
     display: flex;
-    flex: 0 0 28px;
     flex-direction: column;
     justify-content: space-between;
     color: var(--secondary-text-colour);
     font-size: 14px;
-    text-align: right;
-    padding-right: 5px;
-    height: 85%;
+    color: #8f969d;
 }
-
+.pressure-scale {
+    left: 10px;
+    text-align: right;
+}
+.volume-scale {
+    right: 10px;
+    text-align: left;
+}
+.volume-scale > span:first-child,
 .pressure-scale > span:first-child {
     position: relative;
     top: 10%;
 }
+.legend-line {
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    margin-right: 5px;
+    border-radius: 2px;
+    vertical-align: middle;
 
+}
+
+.pressure-line {
+    background: #35e87b;
+}
+
+.volume-line {
+    border-top: 2px dashed #003f73;
+}
+.pressure-line.healthy {
+    background: #35e87b;
+}
+
+.pressure-line.minor {
+    background: rgb(255, 157, 0);
+}
+
+.pressure-line.major {
+    background: red;
+}
+.healthy-line {
+    height: 3px;
+    border-radius: 2px;
+    background: #35e87b;
+}
+.graph-toggle {
+    border: 1px solid #aaa;
+    border-radius: 12px;
+    padding: 2px 8px;
+
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    height: 22px;
+
+    background: white;
+    color: #777;
+
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.graph-toggle.active {
+    background: #e8e8e8;
+    color: #222;
+    border-color: #555;
+    opacity: 1;
+}
+
+.graph-toggle:hover {
+    opacity: 1;
+    
+}
 .pressure-unit {
     position: relative;
     top: 5%;
