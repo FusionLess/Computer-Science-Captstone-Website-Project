@@ -9,9 +9,19 @@ import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
 
-function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
+function CameraController({
+    resetTrigger,
+    initialPos = [-225, -20, -200] ,
+    syncEnabled = false,
+    syncedCameraRef,
+    index
+}) {
     const { camera } = useThree()
     const controlsRef = useRef(null)
+    const isInteractingRef = useRef(false)
+
+    const targetPos = useRef(new THREE.Vector3())
+    const targetTarget = useRef(new THREE.Vector3())
 
     const animatingRef = useRef(false)
     const startTimeRef = useRef(0)
@@ -25,6 +35,21 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
     const endUp = useMemo(() => new THREE.Vector3(0, 1, 0), [])
 
     useEffect(() => {
+        if (!syncEnabled) {
+            if (syncedCameraRef) syncedCameraRef.current = null
+            return
+        }
+
+        if (index === 0 && controlsRef.current && syncedCameraRef) {
+            syncedCameraRef.current = {
+                position: camera.position.toArray(),
+                target: controlsRef.current.target.toArray(),
+                zoom: camera.zoom,
+            }
+        }
+    }, [syncEnabled, index, camera, syncedCameraRef])
+
+    useEffect(() => {
         if (resetTrigger === 0 || !controlsRef.current) return
 
         startPos.current.copy(camera.position)
@@ -36,26 +61,64 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
     }, [resetTrigger, camera])
 
     useFrame(() => {
-        if (!animatingRef.current || !controlsRef.current) return
+        if (!controlsRef.current) return
 
-        const elapsed = (performance.now() - startTimeRef.current) / 1000
-        const rawT = Math.min(elapsed / DURATION, 1.0)
+        if (animatingRef.current) {
+            const elapsed = (performance.now() - startTimeRef.current) / 1000
+            const rawT = Math.min(elapsed / DURATION, 1.0)
+            const t = 1.0 - Math.pow(1.0 - rawT, 3)
 
-        // Smooth cubic ease-out: t = 1 - (1 - t)^3
-        const t = 1.0 - Math.pow(1.0 - rawT, 3)
+            camera.position.lerpVectors(startPos.current, endPos, t)
+            camera.up.lerpVectors(startUp.current, endUp, t).normalize()
+            controlsRef.current.target.lerpVectors(startTarget.current, endTarget, t)
 
-        camera.position.lerpVectors(startPos.current, endPos, t)
-        camera.up.lerpVectors(startUp.current, endUp, t).normalize()
-        controlsRef.current.target.lerpVectors(startTarget.current, endTarget, t)
+            camera.lookAt(controlsRef.current.target)
+            controlsRef.current.update()
 
-        camera.lookAt(controlsRef.current.target)
-        controlsRef.current.update()
+            if (rawT >= 1.0) {
+                animatingRef.current = false
+                controlsRef.current.saveState()
 
-        if (rawT >= 1.0) {
-            animatingRef.current = false
-            controlsRef.current.saveState()
+                if (syncEnabled && syncedCameraRef) {
+                    syncedCameraRef.current = {
+                        position: camera.position.toArray(),
+                        target: controlsRef.current.target.toArray(),
+                        zoom: camera.zoom,
+                    }
+                }
+            }
+            return
+        }
+
+
+        if (syncEnabled && syncedCameraRef?.current && !isInteractingRef.current) {
+            const { position, target, zoom } = syncedCameraRef.current
+
+            targetPos.current.set(...position)
+            targetTarget.current.set(...target)
+
+            // Lerp smoothly at 0.3 factor
+            camera.position.lerp(targetPos.current, 0.3)
+            controlsRef.current.target.lerp(targetTarget.current, 0.3)
+
+            if (Math.abs(camera.zoom - zoom) > 0.0001) {
+                camera.zoom = THREE.MathUtils.lerp(camera.zoom, zoom, 0.3)
+                camera.updateProjectionMatrix()
+            }
+
+            controlsRef.current.update()
         }
     })
+
+    const handleControlsChange = () => {
+        if (!syncEnabled || !isInteractingRef.current || !controlsRef.current || !syncedCameraRef) return
+
+        syncedCameraRef.current = {
+            position: camera.position.toArray(),
+            target: controlsRef.current.target.toArray(),
+            zoom: camera.zoom,
+        }
+    }
 
     return (
         <OrbitControls
@@ -67,11 +130,22 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
             maxDistance={380}
             minPolarAngle={0}
             maxPolarAngle={Math.PI}
+            onChange={handleControlsChange}
+            onStart={() => { isInteractingRef.current = true }}
+            onEnd={() => { isInteractingRef.current = false }}
         />
     )
 }
 
-export default function HeartViewer({ frameFolder, setSelectedPart }) {
+export default function HeartViewer({
+    frameFolder,
+    setSelectedPart,
+    syncEnabled,
+    syncedCameraRef,
+    index,
+    sharedResetTrigger,
+    setSharedResetTrigger,
+}) {
     const [resetTrigger, setResetTrigger] = useState(0)
 
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
@@ -93,10 +167,24 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
         shortAxis: -18,
     })
 
-    const handleResetView = () => {
-        setResetTrigger((prev) => prev + 1)
-    }
+    const isInitialMount = useRef(true)
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false
+            return
+        }
+        if (syncEnabled) {
+            setResetTrigger((prev) => prev + 1)
+        }
+    }, [sharedResetTrigger])
 
+    const handleResetView = () => {
+        if (syncEnabled && setSharedResetTrigger) {
+            setSharedResetTrigger((prev) => prev + 1)
+        } else {
+            setResetTrigger((prev) => prev + 1)
+        }
+    }
     // tidies up the onClick part of the button to set the preset values of each slicing view
     const handlePresetSelect = (presetKey, p, y) => {
         setActivePreset(presetKey)
@@ -224,7 +312,13 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                     visible={sliceEnabled && showPlaneGuide}
                 />
 
-                <CameraController resetTrigger={resetTrigger} initialPos={INITIAL_CAMERA_POS} />
+                <CameraController
+                    resetTrigger={resetTrigger}
+                    initialPos={INITIAL_CAMERA_POS}
+                    syncEnabled={syncEnabled}
+                    syncedCameraRef={syncedCameraRef}
+                    index={index}
+                />
             </Canvas>
             
             {/* Hover popup */}
@@ -252,23 +346,16 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                 style={{
                     position: 'absolute',
                     bottom: '24px',
-                    left: '24px',
-                    // background: 'rgba(20, 20, 22, 0.9)',
-                    // padding: '16px 20px',
-                    // borderRadius: '12px',
-                    // border: '1px solid rgba(255, 255, 255, 0.1)',
-                    // boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
-                    // backdropFilter: 'blur(8px)',
-                    // color: '#ffffff',
+                    left: '50%',
+                    transform: 'translate(-50%)',
                     fontFamily: 'system-ui, -apple-system, sans-serif',
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: 'row',
                     gap: '12px',
-                    width: '260px',
                     zIndex: 10,
+                    pointerEvents: 'none',
                 }}
             >
-
                 {/* Reset View Button */}
                 <button
                     type="button"
@@ -285,16 +372,16 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                         height: '50px',
                         width: '50px',
                         boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
-                        background: '#f2ece4',
+                        background: '#f5f5f5',
                         color: 'grey',
                         cursor: 'pointer',
-                        paddingTop: 5,
+                        pointerEvents: 'auto',
                         transition: 'transform 0.1s ease, background 0.2s',
                     }}
                     onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
                     onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                    onMouseEnter={(e) => (e.target.style.background = '#ebe5dd')}
-                    onMouseLeave={(e) => (e.target.style.background = '#f2ece4',
+                    onMouseEnter={(e) => (e.target.style.background = '#e3e3e3')}
+                    onMouseLeave={(e) => (e.target.style.background = '#f5f5f5',
                         e.currentTarget.style.transform = 'scale(1)')}
                 >
                     <p style={{fontSize: '20px', fontWeight: 500, margin: '0'}}>
@@ -312,7 +399,7 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        paddingTop: 5,
+                        pointerEvents: 'auto',
                         fontSize: '8px',
                         fontWeight: 200,
                         borderRadius: '6px',
@@ -322,7 +409,7 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                         boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
                         color: isPaused ? '#f2ece4' :  'grey',
                         cursor: 'pointer',
-                        background: isPaused ? '#e74c3c' : '#f2ece4',
+                        background: isPaused ? '#9e0000' : '#f5f5f5',
                     }}
                 >
                     <p style={{fontSize: '20px', fontWeight: 500, margin: '0', paddingBottom: '2px'}}>
@@ -340,15 +427,16 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '8px',
+                    pointerEvents: 'auto',
                     fontWeight: 200,
                     borderRadius: '6px',
                     border: 'none',
                     height: '50px',
                     width: '50px',
                     boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
-                    color: showEpi ? '#f2ece4' :  'grey',
+                    color: showEpi ? '#f5f5f5' :  'grey',
                     cursor: 'pointer',
-                    background: showEpi ? '#e74c3c' : '#f2ece4',
+                    background: showEpi ? '#9e0000' : '#f5f5f5',
                 }}>
                     <p style={{fontSize: '20px', fontWeight: 500, margin: '0'}}>
                         {showEpi ? '●' : '◉'}
@@ -360,34 +448,40 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
             <div
                 style={{
                     position: 'absolute',
-                    bottom: '24px',
-                    right: '24px',
+                    bottom: '50%',
+                    transform: 'translateY(50%)',
+                    ...(index === 0 ? {left: '24px', direction: 'ltr',} : {right: '24px', direction: 'rtl',}),
+                    // right: '24px',
                     padding: '0',
+                    alignItems: 'center',
                     fontFamily: 'system-ui, -apple-system, sans-serif',
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: 'row',
+
                     gap: '12px',
-                    width: '200px',
                     zIndex: 10,
                 }}
             >
                 <button onClick={() => setSliceControlEnabled(!sliceControlEnabled)}
                 style={{
-                    width: "100%",
-                    background: 'rgba(235, 229, 221, 0.75)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: "40px",
+                    background: 'rgba(230, 230, 230, 0.5)',
                     borderRadius: '12px',
+                    height: '40px',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
                     backdropFilter: 'blur(8px)',
                 }}>
-                    {sliceControlEnabled ?  "Hide Slice Control" : "Show Slice Control"}
+                    {sliceControlEnabled ?  "〇" : "◐"}
                 </button>
 
                 {/* Slicing Controls */}
                 {sliceControlEnabled && (
                 <div style={{
-                    width: "100%",
-                    background: 'rgba(235, 229, 221, 0.5)',
+                    background: 'rgba(230, 230, 230, 0.5)',
                     borderRadius: '12px',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
@@ -405,123 +499,121 @@ export default function HeartViewer({ frameFolder, setSelectedPart }) {
                         />
                     </label>
 
-                    {sliceEnabled && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {/* Guide Plane Visibility Toggle */}
-                            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: 'black' }}>
-                                <span>Show Slice Indicator</span>
-                                <input
-                                    type="checkbox"
-                                    checked={showPlaneGuide}
-                                    onChange={(e) => setShowPlaneGuide(e.target.checked)}
-                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                                />
-                            </label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {/* Guide Plane Visibility Toggle */}
+                        <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: 'black' }}>
+                            <span>Show Slice Indicator</span>
+                            <input
+                                type="checkbox"
+                                checked={showPlaneGuide}
+                                onChange={(e) => setShowPlaneGuide(e.target.checked)}
+                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                            />
+                        </label>
 
-                            {/* Quick Clinical Views */}
-                            <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
-                                <button
-                                    type="button"
-                                    onClick={() => handlePresetSelect('frontal', 0, 40)}
-                                    style={{
-                                        padding: '4px 6px',
-                                        fontSize: '10px',
-                                        borderRadius: '4px',
-                                        border: 'none',
-                                        background: activePreset === 'frontal' ? '#3498db' : '#2c2c30',
-                                        color: '#fff',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    Frontal
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => handlePresetSelect('sagittal', 0, 130)}
-                                    style={{
-                                        padding: '4px 6px',
-                                        fontSize: '10px',
-                                        borderRadius: '4px',
-                                        border: 'none',
-                                        background: activePreset === 'sagittal' ? '#3498db' : '#2c2c30',
-                                        color: '#fff',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    Sagittal
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => handlePresetSelect('shortAxis', -90, 0)}
-                                    style={{
-                                        padding: '4px 6px',
-                                        fontSize: '10px',
-                                        borderRadius: '4px',
-                                        border: 'none',
-                                        background: activePreset === 'shortAxis' ? '#3498db' : '#2c2c30',
-                                        color: '#fff',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    Short-Axis
-                                </button>
-                            </div>
-
-                            {/* Pitch / Elevation */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
-                                    <span>PITCH (TILT)</span>
-                                    <span>{pitch}°</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="-90"
-                                    max="90"
-                                    value={pitch}
-                                    onChange={(e) => {
-                                        setPitch(Number(e.target.value))
-                                        setActivePreset(null)
-                                    }}
-                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                                />
-                            </div>
-
-                            {/* Yaw / Rotation */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
-                                    <span>YAW (ROTATION)</span>
-                                    <span>{yaw}°</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="360"
-                                    value={yaw}
-                                    onChange={(e) => {
-                                        setYaw(Number(e.target.value))
-                                        setActivePreset(null)
-                                    }}
-                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                                />
-                            </div>
-
-                            {/* Depth Distance */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
-                                    <span>PLANE DEPTH</span>
-                                    <span>{sliceDistance} mm</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="-100"
-                                    max="100"
-                                    value={sliceDistance}
-                                    onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
-                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                                />
-                            </div>
+                        {/* Quick Clinical Views */}
+                        <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
+                            <button
+                                type="button"
+                                onClick={() => handlePresetSelect('frontal', 0, 40)}
+                                style={{
+                                    padding: '4px 6px',
+                                    fontSize: '10px',
+                                    borderRadius: '4px',
+                                    border: 'none',
+                                    background: activePreset === 'frontal' ? '#3498db' : '#2c2c30',
+                                    color: '#fff',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Frontal
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handlePresetSelect('sagittal', 0, 130)}
+                                style={{
+                                    padding: '4px 6px',
+                                    fontSize: '10px',
+                                    borderRadius: '4px',
+                                    border: 'none',
+                                    background: activePreset === 'sagittal' ? '#3498db' : '#2c2c30',
+                                    color: '#fff',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Sagittal
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handlePresetSelect('shortAxis', -90, 0)}
+                                style={{
+                                    padding: '4px 6px',
+                                    fontSize: '10px',
+                                    borderRadius: '4px',
+                                    border: 'none',
+                                    background: activePreset === 'shortAxis' ? '#3498db' : '#2c2c30',
+                                    color: '#fff',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Short-Axis
+                            </button>
                         </div>
-                    )}
+
+                        {/* Pitch / Elevation */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
+                                <span>PITCH (TILT)</span>
+                                <span>{pitch}°</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="-90"
+                                max="90"
+                                value={pitch}
+                                onChange={(e) => {
+                                    setPitch(Number(e.target.value))
+                                    setActivePreset(null)
+                                }}
+                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                            />
+                        </div>
+
+                        {/* Yaw / Rotation */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
+                                <span>YAW (ROTATION)</span>
+                                <span>{yaw}°</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0"
+                                max="360"
+                                value={yaw}
+                                onChange={(e) => {
+                                    setYaw(Number(e.target.value))
+                                    setActivePreset(null)
+                                }}
+                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                            />
+                        </div>
+
+                        {/* Depth Distance */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
+                                <span>PLANE DEPTH</span>
+                                <span>{sliceDistance} mm</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="-100"
+                                max="100"
+                                value={sliceDistance}
+                                onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
+                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                            />
+                        </div>
+                    </div>
                 </div>
                 )}
             </div>
