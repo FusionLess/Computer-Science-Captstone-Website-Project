@@ -6,7 +6,7 @@ import { useFrame } from '@react-three/fiber'
 const NUM_FRAMES = 75
 const ES_FRAME = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/decompensated_heart/frame_${i}.glb`)
+const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 75 frames are loaded into gpu memory but only active frame is visible
