@@ -9,17 +9,18 @@ const VIEWBOX_WIDTH = 500
 
 
 type GraphBarProps = {
-    active: HeartState
+    active: HeartState,
+    graphActive: boolean,
 }
 
-export default function GraphBar({ active }: GraphBarProps) {
+export default function GraphBar({ active, graphActive }: GraphBarProps) {
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
     const { bpm, graphPhase } = useHeartMonitor()
     const getECGProfile = () => {
         switch (active.option) {
-            case "Normal":
+            case "Healthy":
                 return ecgProfiles.healthy
 
             case "Minor":
@@ -43,7 +44,7 @@ export default function GraphBar({ active }: GraphBarProps) {
     }
     const getPressureProfile = () => {
         switch (active.option) {
-            case "Normal":
+            case "Healthy":
                 return pressureProfiles.healthy
             case "Minor":
                 return pressureProfiles.minorAttack
@@ -67,6 +68,7 @@ export default function GraphBar({ active }: GraphBarProps) {
 
     const profile1 = getECGProfile()
     const profile2 = getPressureProfile()
+    if (graphActive) {
     return (
         <footer className="graphs">
             <ICUContainer
@@ -102,7 +104,7 @@ export default function GraphBar({ active }: GraphBarProps) {
                 onToggleHealthyPressure={() => setShowHealthyPressure(prev => !prev)}
             />
         </footer>
-    )
+    )}
 }
 
 /*
