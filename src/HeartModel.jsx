@@ -4,11 +4,12 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 
 const NUM_FRAMES = 75
+const ES_FRAME = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
+const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/decompensated_heart/frame_${i}.glb`)
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
-// all 25 frames are loaded into gpu memory but only active frame is visible
+// all 75 frames are loaded into gpu memory but only active frame is visible
 function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
   const { scene } = useGLTF(url)
   const epiMeshRef = useRef(null)
@@ -25,6 +26,9 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
         if (child.material) {
           child.material.side = THREE.DoubleSide
           child.material.flatShading = false
+          // Solid opaque rendering prevents see-through ghosting
+          child.material.transparent = false
+          child.material.depthWrite = true
 
           // forces GPU to prioritize outer shell over inner cavities when facing camera
           if (isEpi) {
@@ -72,25 +76,53 @@ export function HeartModel({
   ...props
 }) {
   const [activeFrame, setActiveFrame] = useState(0)
-  const animState = useRef({ elapsed: 0, currentFrame: 0 })
+  const animElapsed = useRef(0)
+  const currentFrameRef = useRef(0)
+
+  const safeBpm = Number(bpm) || 60
 
   useFrame((_, delta) => {
     // stop advancing the animation timeline if paused
     if (isPaused) return
 
-    // how long should the frame be showm? calculated below
-    const cycleDuration = 60.0 / bpm
+    // Cap delta to prevent frame spikes when dragging the slider
+    const dt = Math.min(delta, 0.05)
 
-    animState.current.elapsed += delta
+    // 1. Total R-R interval in seconds
+    const tCycle = 60.0 / safeBpm
 
-    // continuous normalized time [0.0, 1.0)
-    const progress = (animState.current.elapsed % cycleDuration) / cycleDuration
-    const targetFrame = Math.min(Math.floor(progress * NUM_FRAMES), NUM_FRAMES - 1)
+    // 2. Weissler's formula for true physiological systolic duration
+    // Scale smoothly so systole never takes more than 50% of the cycle at extreme BPMs
+    const maxSysFraction = tCycle * 0.48
+    const tSysCalculated = 0.413 - 0.0017 * safeBpm
+    const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
 
-    //checks if the current frame is the correct frame, if not
-    //set the frame to the correct frame
-    if (targetFrame !== animState.current.currentFrame) {
-      animState.current.currentFrame = targetFrame
+    // 3. Diastolic duration absorbs the rest of the cardiac interval
+    const tDia = tCycle - tSys
+
+    animElapsed.current = (animElapsed.current + dt) % tCycle
+    const tLocal = animElapsed.current
+
+    let targetFrame = 0
+
+    if (tLocal < tSys) {
+      // --- SYSTOLIC PHASE (Frames 0 -> ES_FRAME) ---
+      // Rapid contraction & ejection
+      const progressSys = tLocal / tSys
+      targetFrame = Math.floor(progressSys * ES_FRAME)
+    } else {
+      // --- DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES) ---
+      // Variable relaxation & passive/active filling
+      const tDiaElapsed = tLocal - tSys
+      const progressDia = tDiaElapsed / tDia
+      targetFrame = ES_FRAME + Math.floor(progressDia * (NUM_FRAMES - ES_FRAME))
+    }
+
+    targetFrame = Math.min(Math.max(targetFrame, 0), NUM_FRAMES - 1)
+
+    // Direct ref check prevents frame thrashing and guarantees state stability
+    if (targetFrame !== currentFrameRef.current) {
+      currentFrameRef.current = targetFrame
       setActiveFrame(targetFrame)
     }
   })
