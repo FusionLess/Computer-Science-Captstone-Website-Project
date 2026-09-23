@@ -23,3 +23,105 @@
     position: relative;
     overflow: hidden;
 }
+.compare-container {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+
+    width: 160px;
+    margin: 0;
+    z-index: 20;
+
+    background: white;
+    border: 1px solid var(--box-border);
+    border-radius: 10px;
+        
+}
+
+.compare-button {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    margin: 0;
+
+    background: white;
+  
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+.compare-button.open {
+    border-bottom: none;
+}
+
+.compare-dropdown {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    background: white;
+    border: none;
+
+    padding: 5px;
+    gap: 5px;
+
+    box-sizing: border-box;
+}
+
+.compare-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.compare-heart-title {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    margin: 0;
+    z-index: 5;
+
+    text-align: center;
+    white-space: nowrap;
+}
+.compare-dropdown .compare-option {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px;
+
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.compare-dropdown .compare-option.healthy:hover {
+    background: rgba(0, 125, 15, 0.2);
+}
+
+.compare-dropdown .compare-option.attack:hover {
+    background: rgba(125, 0, 0, 0.2);
+}
+
+.compare-dropdown .compare-option.electricity:hover {
+    background: rgba(232, 209, 0, 0.2);
+}
+
+.compare-dropdown .compare-option.failure:hover {
+    background: rgba(60, 0, 115, 0.2);
+}
+
+23

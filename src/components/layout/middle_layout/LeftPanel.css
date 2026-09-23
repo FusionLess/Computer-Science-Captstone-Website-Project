@@ -109,28 +109,3 @@
     background: #ededed;
 }
 
-.compare {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    flex-shrink: 0;
-    border-top: 1px solid var(--box-border);
-}
-
-.compare_options {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.compare_options button {
-    border: 1px solid var(--box-border);
-}
-
-button.compare_button {
-    width: fit-content;
-}
-
-.toggle_buttons::-webkit-scrollbar {
-    display: none;                /* Chrome/Safari */
-}
