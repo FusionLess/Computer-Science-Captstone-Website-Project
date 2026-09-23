@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 
-const NUM_FRAMES = 25
+const NUM_FRAMES = 75
 // loads all the frames path into an array and iterates over all of them
 const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
 
@@ -80,13 +80,12 @@ export function HeartModel({
 
     // how long should the frame be showm? calculated below
     const cycleDuration = 60.0 / bpm
-    const frameInterval = cycleDuration / NUM_FRAMES
 
     animState.current.elapsed += delta
 
-    const targetFrame = Math.floor(
-      (animState.current.elapsed % cycleDuration) / frameInterval
-    )
+    // continuous normalized time [0.0, 1.0)
+    const progress = (animState.current.elapsed % cycleDuration) / cycleDuration
+    const targetFrame = Math.min(Math.floor(progress * NUM_FRAMES), NUM_FRAMES - 1)
 
     //checks if the current frame is the correct frame, if not
     //set the frame to the correct frame
