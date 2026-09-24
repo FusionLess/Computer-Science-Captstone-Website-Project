@@ -1,6 +1,6 @@
     import "./Content.css"
 
-    import type {HeartOption, HeartState} from "../../types/states.ts";
+    import type { HeartState} from "../../types/states.ts";
     import type { CompareState } from "../../types/compare.ts"
 
     import { FRAMES } from "../../../data/frames.ts"
@@ -44,7 +44,7 @@ function MiddleBox({active, compareState, setSelectedPart} : {active: HeartState
 
     return (
         <div className="middle box">
-            {heartsToShow.map((option : HeartOption, index) => {
+            {heartsToShow.map((option, index) => {
                 if (!option) return null;
 
                 return (
