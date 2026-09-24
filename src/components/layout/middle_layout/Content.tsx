@@ -23,16 +23,30 @@ function Content({active, setActive} : {active: HeartState, setActive: (v: Heart
     return (
         <main className="content">
             <LeftBox active={active} setActive={setActive} compareState={compareState}/>
-            <MiddleBox active={active} compareState={compareState} setSelectedPart={setSelectedPart}/>
+            <MiddleBox active={active} setActive={setActive} compareState={compareState} setSelectedPart={setSelectedPart}/>
             <RightBox active={active} compareState={compareState} selectedPart={selectedPart} />
         </main>
     )
 }
 
 
-function MiddleBox({active, compareState, setSelectedPart}: {active: HeartState, compareState: CompareState, setSelectedPart: (part: string | null) => void }) {
+function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, setSelectedPart: (part: string | null) => void }) {
     const {selection1,selection2, chooseSelection1, chooseSelection2,isComparing, setIsComparing} = compareState
 
+    const stopComparing = (option: HeartOption) => {
+        setIsComparing(false)
+
+        const categories: Record<HeartOption, HeartCategory> = {
+            Normal: "healthy",
+            Minor: "attack",
+            Severe: "attack",
+            Fibrillation: "electricity",
+            Compensated: "failure",
+            Decompensated: "failure"
+        }
+
+        setActive({category: categories[option], option: option})
+    }
     // normal
     if (!isComparing) {
         return (
@@ -66,6 +80,13 @@ function MiddleBox({active, compareState, setSelectedPart}: {active: HeartState,
                         currentOption={selection1}
                         onSelect={(option) => {chooseSelection1(option)}}
                     />
+                    <button
+                        type="button"
+                        className="stop-compare-button"
+                        onClick={() => stopComparing(selection1)}
+                    >
+                        Stop Comparing
+                    </button>
 
                     <HeartViewerPage
                         frameFolder={FRAMES[selection1]}
@@ -85,6 +106,13 @@ function MiddleBox({active, compareState, setSelectedPart}: {active: HeartState,
                             chooseSelection2(option)
                         }}
                     />
+                    <button
+                        type="button"
+                        className="stop-compare-button"
+                        onClick={() => stopComparing(selection2)}
+                    >
+                        Stop Comparing
+                    </button>
 
                     <HeartViewerPage
                         frameFolder={FRAMES[selection2]}

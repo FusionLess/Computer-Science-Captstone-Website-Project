@@ -38,6 +38,21 @@
         
 }
 
+.stop-compare-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 20;
+
+    height: 36px;
+    padding: 0 14px;
+
+    background: white;
+    border: 1px solid var(--box-border);
+    border-radius: 10px;
+
+    cursor: pointer;
+}
 .compare-button {
     position: relative;
     width: 100%;
@@ -124,4 +139,4 @@
     background: rgba(60, 0, 115, 0.2);
 }
 
-23
+
