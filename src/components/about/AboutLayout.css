@@ -1,4 +1,4 @@
-.about_layout {
+.about-layout {
     display: flex;
     flex: 1;
     min-height: 0;
@@ -15,14 +15,127 @@
 }
 
 .main.column {
-    background: #f0f0f0;
+    background: whitesmoke;
 }
 
 .left.column {
     flex: 0 0 300px;
-    background: lightgrey;
+    background: #f0f0f0;
+    min-height: 0;
+    overflow-y: auto;
 }
 
-.left button {
+.about-layout .left button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    min-height: 88px;
+    padding: 18px 20px;
+    font-family: inherit;
+    text-align: left;
+    color: #343434;
+    border-radius: 14px;
+    cursor: pointer;
+    position: relative;
     width: 100%;
+    flex-shrink: 0;
+
+    transition:
+            transform 150ms ease,
+            box-shadow 150ms ease,
+            background-color 150ms ease,
+            min-height 180ms ease,
+            padding 180ms ease,
+            gap 180ms ease;
+}
+
+.about-layout .left button:not(.active) {
+    min-height: 52px;
+    padding: 12px 20px;
+    gap: 0;
+}
+
+.about-layout .left button:not(.active):hover,
+.about-layout .left button:not(.active):focus-visible{
+    min-height: 88px;
+    padding: 18px 20px;
+    gap: 8px;
+}
+
+.about-layout .left button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+}
+
+.about-layout .left button.active {
+    min-height: 144px;
+    background: #960a00;
+    color: #fafafa;
+    box-shadow: 0 5px 14px rgb(0 0 0 / 12%);
+}
+
+.about-option-index {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-4px);
+    transition:
+        max-height 180ms ease,
+        opacity 180ms ease,
+        transform 180ms ease;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #737373;
+}
+
+.about-layout .left button:hover .about-option-index,
+.about-layout .left button:focus-visible .about-option-index,
+.about-layout .left button.active .about-option-index {
+    max-height: 20px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about-option-title {
+    max-width: 100%;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
+.about-layout .left button.active .about-option-index {
+    color: #dbdbdb;
+}
+
+.about-layout .left button.active .about-option-title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+}
+
+@media (max-width: 700px) {
+    .about-layout {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .about-layout .left.column {
+        flex: 0 0 auto;
+        width: 100%;
+        overflow: visible;
+    }
+
+    .about-layout .main.column {
+        flex: 0 0 auto;
+        overflow: visible;
+    }
 }

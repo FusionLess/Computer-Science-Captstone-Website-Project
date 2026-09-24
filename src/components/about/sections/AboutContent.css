@@ -1,0 +1,67 @@
+.about-layout .main {
+    padding: clamp(24px, 5vw, 72px);
+    min-width: 0;
+    overflow-y: auto;
+    gap: 0;
+}
+
+.about-layout .content-heading {
+    display: block;
+    max-width: 20ch;
+    margin: 0 0 24px;
+    color: #252525;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+}
+
+/* Small accent underneath the heading */
+.about-layout .content-heading::after {
+    content: "";
+    display: block;
+    width: 20%;
+    height: 4px;
+    margin: 24px auto 0;
+    border-radius: 2px;
+    background: var(--colour-accent1);
+}
+
+/*global p styling*/
+.about-layout .main p {
+    max-width: 65ch;
+    margin: 0 0 24px;
+    color: #555;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+/* Opening paragraph */
+.about-layout .mission.content-heading + p {
+    color: #333;
+    font-size: 20px;
+    line-height: 1.65;
+    text-align: center;
+}
+
+.about-layout .mission.content-desc-sec {
+    font-style: italic;
+    text-align: justify;
+    text-align-last: center
+}
+
+.about-layout .mission.content-desc-sec::before, .about-layout .mission.content-desc-sec::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2.5px;
+    min-height: 2px;
+    flex-shrink: 0;
+    margin:10px auto;
+    /*position: relative;*/
+    /*left: 50%;*/
+    /*transform: translateX(-50%);*/
+    border-radius: 2px;
+    background: grey;
+}
