@@ -347,6 +347,12 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
     const safePhase = isNaN(phase) ? 0 : phase
     const xPos = safePhase * 100
 
+    const scannerX = safePhase * VIEWBOX_WIDTH
+    const trailLength = 70
+
+    const trailStart = Math.max(0, scannerX - trailLength)
+    const trailWidth = scannerX - trailStart
+
     return (
         <div className={`${type} container`}>
             <div className="container-content-wrapper">
@@ -374,25 +380,70 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                         position: 'relative', width: '100%', height: '100%', flex: 1, overflow: 'hidden', marginLeft: type === "pressure" ? "55px" : "0",
                         marginRight: type === "pressure" ? "35px" : "0" }}>
                         <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
+                            <defs>
+                                <clipPath id={`waveform-reveal-${type}`}>
+                                    <rect
+                                        x="0"
+                                        y="0"
+                                        width={safePhase * VIEWBOX_WIDTH}
+                                        height="150"
+                                    />
+                                </clipPath>
+                                <linearGradient
+                                    id={`trail-gradient-${type}`}
+                                    x1="0%"
+                                    y1="0%"
+                                    x2="100%"
+                                    y2="0%"
+                                >
+                                    <stop offset="0%" stopColor="white" stopOpacity="0" />
+                                    <stop offset="35%" stopColor="white" stopOpacity="0.15" />
+                                    <stop offset="70%" stopColor="white" stopOpacity="0.55" />
+                                    <stop offset="100%" stopColor="white" stopOpacity="1" />
+                                </linearGradient>
+
+                                <mask id={`waveform-trail-${type}`}>
+                                    <rect
+                                        x={trailStart}
+                                        y="0"
+                                        width={trailWidth}
+                                        height="150"
+                                        fill={`url(#trail-gradient-${type})`}
+                                    />
+                                </mask>
+                            </defs>
                             {/* ECG */}
                             {type === "ecg" && (
                                 <>
-                                    <path d={d} className="ecg-waveform"/>
-                                    {overlayD && ( <path d={overlayD}className={`ecg-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`}/>)}
+                                    <path d={d} className="ecg-waveform" clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={d} className="ecg-waveform waveform-trail" mask={`url(#waveform-trail-${type})`}
+                                    />
+                                    {overlayD && (<path d={overlayD} className={`ecg-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${type})`} />)}
+                                    {overlayD && (<path d={overlayD} className={`ecg-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />)}
                                 </>
                             )}
 
                             {/* Healthy pressure */}
                             {type === "pressure" && (overlayD? showHealthyPressure : showPressure) && (
-                                <path d={d}className="pressure-waveform"/>
+                                <>
+                                    <path d={d} className="pressure-waveform" clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={d} className="pressure-waveform waveform-trail" mask={`url(#waveform-trail-${type})`} />
+                                </>
+                                
                             )}
                             {/* Selected condition pressure */}
                             {type === "pressure" && showPressure && overlayD && (
-                                <path d={overlayD} className={`pressure-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`}/>
+                                <>
+                                    <path d={overlayD} className={`pressure-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={overlayD} className={`pressure-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />
+                                </>
                             )}
                             {/* Volume */}
                             {type === "pressure" && showVolume && volumeD && (
-                                <path d={volumeD} className="volume-waveform" transform={ isFibrillation? undefined : "translate(0 150) scale(1 -1)"}/>
+                                <>
+                                    <path d={volumeD} className="volume-waveform" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={volumeD} className="volume-waveform waveform-trail" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} mask={`url(#waveform-trail-${type})`} />
+                                </>
                             )}
                         </svg>
                         <div
