@@ -3,9 +3,7 @@ import type {HeartState} from "../../types/states.ts";
 import type {HeartCategory} from "../../types/states.ts";
 import type {HeartOption} from "../../types/states.ts";
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import type { CompareState } from "../../types/compare.ts";
-import SelectPanel from "./SelectPanel.tsx";
 
 
 function LeftBox({active, setActive, compareState} :
@@ -21,7 +19,7 @@ function LeftBox({active, setActive, compareState} :
             >
                 Heart Conditions
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                      className="lucide lucide-chevron-down preview-icon">
                     <path d="m6 9 6 6 6-6"/>
                 </svg>
@@ -32,7 +30,7 @@ function LeftBox({active, setActive, compareState} :
                     isMobileConditionsOpen ? "mobile_open" : ""
                 }`}
             >
-                <HeartButtons active={active} setActive={setActive} compareState={CompareState}/>
+                <HeartButtons active={active} setActive={setActive} compareState={compareState}/>
             </aside>
         </>
     )

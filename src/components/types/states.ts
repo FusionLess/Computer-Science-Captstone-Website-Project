@@ -13,7 +13,7 @@ export type HeartState = {
     option: HeartOption;
 };
 export const HEART_STATE_TITLES: Record<HeartOption, string> = {
-    Normal: "Healthy Heart",
+    Healthy: "Healthy Heart",
     Minor: "Minor Heart Attack",
     Severe: "Severe Heart Attack",
     Fibrillation: "Fibrillation",

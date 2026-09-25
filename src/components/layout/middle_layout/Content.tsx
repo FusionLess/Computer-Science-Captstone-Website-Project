@@ -4,7 +4,7 @@
     import type { HeartCategory, HeartOption, HeartState } from "../../types/states.ts";
     import type { CompareState } from "../../types/compare.ts"
 
-    import { FRAMES } from "../../types/frames.ts"
+    import { FRAMES } from "../../../data/frames.ts"
     import { useEffect, useState, useRef } from "react";
 
     
@@ -37,7 +37,7 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
         setIsComparing(false)
 
         const categories: Record<HeartOption, HeartCategory> = {
-            Normal: "healthy",
+            Healthy: "healthy",
             Minor: "attack",
             Severe: "attack",
             Fibrillation: "electricity",
@@ -72,7 +72,11 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                     frameFolder={FRAMES[active.option]}
                     setSelectedPart={setSelectedPart}
                     title={HEART_STATE_TITLES[active.option]}
-                    
+                    syncEnabled={syncEnabled}
+                    syncedCameraRef={syncedCameraRef}
+                    index={0}
+                    sharedResetTrigger={sharedResetTrigger}
+                    setSharedResetTrigger={setSharedResetTrigger}
                 />
             </aside>
         )
@@ -103,7 +107,7 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                       
                         syncEnabled={syncEnabled}
                         syncedCameraRef={syncedCameraRef}
-                        index={index}
+                        index={0}
                         sharedResetTrigger={sharedResetTrigger}
                         setSharedResetTrigger={setSharedResetTrigger}
 
@@ -133,11 +137,11 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                         setSelectedPart={setSelectedPart}
                         title={HEART_STATE_TITLES[selection2]}
                       
-                      syncEnabled={syncEnabled}
-                      syncedCameraRef={syncedCameraRef}
-                      index={index}
-                      sharedResetTrigger={sharedResetTrigger}
-                      setSharedResetTrigger={setSharedResetTrigger}
+                        syncEnabled={syncEnabled}
+                        syncedCameraRef={syncedCameraRef}
+                        index={1}
+                        sharedResetTrigger={sharedResetTrigger}
+                        setSharedResetTrigger={setSharedResetTrigger}
 
                     />
                 </aside>
@@ -160,12 +164,13 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                 </button>
             }
      </>
+    )
 
 }
 function CompareButton({currentOption, onSelect}: {currentOption: HeartOption, onSelect: (v: HeartOption) => void}) {
     const [isOpen, setIsOpen] = useState(false)
     const compareOptions: {label: string, option: HeartOption, category: HeartCategory}[] = [
-            {label: "Healthy", option: "Normal", category: "healthy"},
+            {label: "Healthy", option: "Healthy", category: "healthy"},
             {label: "Minor Heart Attack", option: "Minor", category: "attack"},
             {label: "Severe Heart Attack", option: "Severe", category: "attack"},
             {label: "Fibrillation", option: "Fibrillation", category: "electricity"},
