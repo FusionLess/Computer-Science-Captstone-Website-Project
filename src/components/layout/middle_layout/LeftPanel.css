@@ -1,10 +1,12 @@
 .left.box {
     display: flex;
     width: var(--left-panel-width);
-    background: var(--background-colour-3);
+    background: var(--left-panel);
     flex-direction: column;
     height: 100%;
     padding: 0 10px 10px 10px;
+    position: relative;
+    border-right: 1px solid var(--box-border);
 }
 
 .left_heading {
@@ -13,6 +15,7 @@
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
+    padding-top: 20px;
 }
 
 .toggle_buttons {
@@ -125,4 +128,130 @@
 
 .toggle_buttons::-webkit-scrollbar {
     display: none;                /* Chrome/Safari */
+}
+
+/* TO BE REMOVED*/
+.compare {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    flex-shrink: 0;
+}
+
+.compare_heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.clear_compare_button {
+    all: unset;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--secondary-text-colour);
+}
+
+.clear_compare_button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+}
+
+.topbar button.clear_compare_button:hover {
+    all: unset;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    color: var(--secondary-text-colour);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.compare_options button {
+    width: 100%;
+    border: 1px solid var(--box-border);
+    border-radius: 20px;
+}
+
+.compare_options button:hover {
+    box-shadow: none;
+    background: var(--button-bg);
+    cursor: pointer;
+}
+
+.compare_options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.mobile_conditions_button {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile_conditions_button {
+        display: flex;
+        position: fixed;
+        top: var(--bar-height);
+        z-index: 21;
+
+        width: 250px;
+        height: 44px;
+        padding: 0 14px;
+
+        align-items: center;
+        justify-content: space-between;
+
+        background: var(--left-panel);
+        border: 1px solid var(--box-border);
+        border-radius: 0 0 12px 0;
+    }
+
+    .mobile_conditions_button.active {
+        border-bottom: 0;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .left.box {
+        position: fixed;
+        top: calc(var(--bar-height) + 44px);
+        z-index: 20;
+
+        width: 250px;
+        height: auto;
+        max-height: calc(100dvh - var(--bar-height) - 54px);
+        overflow-y: auto;
+
+        padding-top: 0;
+        border: 1px solid var(--box-border);
+        border-top: 0;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16);
+
+        transform: translateY(-8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 180ms ease, opacity 180ms ease;
+    }
+
+    .left.box.mobile_open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .compare {
+        display: none;
+    }
+
+    .left_heading{
+        display: none;
+    }
 }

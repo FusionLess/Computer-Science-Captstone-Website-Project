@@ -22,7 +22,9 @@ function Content({active, setActive, compareState} :
         <main className="content">
             <LeftBox active={active} setActive={setActive} compareState={compareState}/>
             <MiddleBox active={active} compareState={compareState} setSelectedPart={setSelectedPart}/>
-            <RightBox active={active} compareState={compareState} selectedPart={selectedPart} />
+            {!compareState.isComparing && (
+                <RightBox active={active} compareState={compareState} selectedPart={selectedPart} />
+            )}
         </main>
     )
 }

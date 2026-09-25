@@ -1,8 +1,8 @@
 .right {
     position: relative;
+    z-index: 1;
     display: flex;
-    padding: 10px;
-    padding-right: 0;
+    padding: 0 0 10px 10px;
 }
 
 .right_content {
@@ -11,9 +11,10 @@
     box-sizing: border-box;
     padding: 10px 0 10px 10px;
     border: 1px solid var(--box-border);
+    border-top: none;
     border-right: 0;
-    border-radius: 12px 0 0 12px;
-    background: var(--background-colour-3);
+    border-radius: 0 0 0 12px;
+    background: var(--right-panel);
     box-shadow: -6px 0 12px -6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -25,8 +26,7 @@
 
 .heart_state_info {
     flex: 1.4;
-    padding: 20px;
-    padding-top: 0;
+    padding: 0 20px 20px;
     white-space: pre-line;
     overflow-y: auto;
 
@@ -50,7 +50,7 @@
 .right button {
     position: absolute;
     left: -8.8px;
-    top: 26px;
+    top: 20px;
 
     display: grid;
     place-items: center;
@@ -61,8 +61,40 @@
     border: 1px solid var(--box-border);
     border-right: 0;
     border-radius: 12px 0 0 12px;
-    background: var(--background-colour);
+    background: var(--background-colour-2);
     box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.08);
 
     cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .right {
+        position: fixed;
+        top: var(--bar-height);
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        padding: 0;
+    }
+
+    .right_content {
+        width: min(350px, calc(100vw - 16px));
+        height: 100%;
+        padding: 10px 0 10px 10px;
+        border-radius: 12px 0 0 12px;
+        box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .right .right_open {
+        left: auto;
+        right: 0;
+        border: 1px solid var(--box-border);
+        border-radius: 12px 0 0 12px;
+    }
+
+    .right button {
+        position: absolute;
+        left: -19px;
+        top: 50px;
+    }
 }

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import "./RightPanel.css"
 import HeartPartInfo from "../HeartPartInfo";
 import type { HeartState } from "../../types/states.ts";
@@ -7,7 +7,16 @@ import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
 
 function RightBox({active, compareState, selectedPart} :
                   {active: HeartState, compareState : CompareState, selectedPart: string | null}) {
-    const [isOpen, setIsOpen] = useState(true)
+    const isMobile = window.matchMedia("(max-width: 768px)").matches
+
+    const [isOpen, setIsOpen] = useState(!isMobile)
+    useEffect(() => {
+        if (compareState.isComparing) {
+            setIsOpen(false)
+        } else if (!isMobile) {
+            setIsOpen(true)
+        }
+    }, [compareState.isComparing, isMobile])
 
     return (
         <aside className = "right box">

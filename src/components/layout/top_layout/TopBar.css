@@ -1,25 +1,17 @@
 .topbar {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    display: flex;
     height: var(--bar-height);
     box-sizing: border-box;
     padding: 10px;
-    background: var(--background-colour);
+    background: var(--topbar);
     align-items: center;
-}
-
-.settings_button{
-    margin:  0 15px;
-}
-
-.settings_button svg{
-    width: 20px;
-    height: 20px;
+    border-bottom: 1px solid var(--box-border);
+    box-shadow: 0 5px 4px rgba(0, 0, 0, 0.02);
 }
 
 .logo {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
 }
 
@@ -28,18 +20,21 @@
     width: auto;
 }
 
-.right_buttons {
+.desktop_navigation{
     display: flex;
     justify-content: right;
+    margin-left: auto;
     align-items: center;
 }
 
-.right_buttons button{
+.desktop_navigation button,
+.mobile_navigation button{
     display: flex;
 }
 
-.right_buttons button svg {
-    display: block;
+.desktop_navigation button svg,
+.mobile_navigation button svg {
+    display: flex;
     padding-right: 3px;
 }
 
@@ -55,7 +50,7 @@ button {
     cursor: pointer;
     font-weight: bolder;
 
-    background: var(--background-colour);
+    background: var(--topbar);
 }
 
 .topbar .active {
@@ -85,4 +80,54 @@ button {
     bottom: 0;
     background: transparent;
     z-index: 15;
+}
+
+.mobile_menu_button,
+.mobile_navigation{
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .logo img{
+        height: 50px;
+    }
+
+    .desktop_navigation {
+        display: none;
+    }
+
+    .mobile_menu_button {
+        padding: 10px;
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+        font-size: 24px;
+    }
+
+    .topbar .mobile_menu_button:not(.active),
+    .topbar .mobile_menu_button:not(.active):hover,
+    .topbar .mobile_menu_button:not(.active):active {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .topbar .mobile_menu_button:not(.active):focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    .mobile_navigation {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: var(--bar-height);
+        right: 10px;
+        padding: 10px;
+        gap: 8px;
+        background: white;
+        border: 1px solid var(--box-border);
+        border-radius: 12px;
+        z-index: 30;
+    }
 }

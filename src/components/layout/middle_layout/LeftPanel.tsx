@@ -9,12 +9,33 @@ import SelectPanel from "./SelectPanel.tsx";
 
 
 function LeftBox({active, setActive, compareState} :
-                 {active: HeartState, setActive: (v: HeartState) => void compareState: CompareState}) {
+                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState}) {
+    const [isMobileConditionsOpen, setIsMobileConditionsOpen] = useState(false)
+
     return (
-        <aside className="left box">
-            <HeartButtons active={active} setActive={setActive} />
-            <CompareButtons compareState={compareState} />
-        </aside>
+        <>
+            <button
+                className={`mobile_conditions_button ${isMobileConditionsOpen ? "active" : ""}`}
+                onClick={() => setIsMobileConditionsOpen((open) => !open)}
+                aria-expanded={isMobileConditionsOpen}
+            >
+                Heart Conditions
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     className="lucide lucide-chevron-down preview-icon">
+                    <path d="m6 9 6 6 6-6"/>
+                </svg>
+            </button>
+
+            <aside
+                className={`left box ${
+                    isMobileConditionsOpen ? "mobile_open" : ""
+                }`}
+            >
+                <HeartButtons active={active} setActive={setActive}/>
+                <CompareButtons compareState={compareState} />
+            </aside>
+        </>
     )
 }
 

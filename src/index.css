@@ -4,11 +4,20 @@
   --left-panel-width: 250px;
   --right-panel-width: 350px;
 
-  --background-colour: #FAFAFA;
+  --background-colour: #F4F6F8;
+
+
+  --topbar: #FAFAFA;
+  --graphbar: #FAFAFA;
+  --left-panel: #FAFAFA;
+  --right-panel: #FAFAFA;
+
+  --background-colour-2: #FFFFFF;
+
 
   --colour-accent1: #b8362a;
 
-
+  --box-border: #D3D3D3FF;
 
 
   --secondary-text-colour: #808080;
@@ -32,9 +41,8 @@
   --red-text: #b2352b;
 
   --button-border: #b8362a;
-  --box-border: #D3D3D3FF;
-
   font-family: Helvetica, sans-serif;
+  --text-main: #1F2937;
 }
 
 

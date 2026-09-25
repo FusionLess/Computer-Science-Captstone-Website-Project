@@ -3,26 +3,57 @@ import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
 
 function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
     return (
         <header className="topbar">
-            <SettingsButton setGraphActive={setGraphActive} graphActive={graphActive} />
             <div className="logo">
                 <img src='images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
-            <div className="right_buttons">
+            <div className="desktop_navigation">
                 <HomeButton />
                 <AboutButton />
+                <SettingsButton
+                    setGraphActive={setGraphActive}
+                    graphActive={graphActive}
+                />
             </div>
+
+            <button
+                className={`mobile_menu_button ${isMobileMenuOpen ? "active" : ""}`}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileMenuOpen}
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     className="lucide lucide-menu preview-icon">
+                    <path d="M4 5h16"/>
+                    <path d="M4 12h16"/>
+                    <path d="M4 19h16"/>
+                </svg>
+            </button>
+
+            {isMobileMenuOpen && (
+                <div className="mobile_navigation">
+                    <HomeButton />
+                    <AboutButton />
+                    <SettingsButton
+                        setGraphActive={setGraphActive}
+                        graphActive={graphActive}
+                    />
+                </div>
+            )}
         </header>
 
     )
 }
 
-function SettingsButton({setGraphActive, graphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
+function SettingsButton({setGraphActive, graphActive}: { graphActive: boolean, setGraphActive: (v: boolean) => void }) {
     const [isOpen, setOpen] = useState(false)
 
     return (
-        <div className = "settings_button">
+        <div className="settings_button">
             <button
                 onClick={() => setOpen(!isOpen)}
                 className={(isOpen ? "active" : "inactive")}
@@ -36,6 +67,7 @@ function SettingsButton({setGraphActive, graphActive}:{graphActive:boolean, setG
                         d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/>
                     <circle cx="12" cy="12" r="3"/>
                 </svg>
+                <text>Settings</text>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
             <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} />
