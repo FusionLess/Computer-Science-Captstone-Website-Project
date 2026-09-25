@@ -2,14 +2,21 @@
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     height: var(--bar-height);
+    flex-shrink: 0;
     box-sizing: border-box;
-    padding: 10px;
+    margin: 0;
+    padding: 0 10px;
     background: var(--background-colour);
     align-items: center;
+    font-size: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    z-index: 20;
 }
 
 .settings_button{
-    margin:  0 15px;
+    display: flex;
+    align-items: center;
+    margin:  0;
 }
 
 .settings_button svg{
@@ -24,7 +31,7 @@
 }
 
 .logo img{
-    height: calc(var(--bar-height) - 2px);
+    height: calc(var(--bar-height) - 8px);
     width: auto;
 }
 
@@ -32,6 +39,7 @@
     display: flex;
     justify-content: right;
     align-items: center;
+    gap: 10px;
 }
 
 .right_buttons button{
@@ -43,13 +51,14 @@
     padding-right: 3px;
 }
 
-button {
-    border-radius: 20px;
-    border: 0;
+.settings_button button {
+    border-radius: 100%;
+    border: none;
+    height: 40px;
+    width: 40px;
 
     align-items: center;
     justify-content: center;
-    width: fit-content  ;
     padding: 10px;
 
     cursor: pointer;
@@ -58,21 +67,37 @@ button {
     background: var(--background-colour);
 }
 
+.nav_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 20px;
+    color: inherit;
+    text-decoration: none;
+    font-weight: bolder;
+
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav_button svg {
+    margin-right: 3px;
+}
+
 .topbar .active {
     background: var(--button-bg);
     color: var(--colour-accent1);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     z-index: 10;
 }
 
-.topbar button:active {
+.topbar button:active, .nav_button:active {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
     z-index: 10;
 }
 
-.topbar button:hover {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+.topbar button:hover, .nav_button:hover {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
     transform: scale(1.05);
     z-index: 10;
 }
