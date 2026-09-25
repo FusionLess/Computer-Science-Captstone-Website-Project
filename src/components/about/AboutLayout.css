@@ -3,6 +3,7 @@
     flex: 1;
     min-height: 0;
     align-items: stretch;
+    background: #fffafa;
 }
 
 .column {
@@ -15,14 +16,14 @@
 }
 
 .main.column {
-    background: whitesmoke;
 }
 
 .left.column {
     flex: 0 0 300px;
-    background: #f0f0f0;
     min-height: 0;
     overflow-y: auto;
+    padding: 16px;
+    gap: 8px;
 }
 
 .about-layout .left button {
@@ -35,7 +36,8 @@
     padding: 18px 20px;
     font-family: inherit;
     text-align: left;
-    color: #343434;
+    background: #fffafa;
+    color: #b33300;
     border-radius: 14px;
     cursor: pointer;
     position: relative;
@@ -57,11 +59,30 @@
     gap: 0;
 }
 
+.about-layout .left button:not(.active)::after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 20%;
+    background: #b33300;
+    border-radius: 12px;
+    bottom: 6px;
+    transform-origin: left;
+    transition: opacity 180ms ease, transform 300ms ease;
+}
+
+.about-layout .left button:hover::after {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
 .about-layout .left button:not(.active):hover,
 .about-layout .left button:not(.active):focus-visible{
     min-height: 88px;
     padding: 18px 20px;
     gap: 8px;
+    border: 3px solid #9e0000;
 }
 
 .about-layout .left button:hover {
@@ -72,10 +93,12 @@
 
 .about-layout .left button.active {
     min-height: 144px;
-    background: #960a00;
-    color: #fafafa;
+    background: #9e0000;
+    color: #fff8f0;
+    border: 3px solid #fff8f0;
     box-shadow: 0 5px 14px rgb(0 0 0 / 12%);
 }
+
 
 .about-option-index {
     max-height: 0;
@@ -91,11 +114,10 @@
     line-height: 1.4;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #737373;
+    color: #ad5050  ;
 }
 
 .about-layout .left button:hover .about-option-index,
-.about-layout .left button:focus-visible .about-option-index,
 .about-layout .left button.active .about-option-index {
     max-height: 20px;
     opacity: 1;
@@ -105,14 +127,14 @@
 .about-option-title {
     max-width: 100%;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 550;
     line-height: 1.25;
     letter-spacing: -0.025em;
     text-wrap: balance;
 }
 
 .about-layout .left button.active .about-option-index {
-    color: #dbdbdb;
+        color: #d67b74;
 }
 
 .about-layout .left button.active .about-option-title {
@@ -132,10 +154,29 @@
         flex: 0 0 auto;
         width: 100%;
         overflow: visible;
+        border-right: 0;
+        border-bottom: 1px solid #d5ceca;
+        padding: 18px;
     }
 
     .about-layout .main.column {
         flex: 0 0 auto;
         overflow: visible;
     }
+
+    .about-layout {
+        scrollbar-width: 0;
+    }
+
+    .about-layout::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.about-layout .left.column {
+    scrollbar-width: 0;
+}
+
+.about-layout .left.column::-webkit-scrollbar {
+    display: none;
 }

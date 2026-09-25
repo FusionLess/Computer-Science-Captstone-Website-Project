@@ -5,7 +5,9 @@ import ResearchContent from "./sections/ResearchContent"
 import TeamContent from "./sections/TeamContent"
 import DevelopmentContent from "./sections/DevelopmentContent"
 
-type AboutSection = "mission" | "research" | "team" | "development";
+import type AboutSection from "../types/aboutsections.ts"
+
+
 
 const sections = {
     mission: MissionContent,
@@ -24,7 +26,7 @@ export default function AboutLayout () {
     )
 }
 
-function AboutLeft ({active, setActive} : {active: AboutSection, setActive: (f) => AboutSection}) {
+function AboutLeft ({active, setActive} : {active: AboutSection, setActive: (f: AboutSection) => void}) {
 
     const toggles: { id: AboutSection; label: string }[] = [
         {id:"mission", label:"Our Mission"},
@@ -51,7 +53,7 @@ function AboutLeft ({active, setActive} : {active: AboutSection, setActive: (f) 
     )
 }
 
-function AboutMain ({active}:{active:string}) {
+function AboutMain ({active}:{active:AboutSection}) {
     const Content = sections[active]
 
     return (
