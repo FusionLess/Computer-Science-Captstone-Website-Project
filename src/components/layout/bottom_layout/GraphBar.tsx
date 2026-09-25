@@ -17,7 +17,7 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
-    const { bpm, graphPhase } = useHeartMonitor()
+    const {bpm, graphPhase} = useHeartMonitor()
     const getECGProfile = () => {
         switch (active.option) {
             case "Healthy":
@@ -62,7 +62,7 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
                 return pressureProfiles.decompensated
 
             default:
-                return pressureProfiles.healthy 
+                return pressureProfiles.healthy
         }
     }
 
@@ -77,10 +77,10 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
                 phase={graphPhase}
                 type="ecg"
                 d={generateECGPath(ecgProfiles.healthy)}
-                overlayD={profile1.severity !== "healthy"  ? generateECGPath(profile1) : undefined}
+                overlayD={profile1.severity !== "healthy" ? generateECGPath(profile1) : undefined}
                 severity={profile1.severity !== "healthy" ? profile1.severity : undefined}
             />
-            <HeartRateContainer bpm={bpm} />
+            <HeartRateContainer bpm={bpm}/>
             <button
                 className="mobile_graph_switch"
                 onClick={() =>
@@ -112,7 +112,7 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
                 phase={graphPhase}
                 type="pressure"
                 d={generatePressurePath(pressureProfiles.healthy)}
-                overlayD={profile2.severity !== "healthy"  ? generatePressurePath(profile2) : undefined}
+                overlayD={profile2.severity !== "healthy" ? generatePressurePath(profile2) : undefined}
                 severity={profile2.severity !== "healthy" ? profile2.severity : undefined}
                 volumeD={active.option === "Fibrillation"
                     ? generateFibrillationPath(
@@ -133,7 +133,7 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
                 onToggleHealthyPressure={() => setShowHealthyPressure(prev => !prev)}
             />
         </footer>
-    )}
+    )
 }
 
 /*

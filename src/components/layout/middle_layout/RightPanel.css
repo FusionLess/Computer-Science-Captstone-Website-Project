@@ -73,7 +73,7 @@
         top: var(--bar-height);
         right: 0;
         bottom: 0;
-        z-index: 40;
+        z-index: 10;
         padding: 0;
     }
 

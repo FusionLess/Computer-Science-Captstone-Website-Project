@@ -17,9 +17,10 @@
     margin: 0;
 }
 
-.settings_button svg {
+.settings_button > button > svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 }
 
 .logo {
@@ -52,11 +53,11 @@
     padding-right: 3px;
 }
 
-.settings_button button {
-    border-radius: 100%;
+.settings_button > button {
+    border-radius: 20px;
     border: none;
     height: 40px;
-    width: 40px;
+    width: auto;
 
     align-items: center;
     justify-content: center;
