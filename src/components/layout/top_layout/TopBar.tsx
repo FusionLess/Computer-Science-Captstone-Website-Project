@@ -1,6 +1,7 @@
 import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
+import { NavLink } from "react-router";
 
 function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -78,7 +79,12 @@ function SettingsButton({setGraphActive, graphActive}: { graphActive: boolean, s
 function HomeButton() {
     return (
         <div className="home_button">
-            <button aria-label="Home">
+            <NavLink
+                to="/"
+                end
+                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+                aria-label="Home"
+            >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      className="lucide lucide-house">
@@ -87,7 +93,7 @@ function HomeButton() {
                         d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                 </svg>
                 <text>Home</text>
-            </button>
+            </NavLink>
         </div>
     )
 }
@@ -95,7 +101,12 @@ function HomeButton() {
 function AboutButton() {
     return (
         <div className="about_button">
-            <button aria-label="About Us">
+            <NavLink
+                to="/about"
+                end
+                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+                aria-label="Home"
+            >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      className="lucide lucide-user-round-group">
@@ -107,7 +118,7 @@ function AboutButton() {
                     <circle cx="5.5" cy="4.5" r="2.5"/>
                 </svg>
                 <text>About Us</text>
-            </button>
+            </NavLink>
         </div>
     )
 }
