@@ -12,7 +12,7 @@ type HeartMonitorContextType = {
 
 const HeartMonitorContext = createContext<HeartMonitorContextType | undefined>(undefined)
 
-export const GRAPH_BEAT_COUNT = 4
+export const GRAPH_BEAT_COUNT = window.matchMedia("(max-width: 768px)").matches ? 2: 4
 
 export function HeartMonitorProvider({ children }: { children: ReactNode }) {
     const [bpm, setBpm] = useState<number>(60)

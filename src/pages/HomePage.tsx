@@ -29,10 +29,13 @@ export default function HomePage() {
 
     return (
         <main className="app">
-            <TopBar graphActive={graphActive} setGraphActive={setGraphActive}/>
+    <TopBar
+                graphActive={graphActive}
+                setGraphActive={setGraphActive}
+            />
             <Content active={active} 
-            setActive={setActive}
-            compareState={compareState}
+                setActive={setActive}
+                compareState={compareState}
             />
             <GraphBar active={active} graphActive={graphActive} />
         </main>
