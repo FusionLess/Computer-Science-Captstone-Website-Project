@@ -9,17 +9,18 @@ const VIEWBOX_WIDTH = 500
 
 
 type GraphBarProps = {
-    active: HeartState
+    active: HeartState,
+    graphActive: boolean,
 }
 
-export default function GraphBar({ active }: GraphBarProps) {
+export default function GraphBar({ active, graphActive }: GraphBarProps) {
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
-    const { bpm, graphPhase } = useHeartMonitor()
+    const {bpm, graphPhase} = useHeartMonitor()
     const getECGProfile = () => {
         switch (active.option) {
-            case "Normal":
+            case "Healthy":
                 return ecgProfiles.healthy
 
             case "Minor":
@@ -43,7 +44,7 @@ export default function GraphBar({ active }: GraphBarProps) {
     }
     const getPressureProfile = () => {
         switch (active.option) {
-            case "Normal":
+            case "Healthy":
                 return pressureProfiles.healthy
             case "Minor":
                 return pressureProfiles.minorAttack
@@ -61,27 +62,57 @@ export default function GraphBar({ active }: GraphBarProps) {
                 return pressureProfiles.decompensated
 
             default:
-                return pressureProfiles.healthy 
+                return pressureProfiles.healthy
         }
     }
 
     const profile1 = getECGProfile()
     const profile2 = getPressureProfile()
+    const [visibleGraph, setVisibleGraph] = useState<"ecg" | "pressure">("ecg")
+
+    if (!graphActive) return null
     return (
-        <footer className="graphs">
+        <footer className={`graphs mobile_${visibleGraph}`}>
             <ICUContainer
                 phase={graphPhase}
                 type="ecg"
                 d={generateECGPath(ecgProfiles.healthy)}
-                overlayD={profile1.severity !== "healthy"  ? generateECGPath(profile1) : undefined}
+                overlayD={profile1.severity !== "healthy" ? generateECGPath(profile1) : undefined}
                 severity={profile1.severity !== "healthy" ? profile1.severity : undefined}
             />
-            <HeartRateContainer bpm={bpm} />
-            <ICUContainer 
-                phase={graphPhase} 
-                type="pressure" 
-                d={generatePressurePath(pressureProfiles.healthy)} 
-                overlayD={profile2.severity !== "healthy"  ? generatePressurePath(profile2) : undefined}
+            <HeartRateContainer bpm={bpm}/>
+            <button
+                className="mobile_graph_switch"
+                onClick={() =>
+                    setVisibleGraph(
+                        visibleGraph === "ecg" ? "pressure" : "ecg"
+                    )
+                }
+                aria-label={
+                    visibleGraph === "ecg"
+                        ? "Show pressure and volume graph"
+                        : "Show ECG graph"
+                }
+            >
+                {visibleGraph === "ecg" ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         className="lucide lucide-chevron-left preview-icon">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         className="lucide lucide-chevron-right preview-icon">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                )}
+            </button>
+            <ICUContainer
+                phase={graphPhase}
+                type="pressure"
+                d={generatePressurePath(pressureProfiles.healthy)}
+                overlayD={profile2.severity !== "healthy" ? generatePressurePath(profile2) : undefined}
                 severity={profile2.severity !== "healthy" ? profile2.severity : undefined}
                 volumeD={active.option === "Fibrillation"
                     ? generateFibrillationPath(
@@ -364,7 +395,10 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                 <path d={volumeD} className="volume-waveform" transform={ isFibrillation? undefined : "translate(0 150) scale(1 -1)"}/>
                             )}
                         </svg>
-
+                        <div
+                            className="graph-marker"
+                            style={{ left: `${xPos}%` }}
+                        />
                         <div
                             style={{
                                 position: 'absolute',
@@ -408,7 +442,7 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                         : "healthy"
                                     }`} 
                                 />
-                                Pressure (mmhg)
+                                Pressure (mmHg)
                             </button>
                             <button 
                                 className={`graph-toggle ${showVolume ? "active" : ""}`} 
@@ -416,7 +450,7 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                 aria-pressed={showVolume}>
                                 <span 
                                     className="legend-line volume-line"/>
-                                    Volume (ml)
+                                    Volume (mL)
                             </button>
                         </>
                     )}
@@ -431,7 +465,22 @@ function HeartRateContainer({ bpm }: { bpm: number }) {
     return (
         <div className="heartrate container">
             <span className="heart-rate-label">HEART RATE</span>
-            <strong className="heart-rate-value">{bpm}</strong>
+            <input
+                className="heart-rate-value bpm-input"
+                type="number"
+                inputMode="numeric"
+                min="0"
+                max="180"
+                value={bpm}
+                aria-label="Heart rate in BPM"
+                onChange={(e) => {
+                    const nextBpm = e.target.valueAsNumber;
+
+                    if (Number.isFinite(nextBpm)) {
+                        setBpm(Math.min(180, Math.max(0, nextBpm)));
+                    }
+                }}
+            />
             <span className="heart-rate-label">BPM</span>
             <input
                 className="bpm-slider"

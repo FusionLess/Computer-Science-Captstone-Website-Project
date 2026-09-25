@@ -1,7 +1,7 @@
 export type HeartCategory = "healthy" | "attack" | "electricity" | "failure";
 
 export type HeartOption =
-    | "Normal"
+    | "Healthy"
     | "Minor"
     | "Severe"
     | "Fibrillation"

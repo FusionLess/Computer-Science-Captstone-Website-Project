@@ -1,10 +1,10 @@
 {
-  "name": "heart-viewer-web",
+  "name": "ABI Heart",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -14,6 +14,7 @@
     "@react-three/fiber": "^9.7.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-router": "^8.4.0",
     "three": "^0.185.1"
   },
   "devDependencies": {

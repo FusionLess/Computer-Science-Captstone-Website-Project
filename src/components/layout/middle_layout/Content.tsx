@@ -5,20 +5,20 @@
     import type { CompareState } from "../../types/compare.ts"
 
     import { FRAMES } from "../../types/frames.ts"
-    import { useState } from "react";
+    import { useEffect, useState, useRef } from "react";
 
     
     import HeartViewerPage from "../../hearts/HeartViewer.jsx"
     import LeftBox from "./LeftPanel.tsx"
     import RightBox from "./RightPanel.tsx";
-
-
-function Content({active, setActive} : {active: HeartState, setActive: (v: HeartState) => void}) {
-    const [isComparing, setIsComparing] = useState<boolean>(false);
-    const [selection1, chooseSelection1] = useState<HeartOption | null>(null); 
-    const [selection2, chooseSelection2] = useState<HeartOption | null>(null);
+  
+function Content({active, setActive, compareState} :
+                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState}) {
     const [selectedPart, setSelectedPart] = useState<string | null>(null);
-    const compareState: CompareState = {selection1,selection2, chooseSelection1, chooseSelection2,isComparing, setIsComparing};
+
+    useEffect(() => {
+        setSelectedPart(null);
+    }, [active.category, active.option]);
 
     return (
         <main className="content">
@@ -47,6 +47,14 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
 
         setActive({category: categories[option], option: option})
     }
+    const [syncEnabled, setSyncEnabled] = useState(false)
+    const syncedCameraRef = useRef<{
+        position: [number, number, number]
+        target: [number, number, number]
+        zoom: number
+    } | null>(null)
+    const [sharedResetTrigger, setSharedResetTrigger] = useState(0)
+
     // normal
     if (!isComparing) {
         return (
@@ -59,7 +67,7 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                         setIsComparing(true)
                     }}
                 />
-
+   
                 <HeartViewerPage
                     frameFolder={FRAMES[active.option]}
                     setSelectedPart={setSelectedPart}
@@ -92,6 +100,12 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                         frameFolder={FRAMES[selection1]}
                         setSelectedPart={setSelectedPart}
                         title={HEART_STATE_TITLES[selection1]}
+                      
+                        syncEnabled={syncEnabled}
+                        syncedCameraRef={syncedCameraRef}
+                        index={index}
+                        sharedResetTrigger={sharedResetTrigger}
+                        setSharedResetTrigger={setSharedResetTrigger}
 
                     />
                 </aside>
@@ -118,12 +132,35 @@ function MiddleBox({active, setActive, compareState, setSelectedPart}: {active: 
                         frameFolder={FRAMES[selection2]}
                         setSelectedPart={setSelectedPart}
                         title={HEART_STATE_TITLES[selection2]}
+                      
+                      syncEnabled={syncEnabled}
+                      syncedCameraRef={syncedCameraRef}
+                      index={index}
+                      sharedResetTrigger={sharedResetTrigger}
+                      setSharedResetTrigger={setSharedResetTrigger}
 
                     />
                 </aside>
             )}
-        </>
-    )
+        
+
+            {isComparing &&
+                <button
+                    className="sync"
+                    onClick={() => (setSyncEnabled((syncEnabled) => !syncEnabled))}
+                    style={{
+                        background: syncEnabled ? "#9e0000" : "#f5f5f5",
+                        color: syncEnabled ? "#ffffff" : "black",
+                    }}
+                >
+                    <p style={{fontSize: '20px', fontWeight: 500, margin: '0', paddingBottom: '2px'}}>
+                        🗘
+                    </p>
+                    Sync
+                </button>
+            }
+     </>
+
 }
 function CompareButton({currentOption, onSelect}: {currentOption: HeartOption, onSelect: (v: HeartOption) => void}) {
     const [isOpen, setIsOpen] = useState(false)

@@ -1,16 +1,28 @@
 .graphs {
     height: var(--graph-height);
-    background: var(--button-border);
     box-sizing: border-box;
     border-top: 1px solid var(--box-border);
     display: grid;
     grid-template-columns: 1fr 148px 1fr;
 }
 
+
+.graph-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.25%;
+    border-radius: 20px;
+    background: var(--colour-accent1);
+    opacity: 0.98;
+    pointer-events: none;
+    transition: none;
+}
+
 .container {
     display: flex;
     flex: 1;
-    background: var(--background-colour-3);
+    background: var(--graphbar);
     outline: 1px solid var(--box-border);
     padding : 15px;
 }
@@ -49,13 +61,13 @@
 .pressure-waveform,
 .ecg-waveform {
     fill: none;
-    stroke-width: 3;
+    stroke-width: 1.5;
     stroke: #35e87b;
 }
 
 .condition-waveform {
     fill: none;
-    stroke-width: 2.5;
+    stroke-width: 1.5;
 }
 
 .condition-waveform.minor {
@@ -82,7 +94,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
+    color: var(--secondary-text-colour);
     font-size: 14px;
     color: #8f969d;
 }
@@ -177,13 +189,13 @@
 }
 
 .heart-rate-label {
-    color: #8f969d;
+    color: var(--secondary-text-colour);
     font-size: 10px;
     font-weight: 600;
 }
 
 .heart-rate-value {
-    color: #b8362a;
+    color: var(--colour-accent1);
     font-size: 28px;
     line-height: 1;
 }
@@ -205,7 +217,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #b8362a;
+    background: var(--colour-accent1);
     box-shadow: 0 0 1px;
     cursor: pointer;
 }
@@ -214,7 +226,138 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #b8362a;
+    background: var(--colour-accent1);
     border: none;
     cursor: pointer;
+}
+
+.bpm-input {
+    width: 4ch;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    text-align: center;
+    font-family: inherit;
+    font-weight: 700;
+}
+
+.bpm-input::-webkit-inner-spin-button,
+.bpm-input::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+
+.mobile_graph_switch {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .graphs {
+        position: relative;
+        height: 120px;
+    }
+
+    .container {
+        padding: 6px 8px;
+    }
+
+    .pressure-scale,
+    .volume-scale {
+        font-size: 10px;
+        top: 8px;
+        bottom: 12px;
+    }
+
+    .scale-unit {
+        font-size: 10px;
+    }
+
+    .graph-toggle {
+        height: 20px;
+        padding: 1px 5px;
+        font-size: 10px;
+    }
+
+    .ecg.container,
+    .pressure.container {
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    .mobile_graph_switch {
+        display: grid;
+        place-items: center;
+        grid-row: 1;
+
+        width: 40px;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        border-left: 1px solid var(--box-border);
+        border-right: 1px solid var(--box-border);
+        border-radius: 0;
+        background: var(--graphbar);
+        color: var(--colour-accent1);
+        z-index: 5;
+    }
+
+    .mobile_graph_switch svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .graphs.mobile_ecg {
+        grid-template-columns: minmax(0, 1fr) 96px 40px;
+    }
+
+    .graphs.mobile_ecg .ecg.container {
+        grid-column: 1;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .graphs.mobile_ecg .heartrate.container {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .graphs.mobile_ecg .mobile_graph_switch {
+        grid-column: 3;
+    }
+
+    .graphs.mobile_ecg .pressure.container {
+        grid-column: 1;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .graphs.mobile_pressure {
+        grid-template-columns: 40px 96px minmax(0, 1fr);
+    }
+
+    .graphs.mobile_pressure .mobile_graph_switch {
+        grid-column: 1;
+    }
+
+    .graphs.mobile_pressure .heartrate.container {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .graphs.mobile_pressure .pressure.container {
+        grid-column: 3;
+        opacity: 1;
+        transform: scaleX(1);
+        transform-origin: left;
+        pointer-events: auto;
+    }
+
+    .graphs.mobile_pressure .ecg.container {
+        grid-column: 3;
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: right;
+        pointer-events: none;
+    }
 }

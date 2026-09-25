@@ -1,70 +1,107 @@
 .topbar {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
+    display: flex;
     height: var(--bar-height);
+    flex-shrink: 0;
     box-sizing: border-box;
     padding: 10px;
-    border-bottom: 1px var(--box-border) solid;
-    background: var(--selector-colour);
+    background: var(--topbar);
+    align-items: center;
+    border-bottom: 1px solid var(--box-border);
+    box-shadow: 0 5px 4px rgba(0, 0, 0, 0.02);
+    z-index: 20;
 }
 
-.left_buttons {
+.settings_button {
     display: flex;
     align-items: center;
-    gap: 10px;
+    margin: 0;
+}
+
+.settings_button > button > svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
 }
 
 .logo {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    justify-content: center;
-    font-weight : 800;
-    font-family: Helvetica Neue, sans-serif;
-    color: darkred;
 }
 
-.right_buttons {
+.logo img{
+    height: calc(var(--bar-height) - 8px);
+    width: auto;
+}
+
+.desktop_navigation{
     display: flex;
     justify-content: right;
+    margin-left: auto;
     align-items: center;
+    gap: 10px;
 }
 
-button {
+.desktop_navigation button,
+.mobile_navigation button{
+    display: flex;
+}
+
+.desktop_navigation button svg,
+.mobile_navigation button svg {
+    display: flex;
+    padding-right: 3px;
+}
+
+.settings_button > button {
     border-radius: 20px;
-    border: 0;
+    border: none;
+    height: 40px;
+    width: auto;
 
     align-items: center;
     justify-content: center;
-    width: fit-content  ;
     padding: 10px;
 
     cursor: pointer;
     font-weight: bolder;
 
-    background: var(--button-inactive-bg);
-    color: var(--button-inactive-text);
+    background: var(--topbar);
 }
 
-.topbar button.inactive {
-    background: var(--button-inactive-bg);
-    color: var(--button-inactive-text);
+.nav_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 20px;
+    color: inherit;
+    text-decoration: none;
+    font-weight: bolder;
+
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav_button svg {
+    margin-right: 3px;
 }
 
 .topbar .active {
-    background: var(--button-active-bg);
-    color: var(--button-active-text);
-    border: 2px solid var(--button-border);
-}
-
-.topbar button:active {
-    transform: scale(0.95);
+    background: var(--button-bg);
+    color: var(--colour-accent1);
     z-index: 10;
 }
 
-.topbar button:hover {
+.topbar button:active, .nav_button:active {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
-    z-index: 1;
+    z-index: 10;
+}
+
+.topbar button:hover, .nav_button:hover {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+    z-index: 10;
 }
 
 .backdrop {
@@ -75,4 +112,54 @@ button {
     bottom: 0;
     background: transparent;
     z-index: 15;
+}
+
+.mobile_menu_button,
+.mobile_navigation {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .logo img {
+        height: 50px;
+    }
+
+    .desktop_navigation {
+        display: none;
+    }
+
+    .mobile_menu_button {
+        padding: 10px;
+        display: flex;
+        justify-content: flex-end;
+        margin-left: auto;
+        font-size: 24px;
+    }
+
+    .topbar .mobile_menu_button:not(.active),
+    .topbar .mobile_menu_button:not(.active):hover,
+    .topbar .mobile_menu_button:not(.active):active {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .topbar .mobile_menu_button:not(.active):focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    .mobile_navigation {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: var(--bar-height);
+        right: 10px;
+        padding: 10px;
+        gap: 8px;
+        background: white;
+        border: 1px solid var(--box-border);
+        border-radius: 12px;
+        z-index: 30;
+    }
 }
