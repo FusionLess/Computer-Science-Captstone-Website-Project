@@ -168,10 +168,9 @@
     justify-content: center;
     align-items: center;
     position: absolute;
-    bottom: 49px;
+    bottom: 200px;
     left: 50%;
     transform: translate(-50%, 50%);
-    display: flex;
     height: 20px;
     padding: 20px;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
