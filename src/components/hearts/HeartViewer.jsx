@@ -140,6 +140,7 @@ function CameraController({
 export default function HeartViewer({
     frameFolder,
     setSelectedPart,
+    title,
     syncEnabled,
     syncedCameraRef,
     index,
@@ -264,7 +265,24 @@ export default function HeartViewer({
     }
 
     return (
+      
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
+             {title && (
+                <h3
+                    style={{
+                        position: 'absolute',
+                        top: '15px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        margin: 0,
+                        zIndex: 10,
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    {title}
+                </h3>
+            )}
             <Canvas
                 camera={{ position: [-225, -20, -200], fov: 45 }}
                 gl={{

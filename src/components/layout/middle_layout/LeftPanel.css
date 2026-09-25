@@ -130,36 +130,6 @@
     display: none;                /* Chrome/Safari */
 }
 
-/* TO BE REMOVED*/
-.compare {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    flex-shrink: 0;
-}
-
-.compare_heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.clear_compare_button {
-    all: unset;
-
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--secondary-text-colour);
-}
-
-.clear_compare_button svg {
-    width: 14px;
-    height: 14px;
-    fill: none;
-}
-
 .topbar button.clear_compare_button:hover {
     all: unset;
     display: flex;
@@ -171,24 +141,6 @@
     cursor: pointer;
     text-decoration: underline;
     text-underline-offset: 2px;
-}
-
-.compare_options button {
-    width: 100%;
-    border: 1px solid var(--box-border);
-    border-radius: 20px;
-}
-
-.compare_options button:hover {
-    box-shadow: none;
-    background: var(--button-bg);
-    cursor: pointer;
-}
-
-.compare_options {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
 }
 
 .mobile_conditions_button {
