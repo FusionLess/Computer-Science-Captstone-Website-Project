@@ -8,10 +8,24 @@ const NUM_FRAMES = 25
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 25 frames are loaded into gpu memory but only active frame is visible
-function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect}) {
+const UNHEALTHY_MESH_MAP = {
+  mesh0: 'mesh0',
+  mesh1: 'mesh4',
+  mesh2: 'mesh1',
+  mesh3: 'mesh5',
+  mesh4: 'mesh2',
+  mesh5: 'mesh6',
+  mesh6: 'mesh3',
+}
+function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect, isUnhealthy}) {
   const { scene } = useGLTF(url)
   const model = useMemo(() => scene.clone(true), [scene]);
   const epiMeshRef = useRef(null)
+
+  const newMeshName = (meshName) => {
+    if (!isUnhealthy) return meshName
+    return UNHEALTHY_MESH_MAP[meshName] ?? meshName
+  }
 
   useEffect(() => {
     model.traverse((child) => {
@@ -69,7 +83,8 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect}) {
       onPointerMove={(event) => {
       event.stopPropagation()
 
-      const meshName = event.object.name
+      const rawMeshName = event.object.name
+      const meshName = newMeshName(rawMeshName) 
 
       if (!showEpi && meshName === 'mesh0') {
         return
@@ -89,7 +104,9 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect}) {
 
     onClick={(event) => {
       event.stopPropagation()
-      const meshName = event.object.name
+      const rawMeshName = event.object.name
+      const meshName = newMeshName(rawMeshName)
+      
       if (!showEpi && meshName === 'mesh0') {
         return
       }
@@ -113,6 +130,7 @@ export function HeartModel({
   const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+18) % NUM_FRAMES}.glb`)
   const [activeFrame, setActiveFrame] = useState(0)
   const animState = useRef({ elapsed: 0, currentFrame: 0 })
+  const isUnhealthy = frameFolder !== "frames"
 
 
   useFrame((_, delta) => {
@@ -150,6 +168,7 @@ export function HeartModel({
 
           onHover={onHover}
           onSelect={onSelect}
+          isUnhealthy={isUnhealthy}
       
         />
       ))}
