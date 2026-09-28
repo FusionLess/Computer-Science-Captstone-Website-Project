@@ -4,23 +4,10 @@
     flex-shrink: 0;
     box-sizing: border-box;
     padding: 10px;
-    background: var(--topbar);
+    background: var(--cards-background);
     align-items: center;
-    border-bottom: 1px solid var(--box-border);
-    box-shadow: 0 5px 4px rgba(0, 0, 0, 0.02);
-    z-index: 20;
-}
-
-.settings_button {
-    display: flex;
-    align-items: center;
-    margin: 0;
-}
-
-.settings_button > button > svg {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--primary-headings) 10%, transparent);
+    z-index: 100;
 }
 
 .logo {
@@ -53,22 +40,6 @@
     padding-right: 3px;
 }
 
-.settings_button > button {
-    border-radius: 20px;
-    border: none;
-    height: 40px;
-    width: auto;
-
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-
-    cursor: pointer;
-    font-weight: bolder;
-
-    background: var(--topbar);
-}
-
 .nav_button {
     display: flex;
     align-items: center;
@@ -77,7 +48,8 @@
     border-radius: 20px;
     color: inherit;
     text-decoration: none;
-    font-weight: bolder;
+    font-size: 12px;
+    font-weight: bold;
 
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -87,20 +59,35 @@
 }
 
 .topbar .active {
-    background: var(--button-bg);
-    color: var(--colour-accent1);
+    position: relative;
+    color: var(--active-labels);
     z-index: 10;
 }
 
-.topbar button:active, .nav_button:active {
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+.topbar .settings_button .nav_button.active {
+    background: var(--selected-suboptions);
+}
+
+.topbar :not(.settings_button) > .nav_button.active::after {
+    content: "";
+    position: absolute;
+    display: block;
+    height: 2px;
+    border-radius: 8px;
+    left: 10%;
+    bottom: 1px;
+    width: 80%;
+    margin: auto 0;
+    background: var(--active-labels);
+}
+
+.topbar .nav_button:hover {
     transform: scale(1.05);
     z-index: 10;
 }
 
-.topbar button:hover, .nav_button:hover {
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-    transform: scale(1.05);
+.topbar .nav_button:active {
+    transform: scale(0.95);
     z-index: 10;
 }
 
@@ -157,8 +144,8 @@
         right: 10px;
         padding: 10px;
         gap: 8px;
-        background: white;
-        border: 1px solid var(--box-border);
+        background: var(--cards-background);
+        border: 1px solid var(--divider);
         border-radius: 12px;
         z-index: 30;
     }

@@ -1,0 +1,129 @@
+.heart_buttons {
+    display: flex;
+    width: 100%;
+    background: var(--home-background);
+    flex-direction: column;
+    height: fit-content;
+    position: relative;
+    align-items: center;
+}
+
+.toggle_buttons {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+}
+
+.toggle_buttons > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    position: relative;
+    min-height: 44px;
+    padding: 0 30px;
+}
+
+.toggle_buttons > button svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.toggle_buttons > button.active {
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+}
+
+.options_buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    overflow: hidden;
+    transition: max-height 200ms ease, opacity 160ms ease;
+
+    max-height: 100px;
+    padding: 4px;
+    opacity: 1;
+    width: fit-content;
+    border-radius: 20px;
+    background: var(--cards-background);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.options_buttons button {
+    min-height: 30px;
+    padding: 0 22px;
+    font-size: 12px;
+    width: 130px;
+    border-radius: 20px;
+}
+
+.options_buttons button.selected.green {
+    background: var(--green-gradient-start);
+    color: var(--green-text);
+}
+
+.options_buttons button.selected.amber {
+    background: var(--amber-gradient-start);
+    color: var(--amber-text);
+}
+
+.options_buttons button.selected.blue {
+    background: #b0e8ff;
+    color: #317e9e;
+}
+
+.options_buttons button.selected.red {
+    background: var(--red-gradient-start);
+    color: var(--red-text);
+}
+
+.toggle_buttons::-webkit-scrollbar {
+    display: none;
+}
+
+.heart_button_label {
+    display: inline-block;
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    transition: max-width 180ms ease, opacity 180ms ease;
+}
+
+@container heart-panel (width < 600px) {
+    .heart_buttons > .toggle_buttons {
+        flex: 0 1 auto;
+        max-width: calc(100% - 20px);
+        overflow-x: auto;
+    }
+
+    .heart_buttons > .toggle_buttons > button {
+        flex-shrink: 0;
+        gap: 0;
+        padding: 0 12px;
+        transition: gap 180ms ease;
+    }
+
+    .heart_buttons .heart_button_label {
+        max-width: 0;
+        opacity: 0;
+    }
+
+    .heart_buttons > .toggle_buttons > button:hover {
+        gap: 8px;
+    }
+
+    .heart_buttons > .toggle_buttons > button:hover .heart_button_label {
+        max-width: 100px;
+        opacity: 1;
+    }
+}

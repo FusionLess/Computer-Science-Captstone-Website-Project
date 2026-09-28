@@ -1,0 +1,106 @@
+.middle-panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+
+.middle-panel-viewers {
+    display: flex;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+
+.middle-panel-viewers > .heart_panel {
+    min-width: 0;
+}
+
+.heart_panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    container-type: inline-size;
+    container-name: heart-panel;
+}
+
+.heart_viewer {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    position: relative;
+
+    padding: 0;
+    background: var(--home-background);
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+
+button.compare-button {
+    position: absolute;
+    top: 10px;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 20;
+
+    width: 140px;
+    height: 44px;
+    margin: 0;
+
+    background: var(--cards-background);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+button.compare-button.not-comparing {
+    position: fixed;
+    right: var(--side-margin);
+    top: calc( var(--bar-height) + 10px);
+    transform: none;
+
+    z-index: 50;
+}
+
+.sync{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 64px;
+    right: 50%;
+    transform: translateX(50%);
+    min-height: 30px;
+    padding: 0 22px;
+    z-index: 10;
+    box-shadow: 0px 1px 3px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+}
+
+.middle-panel-viewers > .heart_panel ~ .heart_panel {
+    position: relative;
+}
+
+.middle-panel-viewers > .heart_panel ~ .heart_panel::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 130px;
+    bottom: 16px;
+    width: 1px;
+    background: var(--divider);
+    z-index: 1;
+    pointer-events: none;
+}

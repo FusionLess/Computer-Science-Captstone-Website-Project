@@ -316,7 +316,7 @@ export default function HeartViewer({
                         position={[0, -90, 0]}   // Sits just beneath the lowest tip of the apex
                         opacity={0.65}           // Shadow intensity
                         scale={220}              // Floor shadow spread
-                        blur={2.0}               // Softness edge blur
+                        blur={5.0}               // Softness edge blur
                         far={300}                // Vertical projection distance
                         resolution={512}
                         color="#050508"

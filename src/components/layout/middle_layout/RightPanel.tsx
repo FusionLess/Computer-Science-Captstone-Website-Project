@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
 import "./RightPanel.css"
 import HeartPartInfo from "../HeartPartInfo";
-import type { HeartState } from "../../types/states.ts";
 import type { CompareState } from "../../types/compare.ts"
 import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
 
-function RightBox({active, compareState, selectedPart} :
-                  {active: HeartState, compareState : CompareState, selectedPart: string | null}) {
+function RightBox({compareState, selectedPart} :
+                  {compareState : CompareState, selectedPart: string | null}) {
     const isMobile = window.matchMedia("(max-width: 768px)").matches
+    const active = compareState.selection1
 
     const [isOpen, setIsOpen] = useState(!isMobile)
     useEffect(() => {
@@ -19,8 +19,9 @@ function RightBox({active, compareState, selectedPart} :
     }, [compareState.isComparing, isMobile])
 
     return (
-        <aside className = "right box">
-            { isOpen && <button className="right_collapse" onClick={() => setIsOpen(!isOpen)}>
+        <aside className = {`right ${isOpen ? "" : "collapsed"}`}>
+
+            { isOpen && <button className="right_toggle open" onClick={() => setIsOpen(!isOpen)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      className="lucide lucide-chevrons-right">
@@ -28,7 +29,7 @@ function RightBox({active, compareState, selectedPart} :
                     <path d="m13 17 5-5-5-5"/>
                 </svg>
             </button>}
-            {!isOpen && <button className="right_open" onClick={() => setIsOpen(!isOpen)}>
+            {!isOpen && <button className="right_toggle closed" onClick={() => setIsOpen(!isOpen)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      className="lucide lucide-chevrons-left">
@@ -36,6 +37,7 @@ function RightBox({active, compareState, selectedPart} :
                     <path d="m18 17-5-5 5-5"/>
                 </svg>
             </button>}
+
             <div className={`right_content ${isOpen ? "" : "closed"}`}>
                 <div className="heart_state_info">
                     <h3>

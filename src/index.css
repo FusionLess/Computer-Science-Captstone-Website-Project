@@ -1,27 +1,37 @@
+@import '@fontsource/roboto-slab/400.css';
+@import '@fontsource/roboto-slab/500.css';
+@import '@fontsource/roboto-slab/600.css';
+@import '@fontsource/roboto-slab/700.css';
+
 :root {
   --bar-height: 65px;
   --graph-height: 150px;
-  --left-panel-width: 250px;
-  --right-panel-width: 350px;
+  --left-panel-width: 300px;
+  --right-panel-width: 450px;
+  --settings-panel-width: 300px;
+  --comparison-dialog-width: 800px;
+  --compare-menu-width: 160px;
+  --heartrate-panel-width: 148px;
+  --heartrate-panel-mobile-width: 96px;
+  --graph-switch-width: 40px;
+  --viewer-control-width: 50px;
+  --slice-control-width: 40px;
 
-  --background-colour: #F4F6F8;
+  --home-background: #F7FAFD;
+  --cards-background: #ffffff;
+  --divider: #e1e8f0;
+  --primary-headings: #071B3D;
+  --body-texts: #687F9F;
+  --secondary-labels: #8491A5;
+  --selected-condition-background: #062451;
+  --active-labels: #0066FF;
+  --control-background: #252F3D;
+  --selected-suboptions: #E0EFFF;
+  --heartrate-text-slider: #0066FF;
 
-  --topbar: #FAFAFA;
-  --graphbar: #FAFAFA;
-  --left-panel: #FAFAFA;
-  --right-panel: #FAFAFA;
+  font-family: 'Inter', sans-serif;
 
-  --background-colour-2: #FFFFFF;
-
-  --colour-accent1: #b8362a;
-
-  --box-border: #D3D3D3FF;
-  --secondary-text-colour: #808080;
-  --contrast-text-colour: white;
-
-  --button-bg: #eaeaea;
-  --button-text: #3d3531;
-  --button-active-text: #a33b30;
+  --side-margin: 24px;
 
   --green-gradient-start: rgba(86, 190, 123, 0.28);
   --green-gradient-end: rgba(86, 190, 123, 0);
@@ -34,18 +44,16 @@
   --red-gradient-start: rgba(220, 80, 70, 0.26);
   --red-gradient-end: rgba(220, 80, 70, 0);
   --red-text: #b2352b;
-
-  --button-border: #b8362a;
-  font-family: Helvetica, sans-serif;
-  --text-main: #1F2937;
 }
-
-
 
 html, body {
   height: 100%;
   margin: 0;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto Slab', sans-serif;
 }
 
 #root {
@@ -66,5 +74,10 @@ button {
   cursor: pointer;
   font-weight: bolder;
 
-  background: var(--background-colour);
+  background: var(--cards-background);
+  color: var(--body-texts);
+  font-family: inherit;
+}
+input, select, textarea {
+  font-family: inherit;
 }

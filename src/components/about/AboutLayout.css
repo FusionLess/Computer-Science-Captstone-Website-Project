@@ -15,9 +15,6 @@
     gap: 10px;
 }
 
-.main.column {
-}
-
 .left.column {
     flex: 0 0 300px;
     min-height: 0;
@@ -98,7 +95,6 @@
     border: 3px solid #fff8f0;
     box-shadow: 0 5px 14px rgb(0 0 0 / 12%);
 }
-
 
 .about-option-index {
     max-height: 0;
