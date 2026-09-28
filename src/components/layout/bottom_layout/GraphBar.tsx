@@ -357,6 +357,10 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
     const trailStart = Math.max(0, scannerX - trailLength)
     const trailWidth = scannerX - trailStart
 
+    const gapWidth = 10
+    const gapEnd = scannerX + gapWidth
+    const wrappedGapEnd = Math.max(0, gapEnd - VIEWBOX_WIDTH)
+
     return (
         <div className={`${type} container`}>
             <div className="container-content-wrapper">
@@ -387,11 +391,19 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                             <defs>
                                 <clipPath id={`waveform-reveal-${type}`}>
                                     <rect
-                                        x="0"
+                                        x={wrappedGapEnd}
                                         y="0"
-                                        width={safePhase * VIEWBOX_WIDTH}
+                                        width={Math.max(0, scannerX - wrappedGapEnd)}
                                         height="150"
                                     />
+                                    {gapEnd < VIEWBOX_WIDTH && (
+                                        <rect
+                                            x={gapEnd}
+                                            y="0"
+                                            width={VIEWBOX_WIDTH - gapEnd}
+                                            height="150"
+                                        />
+                                    )}
                                 </clipPath>
                                 <linearGradient
                                     id={`trail-gradient-${type}`}
@@ -470,7 +482,27 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                 bottom: 0,
                                 left: `${xPos}%`,
                                 width: '0.15%',
-                                background: '#b8362a',
+                                background: 'var(--divider)',
+                                opacity: 0.98,
+                                pointerEvents: 'none',
+                                transition: 'none',
+                                borderRadius: '20px',
+                            }}
+                        />
+                        <div
+                            className="graph-marker"
+                            style={{
+                                left: `${(xPos + (gapWidth / VIEWBOX_WIDTH) * 100) % 100}%`,
+                            }}
+                        />
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                bottom: 0,
+                                left: `${xPos+(gapWidth / VIEWBOX_WIDTH) * 100}%`,
+                                width: '0.15%',
+                                background: 'var(--divider)',
                                 opacity: 0.98,
                                 pointerEvents: 'none',
                                 transition: 'none',
