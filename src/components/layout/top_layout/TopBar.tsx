@@ -3,7 +3,7 @@ import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
 import { NavLink } from "react-router";
 
-function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
+function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     return (
@@ -17,6 +17,9 @@ function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActi
                 <SettingsButton
                     setGraphActive={setGraphActive}
                     graphActive={graphActive}
+                    glowActive={glowActive}
+                    setGlowActive={setGlowActive}
+
                 />
             </div>
 
@@ -42,6 +45,8 @@ function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActi
                     <SettingsButton
                         setGraphActive={setGraphActive}
                         graphActive={graphActive}
+                        glowActive={glowActive}
+                        setGlowActive={setGlowActive}
                     />
                 </div>
             )}
@@ -50,7 +55,7 @@ function TopBar({graphActive, setGraphActive}:{graphActive:boolean, setGraphActi
     )
 }
 
-function SettingsButton({setGraphActive, graphActive}: { graphActive: boolean, setGraphActive: (v: boolean) => void }) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void }) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -71,7 +76,7 @@ function SettingsButton({setGraphActive, graphActive}: { graphActive: boolean, s
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} />
+            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} />
         </div>
     )
 }

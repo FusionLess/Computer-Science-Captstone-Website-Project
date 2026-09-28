@@ -1,9 +1,9 @@
 import "./SidePanel.css"
 import { useState } from "react"
 
-function SidePanel({isOpen, graphActive, setGraphActive}:
-                   { isOpen : boolean, graphActive:boolean, setGraphActive:(v : boolean)=>void}) {
-    const [complexity, setComplexity] = useState<string>("standard")
+function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActive}:
+    { isOpen: boolean, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void}) {
+    const [complexity, setComplexity] = useState<string>("standard") 
 
     const complexities = [
         {id:"basic", label: "Basic"},
@@ -42,6 +42,17 @@ function SidePanel({isOpen, graphActive, setGraphActive}:
                         Off
                     </button>
                 </div>
+                <h4>Toggle Glow On Waveforms</h4>
+                <div className="selector_section">
+                    <button className={glowActive ? "active" : "inactive"} onClick={() => setGlowActive(true)} >
+                        On
+                    </button>
+                    <button
+                        className={!glowActive ? "active" : "inactive"} onClick={() => setGlowActive(false)} >
+                        Off
+                    </button>
+                </div>
+
             </div>
             <div className="theme_selector">
                 <button>◐</button>
