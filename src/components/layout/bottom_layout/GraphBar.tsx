@@ -11,9 +11,10 @@ const VIEWBOX_WIDTH = 500
 type GraphBarProps = {
     active: HeartState,
     graphActive: boolean,
+    glowActive: boolean,
 }
 
-export default function GraphBar({ active, graphActive }: GraphBarProps) {
+export default function GraphBar({ active, graphActive, glowActive}: GraphBarProps) {
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
@@ -79,6 +80,7 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
                 d={generateECGPath(ecgProfiles.healthy)}
                 overlayD={profile1.severity !== "healthy" ? generateECGPath(profile1) : undefined}
                 severity={profile1.severity !== "healthy" ? profile1.severity : undefined}
+                glowActive={glowActive}
             />
             <HeartRateContainer bpm={bpm}/>
             <button
@@ -131,6 +133,8 @@ export default function GraphBar({ active, graphActive }: GraphBarProps) {
                 onTogglePressure={() => setShowPressure(prev => !prev)}
                 onToggleVolume={() => setShowVolume(prev => !prev)}
                 onToggleHealthyPressure={() => setShowHealthyPressure(prev => !prev)}
+
+                glowActive={glowActive}
             />
         </footer>
     )
@@ -343,7 +347,7 @@ function generatePressurePath(profile2: PressureProfile) {
     return fullD
 }
 
-function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume, onToggleVolume, showPressure, onTogglePressure, showHealthyPressure, onToggleHealthyPressure, isFibrillation }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major', volumeD?: string, showVolume?: boolean, onToggleVolume?: () => void, showPressure?: boolean, onTogglePressure?: () => void, showHealthyPressure?: boolean, onToggleHealthyPressure?: () => void, isFibrillation?: boolean }) {
+function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume, onToggleVolume, showPressure, onTogglePressure, showHealthyPressure, onToggleHealthyPressure, isFibrillation, glowActive }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major', volumeD?: string, showVolume?: boolean, onToggleVolume?: () => void, showPressure?: boolean, onTogglePressure?: () => void, showHealthyPressure?: boolean, onToggleHealthyPressure?: () => void, isFibrillation?: boolean, glowActive?: boolean }) {
     const safePhase = isNaN(phase) ? 0 : phase
     const xPos = safePhase * 100
 
@@ -416,10 +420,13 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                             {type === "ecg" && (
                                 <>
                                     <path d={d} className="ecg-waveform" clipPath={`url(#waveform-reveal-${type})`} />
-                                    <path d={d} className="ecg-waveform waveform-trail" mask={`url(#waveform-trail-${type})`}
-                                    />
+                                    {glowActive && (
+                                        <path d={d} className="ecg-waveform waveform-trail" mask={`url(#waveform-trail-${type})`}/>
+                                    )}
                                     {overlayD && (<path d={overlayD} className={`ecg-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${type})`} />)}
-                                    {overlayD && (<path d={overlayD} className={`ecg-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />)}
+                                    {overlayD && glowActive && (
+                                        <path d={overlayD} className={`ecg-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />
+                                    )}
                                 </>
                             )}
 
@@ -427,7 +434,9 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                             {type === "pressure" && (overlayD? showHealthyPressure : showPressure) && (
                                 <>
                                     <path d={d} className="pressure-waveform" clipPath={`url(#waveform-reveal-${type})`} />
-                                    <path d={d} className="pressure-waveform waveform-trail" mask={`url(#waveform-trail-${type})`} />
+                                    {glowActive && (
+                                        <path d={d} className="pressure-waveform waveform-trail" mask={`url(#waveform-trail-${type})`} />
+                                    )}
                                 </>
                                 
                             )}
@@ -435,14 +444,18 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                             {type === "pressure" && showPressure && overlayD && (
                                 <>
                                     <path d={overlayD} className={`pressure-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${type})`} />
-                                    <path d={overlayD} className={`pressure-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />
+                                    {glowActive && (
+                                        <path d={overlayD} className={`pressure-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />
+                                    )}
                                 </>
                             )}
                             {/* Volume */}
                             {type === "pressure" && showVolume && volumeD && (
                                 <>
                                     <path d={volumeD} className="volume-waveform" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} clipPath={`url(#waveform-reveal-${type})`} />
-                                    <path d={volumeD} className="volume-waveform waveform-trail" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} mask={`url(#waveform-trail-${type})`} />
+                                    {glowActive && (
+                                        <path d={volumeD} className="volume-waveform waveform-trail" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} mask={`url(#waveform-trail-${type})`} />
+                                    )}
                                 </>
                             )}
                         </svg>

@@ -13,6 +13,7 @@ export default function HomePage() {
     });
 
     const [graphActive, setGraphActive] = useState<boolean>(true)
+    const [glowActive, setGlowActive] = useState(true)
 
     const [isComparing, setIsComparing] = useState(false)
     const [selection1, chooseSelection1] = useState<HeartOption | null>(null)
@@ -29,15 +30,18 @@ export default function HomePage() {
 
     return (
         <main className="app">
-    <TopBar
+            <TopBar
                 graphActive={graphActive}
                 setGraphActive={setGraphActive}
+                glowActive={glowActive}
+                setGlowActive={setGlowActive}
+
             />
             <Content active={active} 
                 setActive={setActive}
                 compareState={compareState}
             />
-            <GraphBar active={active} graphActive={graphActive} />
+            <GraphBar active={active} graphActive={graphActive} glowActive={glowActive} />
         </main>
     )
 }
