@@ -17,7 +17,7 @@ const UNHEALTHY_MESH_MAP = {
   mesh5: 'mesh6',
   mesh6: 'mesh3',
 }
-function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect, isUnhealthy}) {
+function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHover, onSelect, isUnhealthy}) {
   const { scene } = useGLTF(url)
   const model = useMemo(() => scene.clone(true), [scene]);
   const epiMeshRef = useRef(null)
@@ -26,7 +26,28 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane, onHover, onSelect, is
     if (!isUnhealthy) return meshName
     return UNHEALTHY_MESH_MAP[meshName] ?? meshName
   }
+  useEffect(() => {
+    model.traverse((child) => {
+      if (!child.isMesh) return
+      const meshName = newMeshName(child.name)
 
+      if (meshName === "mesh0") {
+        child.visible = showEpi
+        return
+      }
+
+      if (ventricleOnly) {
+        // Only LV + RV
+        child.visible =
+          meshName === "mesh1" ||
+          meshName === "mesh4"
+      } else {
+        // Show all internal structures
+        child.visible = true
+      }
+    })
+  }, [model, ventricleOnly, showEpi, isUnhealthy])
+  
   useEffect(() => {
     model.traverse((child) => {
       if (child.isMesh) {
@@ -120,6 +141,7 @@ export function HeartModel({
   frameFolder = "frames",
   bpm = 60,
   showEpi = true,
+  ventricleOnly = false,
   clipPlane = null,
   isPaused = false,
   beatInterval,
@@ -164,6 +186,7 @@ export function HeartModel({
           url={path}
           isVisible={idx === activeFrame}
           showEpi={showEpi}
+          ventricleOnly={ventricleOnly}
           clipPlane={clipPlane}
 
           onHover={onHover}

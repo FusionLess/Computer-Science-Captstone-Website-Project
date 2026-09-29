@@ -1,140 +1,21 @@
 import React, { Suspense, useState, useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
-import { Canvas, useThree, useFrame } from '@react-three/fiber'
-import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { Center, ContactShadows } from '@react-three/drei'
+
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
+import CameraController from './CameraController.jsx'
+import ViewerControls from './ViewerControls.jsx'
+import SliceControls from './SliceControls.jsx'
+
 import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 
-const INITIAL_CAMERA_POS = [-225, -20, -200]
-
-function CameraController({
-    resetTrigger,
-    initialPos = [-225, -20, -200] ,
-    syncEnabled = false,
-    syncedCameraRef,
-    index
-}) {
-    const { camera } = useThree()
-    const controlsRef = useRef(null)
-    const isInteractingRef = useRef(false)
-
-    const targetPos = useRef(new THREE.Vector3())
-    const targetTarget = useRef(new THREE.Vector3())
-
-    const animatingRef = useRef(false)
-    const startTimeRef = useRef(0)
-    const DURATION = 0.8 // Duration in seconds
-
-    const startPos = useRef(new THREE.Vector3())
-    const endPos = useMemo(() => new THREE.Vector3(...initialPos), [initialPos])
-    const startTarget = useRef(new THREE.Vector3())
-    const endTarget = useMemo(() => new THREE.Vector3(0, 0, 0), [])
-    const startUp = useRef(new THREE.Vector3())
-    const endUp = useMemo(() => new THREE.Vector3(0, 1, 0), [])
-
-    useEffect(() => {
-        if (!syncEnabled) {
-            if (syncedCameraRef) syncedCameraRef.current = null
-            return
-        }
-
-        if (index === 0 && controlsRef.current && syncedCameraRef) {
-            syncedCameraRef.current = {
-                position: camera.position.toArray(),
-                target: controlsRef.current.target.toArray(),
-                zoom: camera.zoom,
-            }
-        }
-    }, [syncEnabled, index, camera, syncedCameraRef])
-
-    useEffect(() => {
-        if (resetTrigger === 0 || !controlsRef.current) return
-
-        startPos.current.copy(camera.position)
-        startTarget.current.copy(controlsRef.current.target)
-        startUp.current.copy(camera.up)
-
-        startTimeRef.current = performance.now()
-        animatingRef.current = true
-    }, [resetTrigger, camera])
-
-    useFrame(() => {
-        if (!controlsRef.current) return
-
-        if (animatingRef.current) {
-            const elapsed = (performance.now() - startTimeRef.current) / 1000
-            const rawT = Math.min(elapsed / DURATION, 1.0)
-            const t = 1.0 - Math.pow(1.0 - rawT, 3)
-
-            camera.position.lerpVectors(startPos.current, endPos, t)
-            camera.up.lerpVectors(startUp.current, endUp, t).normalize()
-            controlsRef.current.target.lerpVectors(startTarget.current, endTarget, t)
-
-            camera.lookAt(controlsRef.current.target)
-            controlsRef.current.update()
-
-            if (rawT >= 1.0) {
-                animatingRef.current = false
-                controlsRef.current.saveState()
-
-                if (syncEnabled && syncedCameraRef) {
-                    syncedCameraRef.current = {
-                        position: camera.position.toArray(),
-                        target: controlsRef.current.target.toArray(),
-                        zoom: camera.zoom,
-                    }
-                }
-            }
-            return
-        }
-
-
-        if (syncEnabled && syncedCameraRef?.current && !isInteractingRef.current) {
-            const { position, target, zoom } = syncedCameraRef.current
-
-            targetPos.current.set(...position)
-            targetTarget.current.set(...target)
-
-            // Lerp smoothly at 0.3 factor
-            camera.position.lerp(targetPos.current, 0.3)
-            controlsRef.current.target.lerp(targetTarget.current, 0.3)
-
-            if (Math.abs(camera.zoom - zoom) > 0.0001) {
-                camera.zoom = THREE.MathUtils.lerp(camera.zoom, zoom, 0.3)
-                camera.updateProjectionMatrix()
-            }
-
-            controlsRef.current.update()
-        }
-    })
-
-    const handleControlsChange = () => {
-        if (!syncEnabled || !isInteractingRef.current || !controlsRef.current || !syncedCameraRef) return
-
-        syncedCameraRef.current = {
-            position: camera.position.toArray(),
-            target: controlsRef.current.target.toArray(),
-            zoom: camera.zoom,
-        }
-    }
-
-    return (
-        <OrbitControls
-            ref={controlsRef}
-            makeDefault
-            target={[0, 0, 0]}
-            enablePan={false}
-            minDistance={240}
-            maxDistance={380}
-            minPolarAngle={0}
-            maxPolarAngle={Math.PI}
-            onChange={handleControlsChange}
-            onStart={() => { isInteractingRef.current = true }}
-            onEnd={() => { isInteractingRef.current = false }}
-        />
-    )
+// const INITIAL_CAMERA_POS = [-225, -20, -200]
+const CAMERA_POSITIONS = {
+    frontal: [-225, -20, -200],
+    shortAxis: [-180, 150, -220]
 }
 
 export default function HeartViewer({
@@ -147,21 +28,53 @@ export default function HeartViewer({
     sharedResetTrigger,
     setSharedResetTrigger,
 }) {
+    const defaultPreset =
+        frameFolder === "compensated_heart" ||
+            frameFolder === "decompensated_heart"
+            ? "frontal"
+            : "shortAxis"
+
+    const initialCameraPos = CAMERA_POSITIONS[defaultPreset]
+    const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
 
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
     const [showEpi, setShowEpi] = useState(true)
+    const [ventricleOnly, setVentricleOnly] = useState(false)
+    const [fullView, setFullView] = useState(false)
 
     // sets the preset states you can slice the heart
     const [sliceEnabled, setSliceEnabled] = useState(false)
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
     const [showPlaneGuide, setShowPlaneGuide] = useState(true)
-    const [pitch, setPitch] = useState(-90) // points the normal downward to cut off superior structures
-    const [yaw, setYaw] = useState(0)
-    const [sliceDistance, setSliceDistance] = useState(-20) // initial height at the atrioventricular junction
+    const [pitch, setPitch] = useState(isDefaultShortAxis ? -90 : 0)
+    const [yaw, setYaw] = useState(isDefaultShortAxis ? 0 : 4)
+    const [sliceDistance, setSliceDistance] = useState(isDefaultShortAxis ? -18 : 0)
+
+    useEffect(() => {
+        const shortAxis = defaultPreset === "shortAxis"
+
+        setFullView(false)
+
+        setSliceEnabled(true)
+        setShowPlaneGuide(true)
+        setActivePreset(defaultPreset)
+
+        if (shortAxis) {
+            setPitch(-90)
+            setYaw(0)
+            setSliceDistance(-18)
+        } else {
+            setPitch(0)
+            setYaw(40)
+            setSliceDistance(0)
+        }
+
+        setResetTrigger(prev => prev + 1)
+    }, [frameFolder])
 
     // sets the preset independent depth slices per selection
-    const [activePreset, setActivePreset] = useState('shortAxis')
+    const [activePreset, setActivePreset] = useState(defaultPreset)
     const [presetDepths, setPresetDepths] = useState({
         frontal: 0,
         sagittal: -3,
@@ -179,11 +92,71 @@ export default function HeartViewer({
         }
     }, [sharedResetTrigger])
 
+    const handleFullView = () => {
+        if (!fullView) {
+            // Enter Full View
+            setFullView(true)
+            setVentricleOnly(false)
+            setShowEpi(true)
+
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+            setActivePreset(defaultPreset)
+
+        } else {            
+            const shortAxis = defaultPreset === "shortAxis"
+            setFullView(false)
+            
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+            setActivePreset(defaultPreset)
+
+            if (shortAxis) {
+                setPitch(-90)
+                setYaw(0)
+                setSliceDistance(-18)
+            } else {
+                setPitch(0)
+                setYaw(40)
+                setSliceDistance(0)
+            }
+        }
+    }
+
     const handleResetView = () => {
+        const shortAxis = defaultPreset === "shortAxis"
+        setFullView(false)
+        setVentricleOnly(false)
+        setShowEpi(true)
+        // Restore predetermined slicing
+        setSliceEnabled(true)
+        setShowPlaneGuide(true)
+        setActivePreset(defaultPreset)
+
+        if (shortAxis) {
+            setPitch(-90)
+            setYaw(0)
+            setSliceDistance(-18)
+        } else {
+            setPitch(0)
+            setYaw(40)
+            setSliceDistance(0)
+        }
         if (syncEnabled && setSharedResetTrigger) {
             setSharedResetTrigger((prev) => prev + 1)
         } else {
             setResetTrigger((prev) => prev + 1)
+        }
+    }
+    const handleVentricleView = () => {
+        const next = !ventricleOnly
+        setVentricleOnly(next)
+
+        if (next && activePreset === "shortAxis") {
+            // but move to a useful ventricular depth
+            setPitch(-90)
+            setYaw(0)
+            setSliceDistance(-12)
         }
     }
     // tidies up the onClick part of the button to set the preset values of each slicing view
@@ -204,7 +177,6 @@ export default function HeartViewer({
         }
     }
     const [hoverInfo, setHoverInfo] = useState(null)
-    const [selectedMesh, setSelectedMeshState] = useState(null)
 
     // compute arbitrary 3d normal vector from pitch and yaw
     const clipPlane = useMemo(() => {
@@ -223,46 +195,6 @@ export default function HeartViewer({
         // slices everything on the side the normal points towards
         return new THREE.Plane(normal, sliceDistance)
     }, [sliceEnabled, pitch, yaw, sliceDistance])
-    const [infoPosition, setInfoPosition] = useState({
-        x: 20,
-        y: 20,
-    })
-
-    const [isDragging, setIsDragging] = useState(false)
-
-    const dragOffset = useRef({
-        x: 0,
-        y: 0,
-    })
-    const handlePointerDown = (event) => {
-        setIsDragging(true)
-
-        dragOffset.current = {
-            x: event.clientX - infoPosition.x,
-            y: event.clientY - infoPosition.y,
-        }
-
-        event.currentTarget.setPointerCapture(event.pointerId)
-    }
-
-    const handlePointerMove = (event) => {
-        if (!isDragging) return
-
-        setInfoPosition({
-            x: event.clientX - dragOffset.current.x,
-            y: event.clientY - dragOffset.current.y,
-        })
-    }
-
-    const handlePointerUp = (event) => {
-        setIsDragging(false)
-        event.currentTarget.releasePointerCapture(event.pointerId)
-    }
-    
-    function setSelectedMesh(part) {
-        const partName = typeof part === 'string' ? part : part?.name
-        setSelectedMeshState(partName ?? null)
-    }
 
     return (
       
@@ -284,7 +216,7 @@ export default function HeartViewer({
                 </h3>
             )}
             <Canvas
-                camera={{ position: [-225, -20, -200], fov: 45 }}
+                camera={{ position: initialCameraPos, fov: 45 }}
                 gl={{
                     logarithmicDepthBuffer: true,
                     antialias: true,
@@ -301,6 +233,7 @@ export default function HeartViewer({
                             frameFolder={frameFolder}
                             bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
                             showEpi={showEpi}
+                            ventricleOnly={ventricleOnly}
                             clipPlane={clipPlane}
                             isPaused={isPaused}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
@@ -332,7 +265,8 @@ export default function HeartViewer({
 
                 <CameraController
                     resetTrigger={resetTrigger}
-                    initialPos={INITIAL_CAMERA_POS}
+                    initialPos={initialCameraPos}
+                    preset={defaultPreset}
                     syncEnabled={syncEnabled}
                     syncedCameraRef={syncedCameraRef}
                     index={index}
@@ -358,319 +292,43 @@ export default function HeartViewer({
                 {HeartParts[hoverInfo.name]?.name ?? hoverInfo.name}
             </div>
             )}
+            
+            {!syncEnabled && (
+                <>
+                    <ViewerControls
+                        isPaused={isPaused}
+                        setIsPaused={setIsPaused}
+                        syncEnabled={syncEnabled}
+                        showEpi={showEpi}
+                        setShowEpi={setShowEpi}
+                        ventricleOnly={ventricleOnly}
+                        setVentricleOnly={setVentricleOnly}
+                        fullView={fullView}
+                        handleFullView={handleFullView}
+                        handleResetView={handleResetView}
+                        handleVentricleView={handleVentricleView}
 
-            {/* Floating Control Panel */}
-            <div
-                style={{
-                    position: 'absolute',
-                    bottom: '24px',
-                    left: '50%',
-                    transform: 'translate(-50%)',
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: '12px',
-                    zIndex: 10,
-                    pointerEvents: 'none',
-                }}
-            >
-                {/* Reset View Button */}
-                <button
-                    type="button"
-                    onClick={handleResetView}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '8px 12px',
-                        fontSize: '8px',
-                        fontWeight: 200,
-                        borderRadius: '6px',
-                        height: '50px',
-                        width: '50px',
-                        boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
-                        background: '#f5f5f5',
-                        color: 'grey',
-                        cursor: 'pointer',
-                        pointerEvents: 'auto',
-                        transition: 'transform 0.1s ease, background 0.2s',
-                    }}
-                    onMouseDown={(e) => (e.currentTarget.style.transform = 'scale(0.95)')}
-                    onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                    onMouseEnter={(e) => (e.target.style.background = '#e3e3e3')}
-                    onMouseLeave={(e) => (e.target.style.background = '#f5f5f5',
-                        e.currentTarget.style.transform = 'scale(1)')}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         className="lucide lucide-rotate-ccw preview-icon">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                        <path d="M3 3v5h5"/>
-                    </svg>
-                    RESET
-                </button>
-
-                {/* Pause Button */}
-                <button
-                    type="button"
-                    onClick={() => setIsPaused((prev) => !prev)}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        pointerEvents: 'auto',
-                        padding: '8px 12px',
-                        fontSize: '8px',
-                        fontWeight: 200,
-                        borderRadius: '6px',
-                        border: 'none',
-                        height: '50px',
-                        width: '50px',
-                        boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
-                        color: isPaused ? '#f2ece4' :  'grey',
-                        cursor: 'pointer',
-                        background: isPaused ? '#9e0000' : '#f5f5f5',
-                    }}
-                >
-                    {isPaused ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             className="lucide lucide-play preview-icon">
-                            <path
-                                d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/>
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             className="lucide lucide-pause preview-icon">
-                            <rect x="14" y="3" width="5" height="18" rx="1"/>
-                            <rect x="5" y="3" width="5" height="18" rx="1"/>
-                        </svg>
-                    )}
-                    {isPaused ? 'RESUME' : 'PAUSE'}
-                </button>
-
-                {/* Epicardium Toggle */}
-                <button
-                    onClick={() => setShowEpi(showEpi => !showEpi)}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '8px 12px',
-                    fontSize: '8px',
-                    pointerEvents: 'auto',
-                    fontWeight: 200,
-                    borderRadius: '6px',
-                    border: 'none',
-                    height: '50px',
-                    width: '50px',
-                    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.2)',
-                    color: showEpi ? '#f5f5f5' :  'grey',
-                    cursor: 'pointer',
-                    background: showEpi ? '#9e0000' : '#f5f5f5',
-                }}>
-                    {showEpi ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             className="lucide lucide-circle-dot-dashed preview-icon">
-                            <path d="M10.1 2.18a9.93 9.93 0 0 1 3.8 0"/>
-                            <path d="M17.6 3.71a9.95 9.95 0 0 1 2.69 2.7"/>
-                            <path d="M21.82 10.1a9.93 9.93 0 0 1 0 3.8"/>
-                            <path d="M20.29 17.6a9.95 9.95 0 0 1-2.7 2.69"/>
-                            <path d="M13.9 21.82a9.94 9.94 0 0 1-3.8 0"/>
-                            <path d="M6.4 20.29a9.95 9.95 0 0 1-2.69-2.7"/>
-                            <path d="M2.18 13.9a9.93 9.93 0 0 1 0-3.8"/>
-                            <path d="M3.71 6.4a9.95 9.95 0 0 1 2.7-2.69"/>
-                            <circle cx="12" cy="12" r="1"/>
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             className="lucide lucide-circle-dot preview-icon">
-                            <circle cx="12" cy="12" r="1"/>
-                            <circle cx="12" cy="12" r="10"/>
-                        </svg>
-                    )}
-                    {showEpi ? 'HIDE EPI' : 'SHOW EPI'}
-                </button>
-            </div>
-
-            <div
-                style={{
-                    position: 'absolute',
-                    bottom: '50%',
-                    transform: 'translateY(50%)',
-                    ...(index === 0 ? {left: '24px', direction: 'ltr',} : {right: '24px', direction: 'rtl',}),
-                    // right: '24px',
-                    padding: '0',
-                    alignItems: 'center',
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                    display: 'flex',
-                    flexDirection: 'row',
-
-                    gap: '12px',
-                    zIndex: 10,
-                }}
-            >
-                <button onClick={() => setSliceControlEnabled(!sliceControlEnabled)}
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: "40px",
-                    background: 'rgba(230, 230, 230, 0.5)',
-                    borderRadius: '12px',
-                    height: '40px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-                    backdropFilter: 'blur(8px)',
-                }}>
-                    {sliceControlEnabled ?  "〇" : "◐"}
-                </button>
-
-                {/* Slicing Controls */}
-                {sliceControlEnabled && (
-                <div style={{
-                    background: 'rgba(230, 230, 230, 0.5)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
-                    backdropFilter: 'blur(8px)',
-                    padding: '8px',
-                    boxSizing: 'border-box',
-                }}>
-                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
-                        <span style={{ fontWeight: 600 }}>Enable Oblique Slice</span>
-                        <input
-                            type="checkbox"
-                            checked={sliceEnabled}
-                            onChange={(e) => setSliceEnabled(e.target.checked)}
-                            style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                        />
-                    </label>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {/* Guide Plane Visibility Toggle */}
-                        <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: 'black' }}>
-                            <span>Show Slice Indicator</span>
-                            <input
-                                type="checkbox"
-                                checked={showPlaneGuide}
-                                onChange={(e) => setShowPlaneGuide(e.target.checked)}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </label>
-
-                        {/* Quick Clinical Views */}
-                        <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>
-                            <button
-                                type="button"
-                                onClick={() => handlePresetSelect('frontal', 0, 40)}
-                                style={{
-                                    padding: '4px 6px',
-                                    fontSize: '10px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: activePreset === 'frontal' ? '#3498db' : '#2c2c30',
-                                    color: '#fff',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Frontal
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handlePresetSelect('sagittal', 0, 130)}
-                                style={{
-                                    padding: '4px 6px',
-                                    fontSize: '10px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: activePreset === 'sagittal' ? '#3498db' : '#2c2c30',
-                                    color: '#fff',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Sagittal
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => handlePresetSelect('shortAxis', -90, 0)}
-                                style={{
-                                    padding: '4px 6px',
-                                    fontSize: '10px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    background: activePreset === 'shortAxis' ? '#3498db' : '#2c2c30',
-                                    color: '#fff',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Short-Axis
-                            </button>
-                        </div>
-
-                        {/* Pitch / Elevation */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
-                                <span>PITCH (TILT)</span>
-                                <span>{pitch}°</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="-90"
-                                max="90"
-                                value={pitch}
-                                onChange={(e) => {
-                                    setPitch(Number(e.target.value))
-                                    setActivePreset(null)
-                                }}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </div>
-
-                        {/* Yaw / Rotation */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
-                                <span>YAW (ROTATION)</span>
-                                <span>{yaw}°</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="360"
-                                value={yaw}
-                                onChange={(e) => {
-                                    setYaw(Number(e.target.value))
-                                    setActivePreset(null)
-                                }}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </div>
-
-                        {/* Depth Distance */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'black' }}>
-                                <span>PLANE DEPTH</span>
-                                <span>{sliceDistance} mm</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="-100"
-                                max="100"
-                                value={sliceDistance}
-                                onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </div>
-                    </div>
-                </div>
-                )}
-            </div>
+                    />
+                    <SliceControls
+                        index={index}
+                        sliceControlEnabled={sliceControlEnabled}
+                        setSliceControlEnabled={setSliceControlEnabled}
+                        sliceEnabled={sliceEnabled}
+                        setSliceEnabled={setSliceEnabled}
+                        showPlaneGuide={showPlaneGuide}
+                        setShowPlaneGuide={setShowPlaneGuide}
+                        activePreset={activePreset}
+                        setActivePreset={setActivePreset}
+                        pitch={pitch}
+                        setPitch={setPitch}
+                        yaw={yaw}
+                        setYaw={setYaw}
+                        sliceDistance={sliceDistance}
+                        handlePresetSelect={handlePresetSelect}
+                        handleDepthSliderChange={handleDepthSliderChange}
+                    />
+                </>
+            )}
         </div>
     )
 }
