@@ -5,7 +5,7 @@
 
 :root {
   --bar-height: 65px;
-  --graph-height: 150px;
+  --graph-height: 120px;
   --left-panel-width: 300px;
   --right-panel-width: 450px;
   --settings-panel-width: 300px;
@@ -28,21 +28,20 @@
   --control-background: #252F3D;
   --selected-suboptions: #E0EFFF;
   --heartrate-text-slider: #0066FF;
+  --secondary-cards-background: #f7f8fa;
 
   font-family: 'Inter', sans-serif;
 
   --side-margin: 24px;
+  --mobile-width: 800px;
 
   --green-gradient-start: rgba(86, 190, 123, 0.28);
-  --green-gradient-end: rgba(86, 190, 123, 0);
   --green-text: #176c3a;
 
   --amber-gradient-start: rgba(241, 181, 56, 0.30);
-  --amber-gradient-end: rgba(241, 181, 56, 0);
   --amber-text: #8b5d00;
 
   --red-gradient-start: rgba(220, 80, 70, 0.26);
-  --red-gradient-end: rgba(220, 80, 70, 0);
   --red-text: #b2352b;
 }
 

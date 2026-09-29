@@ -1,7 +1,7 @@
 import '../App.css'
 import TopBar from '../components/layout/top_layout/TopBar.tsx'
 import Content from '../components/layout/middle_layout/Content.tsx'
-import GraphBar from '../components/layout/bottom_layout/GraphBar.tsx'
+import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
 import { useState } from 'react'
 import type { HeartState } from "../components/types/states.ts";
 import type { CompareState } from "../components/types/compare.ts"
@@ -49,7 +49,7 @@ export default function HomePage() {
                 setActive={setActive}
                 compareState={compareState}
             />
-            <GraphBar active={selection1} graphActive={graphActive} glowActive={glowActive} />
+            <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>
     )
 }

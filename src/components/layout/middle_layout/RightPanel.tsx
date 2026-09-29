@@ -6,10 +6,11 @@ import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
 
 function RightBox({compareState, selectedPart} :
                   {compareState : CompareState, selectedPart: string | null}) {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches
+    const isMobile = window.matchMedia("(width < 800px)").matches;
     const active = compareState.selection1
 
-    const [isOpen, setIsOpen] = useState(!isMobile)
+    const [isOpen, setIsOpen] = useState(!isMobile);
+
     useEffect(() => {
         if (compareState.isComparing) {
             setIsOpen(false)

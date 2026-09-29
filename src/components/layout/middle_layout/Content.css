@@ -3,5 +3,28 @@
     box-sizing: border-box;
     background: var(--home-background);
     flex: 1;
-    height: calc(100vh - var(--graph-height) - var(--bar-height));
+    min-height: 0;
+    position: relative;
+}
+
+.content button {
+    transition:
+            translate 180ms ease,
+            scale 180ms ease,
+}
+
+.content button:active {
+    translate: 0 0;
+    scale: 0.97;
+}
+
+@media (max-width: 800px) {
+    .content {
+        margin-top: var(--bar-height);
+        position: relative;
+        flex-direction: column;
+        flex: 1 0 auto;
+        min-height: 600px;
+        padding-bottom: 40px;
+    }
 }

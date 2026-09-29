@@ -106,7 +106,7 @@
     display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     .logo img {
         height: 50px;
     }
@@ -148,5 +148,10 @@
         border: 1px solid var(--divider);
         border-radius: 12px;
         z-index: 30;
+    }
+
+    .topbar {
+        position: fixed;
+        width: 100%;
     }
 }

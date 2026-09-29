@@ -104,3 +104,23 @@ button.compare-button.not-comparing {
     z-index: 1;
     pointer-events: none;
 }
+
+@media (width < 800px) {
+    .middle-panel {
+        flex-direction: column;
+        min-height: 400px;
+        position: relative;
+        padding-top: 54px;
+    }
+
+    .middle-panel > button.compare-button {
+        position: absolute;
+        top: 10px;
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    .middle-panel:has(.sync) {
+        padding-top: 104px;
+    }
+}

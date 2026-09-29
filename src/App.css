@@ -1,8 +1,15 @@
 .app {
     display: flex;
-    height: 100%;
+    height: 100dvh;
     flex: 1;
     flex-direction: column;
     background: var(--home-background);
     color: var(--body-texts);
+    overflow: hidden;
+}
+
+@media (width < 800px) {
+    .app {
+        overflow-y: auto;
+    }
 }

@@ -46,6 +46,22 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
                 {isComparing ? "Stop Comparing" : "Compare"}
             </button>
 
+            {isComparing &&
+                <button
+                    className="sync"
+                    onClick={() => (setSyncEnabled((syncEnabled) => !syncEnabled))}
+                    style={{
+                        background: syncEnabled ? "var(--selected-condition-background)" : "var(--cards-background)",
+                        color: syncEnabled ? "var(--cards-background)" : "var(--body-texts)",
+                    }}
+                >
+                    <p style={{fontSize: '20px', fontWeight: 500, margin: '0', paddingBottom: '2px'}}>
+                        🗘
+                    </p>
+                    Sync
+                </button>
+            }
+
             <div className="middle-panel-viewers">
                 <HeartPanel
                     active={selection1}
@@ -53,22 +69,6 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
                     syncState={syncState}
                     setSelectedPart={setSelectedPart}
                 />
-
-                {isComparing &&
-                    <button
-                        className="sync"
-                        onClick={() => (setSyncEnabled((syncEnabled) => !syncEnabled))}
-                        style={{
-                            background: syncEnabled ? "var(--selected-condition-background)" : "var(--cards-background)",
-                            color: syncEnabled ? "var(--cards-background)" : "var(--body-texts)",
-                        }}
-                    >
-                        <p style={{fontSize: '20px', fontWeight: 500, margin: '0', paddingBottom: '2px'}}>
-                            🗘
-                        </p>
-                        Sync
-                    </button>
-                }
 
                 {isComparing && (
                     <HeartPanel

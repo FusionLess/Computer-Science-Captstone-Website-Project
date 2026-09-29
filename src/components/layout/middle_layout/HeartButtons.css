@@ -8,6 +8,18 @@
     align-items: center;
 }
 
+.heart_buttons button span, .heart_buttons button svg {
+    transition:
+            translate 80ms ease,
+            scale 80ms ease,
+            box-shadow 180ms ease;
+}
+
+.heart_buttons button:hover span, .heart_buttons button:hover svg {
+    translate: 0 -2px;
+    scale: 1.03;
+}
+
 .toggle_buttons {
     display: flex;
     flex-direction: row;
@@ -39,6 +51,7 @@
 .toggle_buttons > button.active {
     background: var(--selected-condition-background);
     color: var(--selected-suboptions);
+    z-index: 2;
 }
 
 .options_buttons {
@@ -59,11 +72,18 @@
 }
 
 .options_buttons button {
+    display: inline-flex;
     min-height: 30px;
     padding: 0 22px;
     font-size: 12px;
-    width: 130px;
+    width: 140px;
+    gap: 4px;
     border-radius: 20px;
+}
+
+.heart_option_icon {
+    display: block;
+    flex-shrink: 0;
 }
 
 .options_buttons button.selected.green {
@@ -99,7 +119,7 @@
     transition: max-width 180ms ease, opacity 180ms ease;
 }
 
-@container heart-panel (width < 600px) {
+@container heart-panel (width < 700px) {
     .heart_buttons > .toggle_buttons {
         flex: 0 1 auto;
         max-width: calc(100% - 20px);
@@ -108,7 +128,7 @@
 
     .heart_buttons > .toggle_buttons > button {
         flex-shrink: 0;
-        gap: 0;
+        gap: 4px;
         padding: 0 12px;
         transition: gap 180ms ease;
     }
@@ -118,12 +138,61 @@
         opacity: 0;
     }
 
+    .heart_buttons .active .heart_button_label {
+        max-width: 100px;
+        opacity: 1;
+    }
+
     .heart_buttons > .toggle_buttons > button:hover {
         gap: 8px;
     }
 
     .heart_buttons > .toggle_buttons > button:hover .heart_button_label {
         max-width: 100px;
+        opacity: 1;
+    }
+}
+
+
+
+
+@container heart-panel (width < 500px) {
+    .heart_buttons .active .heart_button_label {
+        max-width: 0;
+        opacity: 0;
+    }
+
+    .options_buttons button {
+        min-width: 44px;
+        width: auto;
+        transition: gap 180ms ease;
+    }
+
+    .heart_option_icon {
+        display: block;
+        flex-shrink: 0;
+    }
+
+    .options_buttons .green .heart_option_icon { color: var(--green-text); }
+    .options_buttons .amber .heart_option_icon { color: var(--amber-text); }
+    .options_buttons .blue .heart_option_icon { color: #317e9e; }
+    .options_buttons .red .heart_option_icon { color: var(--red-text); }
+
+    .heart_buttons .options_buttons .heart_option_label {
+        display: inline-block;
+        max-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        opacity: 0;
+        transition: max-width 180ms ease, opacity 180ms ease;
+    }
+
+    .options_buttons button:hover {
+        gap: 6px;
+    }
+
+    .heart_buttons .options_buttons button:hover .heart_option_label{
+        max-width: 140px;
         opacity: 1;
     }
 }
