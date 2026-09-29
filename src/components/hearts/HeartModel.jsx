@@ -156,6 +156,7 @@ export function HeartModel({
   const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+18) % NUM_FRAMES}.glb`)
   const [activeFrame, setActiveFrame] = useState(0)
   const animElapsed = useRef(0)
+  const totalElapsed = useRef(0)
   const currentFrameRef = useRef(0)
 
   const safeBpm = Number(bpm) || 60
@@ -167,6 +168,10 @@ export function HeartModel({
 
     // Cap delta to prevent frame spikes when dragging the slider
     const dt = Math.min(delta, 0.05)
+
+    // The graph spans multiple beats, so its elapsed time must not wrap each cycle.
+    totalElapsed.current += dt
+    beatInterval?.(totalElapsed.current)
 
     // 1. Total R-R interval in seconds
     const tCycle = 60.0 / safeBpm
