@@ -10,7 +10,7 @@
     outline: black;
     border-radius: 20px;
     padding: 20px;
-    background: var(--background-colour-3);
+    background: var(--background-colour);
     display: flex;
     flex-direction: column;
 }
@@ -19,6 +19,25 @@
     top: 0;
     background: rgba(0, 0, 0, 0.1);
     z-index: 15;
+}
+
+.select_panel {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.selectables button {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.selectables button:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+}
+
+.selectables button.selected,
+.selectables button.selected:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
 }
 
 .selections {
@@ -32,29 +51,37 @@
 
 .column {
     display: flex;
-    width: 25%;
+    flex: 1;
+    width: auto;
     flex-direction: column;
     align-items: center;
 }
 
 .labels {
-
+    width: 100%;
+    text-align: center;
 }
 
 .selectables {
     display: flex;
     flex-direction: column;
+    align-items: center;
     width: 100%;
     gap: 10px;
 }
 
 .selectables button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     height: 100px;
+    text-align: center;
 }
 
 .selectables .selected {
     background: var(--button-border);
-    color: antiquewhite;
+    color: var(--contrast-text-colour);
 }
 
 .selectables :hover {
@@ -64,13 +91,16 @@
 .confirm_panel {
     display: flex;
     align-items: flex-end;
+    justify-content: center;
     gap: 10px;
 }
 
 .confirm_panel button {
+    border: 1px solid var(--box-border);
     width: 20%;
 }
 
 .confirm_panel button:hover {
-    background: #ededed;
+    background: var(--colour-accent1);
+    color: var(--contrast-text-colour);
 }

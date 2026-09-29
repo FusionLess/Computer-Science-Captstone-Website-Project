@@ -3,19 +3,45 @@ import TopBar from '../components/layout/top_layout/TopBar.tsx'
 import Content from '../components/layout/middle_layout/Content.tsx'
 import GraphBar from '../components/layout/bottom_layout/GraphBar.tsx'
 import { useState } from 'react'
-import type {HeartState} from "../components/types/states.ts";
+import type { HeartOption, HeartState } from "../components/types/states.ts";
+import type { CompareState } from "../components/types/compare.ts"
 
 export default function HomePage() {
     const [active, setActive] = useState<HeartState>({
         category: "healthy",
-        option: "Normal"
+        option: "Healthy"
     });
+
+    const [graphActive, setGraphActive] = useState<boolean>(true)
+    const [glowActive, setGlowActive] = useState(true)
+
+    const [isComparing, setIsComparing] = useState(false)
+    const [selection1, chooseSelection1] = useState<HeartOption | null>(null)
+    const [selection2, chooseSelection2] = useState<HeartOption | null>(null)
+
+    const compareState: CompareState = {
+        selection1,
+        selection2,
+        chooseSelection1,
+        chooseSelection2,
+        isComparing,
+        setIsComparing,
+    }
 
     return (
         <main className="app">
-            <TopBar />
-            <Content active={active} setActive={setActive} />
-            <GraphBar />
+            <TopBar
+                graphActive={graphActive}
+                setGraphActive={setGraphActive}
+                glowActive={glowActive}
+                setGlowActive={setGlowActive}
+
+            />
+            <Content active={active} 
+                setActive={setActive}
+                compareState={compareState}
+            />
+            <GraphBar active={active} graphActive={graphActive} glowActive={glowActive} />
         </main>
     )
 }

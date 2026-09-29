@@ -1,0 +1,20 @@
+.heart_part_info {
+    flex: 0 0 300px;
+    box-sizing: border-box;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+}
+.heart_part_info h3 {
+    margin: 0;
+}
+
+.heart_part_description h4{
+    margin-bottom: 10px;
+}
+
+.heart_part_description p{
+    margin-top: 0;
+}
