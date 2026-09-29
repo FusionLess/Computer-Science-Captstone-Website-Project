@@ -1,0 +1,103 @@
+.heart-controller {
+    --control-button-width: 60px;
+    --control-button-margin: 2px;
+    position: absolute;
+    bottom:10px;
+    left: var(--side-margin);
+    /*transform: translate(-50%);*/
+    font-family: system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: row;
+    z-index: 10;
+    pointer-events: none;
+
+    background: color-mix(in srgb, var(--cards-background) 70%, transparent);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /*box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);*/
+}
+
+.heart-controller button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    margin: var(--control-button-margin);
+    font-size: 8px;
+    font-weight: 200;
+    border-radius: 20px;
+    height: 45px;
+    gap: 2px;
+    width: var(--control-button-width);
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: transparent;
+    color: grey;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.heart-controller-actions {
+    display: flex;
+    width: calc(3 * (var(--control-button-width) + 2 * var(--control-button-margin)));
+    overflow: hidden;
+    opacity: 1;
+    transition: width 250ms ease, opacity 200ms ease;
+}
+
+.heart-controller.is-collapsed .heart-controller-actions {
+    width: 0;
+    opacity: 0;
+}
+
+.heart-controller .reset-button {
+    transition: transform 0.1s ease, background 0.2s;
+}
+
+.heart-controller .reset-button:active:hover {
+    transform: scale(0.95);
+}
+
+.heart-controller .pause-button,
+.heart-controller .epi-button {
+    border: none;
+}
+
+.heart-controller .pause-button.is-active {
+    color: var(--active-labels);
+    background: color-mix(in srgb, var(--active-labels) 20%, transparent);
+}
+
+.heart-controller .epi-button.is-active {
+    color: var(--active-labels);
+    background: color-mix(in srgb, var(--active-labels) 20%, transparent);
+}
+
+.heart-controller .show-controls-button {
+    position: relative;
+    font-weight: bolder;
+    text-wrap: auto;
+}
+
+.heart-controller .show-controls-button::after {
+    content:"";
+    position: absolute;
+    left: var(--control-button-width);
+    height: 80%;
+    width: 2px;
+    border-radius: 8px;
+    background: var(--divider);
+    transition: opacity 200ms ease;
+}
+
+.heart-controller.is-collapsed .show-controls-button::after {
+    opacity: 0;
+}
+
+/*.heart-controller .show-controls-button.hiding {*/
+/*    color: var(--active-labels);*/
+/*    background: color-mix(in srgb, var(--active-labels) 20%, transparent);*/
+/*}*/
