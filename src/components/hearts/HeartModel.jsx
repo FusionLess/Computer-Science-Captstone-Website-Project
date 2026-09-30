@@ -140,7 +140,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       onHover?.(null)
     }}
 
-    onClick={(event) => {
+    onPointerDown={(event) => {
       event.stopPropagation()
       const rawMeshName = event.object.name
       const meshName = newMeshName(rawMeshName)
