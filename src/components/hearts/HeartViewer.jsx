@@ -60,7 +60,7 @@ export default function HeartViewer({
     const initialCameraPos = CAMERA_POSITIONS[defaultPreset]
     const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
-
+    const [viewMode, setViewMode] = useState('3d')
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
 
@@ -343,22 +343,23 @@ export default function HeartViewer({
     return (
       
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
-             {title && (
-                <h3
-                    style={{
-                        position: 'absolute',
-                        top: '15px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        margin: 0,
-                        zIndex: 10,
-                        textAlign: 'center',
-                        whiteSpace: 'nowrap'
-                    }}
-                >
-                    {title}
-                </h3>
-            )}
+            {/* {title && (*/}
+            {/*    <h3*/}
+            {/*        style={{*/}
+            {/*            position: 'absolute',*/}
+            {/*            top: '15px',*/}
+            {/*            left: '50%',*/}
+            {/*            transform: 'translateX(-50%)',*/}
+            {/*            margin: 0,*/}
+            {/*            zIndex: 10,*/}
+            {/*            textAlign: 'center',*/}
+            {/*            whiteSpace: 'nowrap'*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        {title}*/}
+            {/*    </h3>*/}
+            {/*)}*/}
+
             <Canvas
                 camera={{ position: initialCameraPos, fov: 45 }}
                 gl={{

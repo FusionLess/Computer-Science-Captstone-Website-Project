@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { HeartModel } from './HeartModel';
+import { HeartModel } from '../../HeartModel';
 
 type ViewMode = '3d' | 'mri';
 

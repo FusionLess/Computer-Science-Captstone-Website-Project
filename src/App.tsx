@@ -14,6 +14,7 @@ export default function App() {
                     </HeartMonitorProvider>
                 }/>
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/mri" element={<AboutPage />} />
             </Routes>
         </BrowserRouter>
     );
