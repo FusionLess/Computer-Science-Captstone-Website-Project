@@ -6,7 +6,6 @@ import { Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
-import ViewerControls from './ViewerControls.jsx'
 import SliceControls from './SliceControls.jsx'
 
 import { HeartParts } from '../../data/HeartParts.ts'
@@ -297,13 +296,6 @@ export default function HeartViewer({
             {!syncEnabled && (
                 <>
                     <HeartController
-                        handleResetView={handleResetView}
-                        isPaused={isPaused}
-                        setIsPaused={setIsPaused}
-                        showEpi={showEpi}
-                        setShowEpi={setShowEpi}
-                    />
-                    <ViewerControls
                         isPaused={isPaused}
                         setIsPaused={setIsPaused}
                         syncEnabled={syncEnabled}
@@ -315,7 +307,6 @@ export default function HeartViewer({
                         handleFullView={handleFullView}
                         handleResetView={handleResetView}
                         handleVentricleView={handleVentricleView}
-
                     />
                     <SliceControls
                         index={index}

@@ -42,7 +42,7 @@
 
 .heart-controller-actions {
     display: flex;
-    width: calc(3 * (var(--control-button-width) + 2 * var(--control-button-margin)));
+    width: fit-content;
     overflow: hidden;
     opacity: 1;
     transition: width 250ms ease, opacity 200ms ease;
