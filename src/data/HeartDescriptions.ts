@@ -38,7 +38,7 @@ export const DESCRIPTIONS = {
 
 export const PAGE_DESCRIPTIONS = {
     healthy : {
-        heading: "Healthy Heart",
+        heading: "The Heart",
         subheading: "Te Manawa",
         description: "The heart pumps blood around the body to provide all the organ systems with oxygen and nutrients.\n\n" +
             "The ECG trace represents the electrical waves in the heart that simulate contraction and generate pressure to pump blood"

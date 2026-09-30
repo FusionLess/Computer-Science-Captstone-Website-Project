@@ -126,7 +126,6 @@ export default function HeartController({
                 <button
                     type="button"
                     onClick={handleFullView}
-                    className={`full-view-button${fullView ? ' is-active' : ''}`}
                 >
                     FULL VIEW
                 </button>

@@ -171,8 +171,8 @@ export default function HeartViewer({
 
         setLocalFullView(false)
 
-        setLocalSliceEnabled(true)
-        setLocalShowPlaneGuide(true)
+        setLocalSliceEnabled(false)
+        setLocalShowPlaneGuide(false)
         setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -273,8 +273,8 @@ export default function HeartViewer({
         setVentricleOnly(false)
         setShowEpi(true)
         // Restore predetermined slicing
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
         setActivePreset(defaultPreset)
 
         if (shortAxis) {

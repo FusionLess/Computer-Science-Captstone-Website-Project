@@ -23,8 +23,8 @@ export default function HomePage() {
     })
 
     const [selection2, chooseSelection2] = useState<HeartState>({
-        category: "attack",
-        option: "Minor",
+        category: "healthy",
+        option: "Healthy",
     })
 
     const compareState: CompareState = {
