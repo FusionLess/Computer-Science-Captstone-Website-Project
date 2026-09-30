@@ -1,8 +1,7 @@
 export const DESCRIPTIONS = {
     Healthy : {
         heading: "Healthy Heart",
-        description: "The heart pumps blood around the body to provide all the organ systems with oxygen and nutrients.\n\n" +
-            "The ECG trace represents the electrical waves in the heart that simulate contraction and generate pressure to pump blood"
+        description: "Explore various heart states by selecting the different heart states above the heart. View each heart states electrocardiograms, pressure and volume in the graphs below."
     },
     Minor : {
         heading: "Minor Heart Attack",
@@ -34,5 +33,32 @@ export const DESCRIPTIONS = {
             "A heart with decompensated failure is weak and has problems with contraction and pumping of blood.\n\n" +
             "Patients with decompensated heart failure will have symptoms, even at rest. These symptoms include dizziness, breathing difficulties, inability to exercise, and chest pains.\n\n" +
             "Treatments for this disease include ACE inhibitors, beta blockers, and diuretics, which work to lower blood pressure and decrease the load on the heart.   "
+    }
+}
+
+export const PAGE_DESCRIPTIONS = {
+    healthy : {
+        heading: "Healthy Heart",
+        subheading: "Te Manawa",
+        description: "The heart pumps blood around the body to provide all the organ systems with oxygen and nutrients.\n\n" +
+            "The ECG trace represents the electrical waves in the heart that simulate contraction and generate pressure to pump blood"
+    },
+    attack : {
+        heading: "Heart Attack",
+        subheading: "Coronary Arteries",
+        description: "The heart pumps blood to itself through blood vessels called coronary arteries (not shown in the 3D model). A heart attack occurs when blood flow is obstructed by a narrowing of these arteries.\n\n" +
+            "Good lifestyle choices help to keep the coronary arteries healthy and prevent heart attacks. Learn more about how lifestyle factors can affect the heart in the following movie clips."
+    },
+    electricity : {
+        heading: "Heart Electricity",
+        subheading: "Electrocardiograms",
+        description: "Electrical waves (coloured yellow) pass through the heart to trigger contraction of the muscular walls. The heart needs coordinated electrical waves and smooth contraction to pump effectively.\n\n" +
+            "The electrical waves in the heart can be measured by placing electrodes on the chest. This is called an electrocardiogram (ECG) recording, as shown on the right.",
+    },
+    failure : {
+        heading: "Heart Failure",
+        subheading: "Chronic Problems",
+        description: "Long-term problems such as high blood pressure or untreated heart attacks can eventually cause the heart to fail.\n\n" +
+            "In heart failure, the heart needs to work harder than normal to meet the demands of the body. This can lead to changes in the heart's shape and stiffness, and its ability to contract and relax."
     }
 }

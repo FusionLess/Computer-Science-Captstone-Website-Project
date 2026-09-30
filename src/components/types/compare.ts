@@ -1,10 +1,10 @@
-import type {HeartOption} from "./states.ts";
+import type {HeartState} from "./states.ts";
 
 export type CompareState = {
-    selection1: HeartOption | null;
-    selection2: HeartOption | null;
-    chooseSelection1: (v: HeartOption | null) => void;
-    chooseSelection2: (v: HeartOption | null) => void;
-    isComparing: boolean;
-    setIsComparing: (v: boolean) => void;
-};
+    selection1: HeartState
+    selection2: HeartState
+    chooseSelection1: (value: HeartState) => void
+    chooseSelection2: (value: HeartState) => void
+    isComparing: boolean
+    setIsComparing: (value: boolean) => void
+}

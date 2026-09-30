@@ -62,7 +62,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive}
         <div className="settings_button">
             <button
                 onClick={() => setOpen(!isOpen)}
-                className={(isOpen ? "active" : "inactive")}
+                className={`nav_button${isOpen ? " active" : ""}`}
                 aria-label={isOpen ? "Close settings" : "Open settings"}
                 aria-expanded={isOpen}
             >

@@ -6,11 +6,11 @@ import { Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
-import ViewerControls from './ViewerControls.jsx'
 import SliceControls from './SliceControls.jsx'
 
 import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
+import HeartController from './HeartController'
 
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
@@ -103,10 +103,10 @@ export default function HeartViewer({
             setShowPlaneGuide(false)
             setActivePreset(defaultPreset)
 
-        } else {            
+        } else {
             const shortAxis = defaultPreset === "shortAxis"
             setFullView(false)
-            
+
             setSliceEnabled(true)
             setShowPlaneGuide(true)
             setActivePreset(defaultPreset)
@@ -228,7 +228,7 @@ export default function HeartViewer({
                 <directionalLight position={[-250, -250, 200]} intensity={0.6} />
 
                 <Suspense fallback={null}>
-                    <Center>
+                    <Center position={[0,15,0]}>
                             <HeartModel
                             frameFolder={frameFolder}
                             bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
@@ -249,7 +249,7 @@ export default function HeartViewer({
                         position={[0, -90, 0]}   // Sits just beneath the lowest tip of the apex
                         opacity={0.65}           // Shadow intensity
                         scale={220}              // Floor shadow spread
-                        blur={2.0}               // Softness edge blur
+                        blur={5.0}               // Softness edge blur
                         far={300}                // Vertical projection distance
                         resolution={512}
                         color="#050508"
@@ -292,10 +292,10 @@ export default function HeartViewer({
                 {HeartParts[hoverInfo.name]?.name ?? hoverInfo.name}
             </div>
             )}
-            
+
             {!syncEnabled && (
                 <>
-                    <ViewerControls
+                    <HeartController
                         isPaused={isPaused}
                         setIsPaused={setIsPaused}
                         syncEnabled={syncEnabled}
@@ -307,7 +307,6 @@ export default function HeartViewer({
                         handleFullView={handleFullView}
                         handleResetView={handleResetView}
                         handleVentricleView={handleVentricleView}
-
                     />
                     <SliceControls
                         index={index}
