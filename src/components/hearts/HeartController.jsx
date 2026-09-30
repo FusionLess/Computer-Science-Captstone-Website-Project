@@ -103,6 +103,7 @@ export default function HeartController({
                 <button
                     type="button"
                     onClick={handleVentricleView}
+                    className={`ventricle-button${ventricleOnly ? ' is-active' : ''}`}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -119,12 +120,13 @@ export default function HeartController({
                         <path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 4.5 8 4.1 10 6 12 8c2-2 4-3.9 6.5-3.5C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z" />
                     </svg>
 
-                    {ventricleOnly ? 'SHOW ALL' : 'LV / RV'}
+                    {ventricleOnly ? 'SHOW ALL' : 'Ventricles'}
                 </button>
 
                 <button
                     type="button"
                     onClick={handleFullView}
+                    className={`full-view-button${fullView ? ' is-active' : ''}`}
                 >
                     FULL VIEW
                 </button>

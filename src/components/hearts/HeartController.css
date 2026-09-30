@@ -66,12 +66,10 @@
     border: none;
 }
 
-.heart-controller .pause-button.is-active {
-    color: var(--active-labels);
-    background: color-mix(in srgb, var(--active-labels) 20%, transparent);
-}
-
-.heart-controller .epi-button.is-active {
+.heart-controller .pause-button.is-active,
+.heart-controller .epi-button.is-active,
+.heart-controller .ventricle-button.is-active,
+.heart-controller .full-view-button.is-active {
     color: var(--active-labels);
     background: color-mix(in srgb, var(--active-labels) 20%, transparent);
 }

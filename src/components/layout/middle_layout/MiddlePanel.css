@@ -104,7 +104,25 @@ button.compare-button.not-comparing {
     z-index: 1;
     pointer-events: none;
 }
+.shared-heart-controller {
+    position: absolute;
+    
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    
+        z-index: 20;
+}
 
+.shared-heart-controller .heart-controller {
+    position: static;
+    transform: none;
+}
 @media (width < 800px) {
     .middle-panel {
         flex-direction: column;

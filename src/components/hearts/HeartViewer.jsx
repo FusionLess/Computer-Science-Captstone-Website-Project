@@ -27,6 +27,29 @@ export default function HeartViewer({
     index,
     sharedResetTrigger,
     setSharedResetTrigger,
+    useSharedControls,
+
+    sharedShowEpi,
+    setSharedShowEpi,
+
+    sharedVentricleOnly,
+    setSharedVentricleOnly,
+
+    sharedFullView,
+    setSharedFullView,
+
+    sharedSliceEnabled,
+    setSharedSliceEnabled,
+    sharedShowPlaneGuide,
+    setSharedShowPlaneGuide,
+    sharedActivePreset,
+    setSharedActivePreset,
+    sharedPitch,
+    setSharedPitch,
+    sharedYaw,
+    setSharedYaw,
+    sharedSliceDistance,
+    setSharedSliceDistance,
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -39,42 +62,133 @@ export default function HeartViewer({
     const [resetTrigger, setResetTrigger] = useState(0)
 
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
-    const [showEpi, setShowEpi] = useState(true)
-    const [ventricleOnly, setVentricleOnly] = useState(false)
-    const [fullView, setFullView] = useState(false)
+
 
     // sets the preset states you can slice the heart
-    const [sliceEnabled, setSliceEnabled] = useState(false)
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
-    const [showPlaneGuide, setShowPlaneGuide] = useState(true)
-    const [pitch, setPitch] = useState(isDefaultShortAxis ? -90 : 0)
-    const [yaw, setYaw] = useState(isDefaultShortAxis ? 0 : 4)
-    const [sliceDistance, setSliceDistance] = useState(isDefaultShortAxis ? -18 : 0)
+    const [localSliceEnabled, setLocalSliceEnabled] =
+        useState(isDefaultShortAxis)
+
+    const [localShowPlaneGuide, setLocalShowPlaneGuide] =
+        useState(false)
+
+    const [localPitch, setLocalPitch] =
+        useState(isDefaultShortAxis ? -90 : 0)
+
+    const [localYaw, setLocalYaw] =
+        useState(isDefaultShortAxis ? 0 : 40)
+
+    const [localSliceDistance, setLocalSliceDistance] =
+        useState(isDefaultShortAxis ? -18 : 0)
+
+    const [localActivePreset, setLocalActivePreset] =
+        useState(defaultPreset)
+    const sliceEnabled = useSharedControls
+        ? sharedSliceEnabled
+        : localSliceEnabled
+
+    const setSliceEnabled = useSharedControls
+        ? setSharedSliceEnabled
+        : setLocalSliceEnabled
+
+
+    const showPlaneGuide = useSharedControls
+        ? sharedShowPlaneGuide
+        : localShowPlaneGuide
+
+    const setShowPlaneGuide = useSharedControls
+        ? setSharedShowPlaneGuide
+        : setLocalShowPlaneGuide
+
+
+    const pitch = useSharedControls
+        ? sharedPitch
+        : localPitch
+
+    const setPitch = useSharedControls
+        ? setSharedPitch
+        : setLocalPitch
+
+
+    const yaw = useSharedControls
+        ? sharedYaw
+        : localYaw
+
+    const setYaw = useSharedControls
+        ? setSharedYaw
+        : setLocalYaw
+
+
+    const sliceDistance = useSharedControls
+        ? sharedSliceDistance
+        : localSliceDistance
+
+    const setSliceDistance = useSharedControls
+        ? setSharedSliceDistance
+        : setLocalSliceDistance
+
+
+    const activePreset = useSharedControls
+        ? sharedActivePreset
+        : localActivePreset
+
+    const setActivePreset = useSharedControls
+        ? setSharedActivePreset
+        : setLocalActivePreset
+
+    const [localShowEpi, setLocalShowEpi] = useState(true)
+    const [localVentricleOnly, setLocalVentricleOnly] = useState(false)
+    const [localFullView, setLocalFullView] = useState(false)
+
+    const showEpi = useSharedControls
+        ? sharedShowEpi
+        : localShowEpi
+
+    const setShowEpi = useSharedControls
+        ? setSharedShowEpi
+        : setLocalShowEpi
+
+
+    const ventricleOnly = useSharedControls
+        ? sharedVentricleOnly
+        : localVentricleOnly
+
+    const setVentricleOnly = useSharedControls
+        ? setSharedVentricleOnly
+        : setLocalVentricleOnly
+
+
+    const fullView = useSharedControls
+        ? sharedFullView
+        : localFullView
+
+    const setFullView = useSharedControls
+        ? setSharedFullView
+        : setLocalFullView
 
     useEffect(() => {
         const shortAxis = defaultPreset === "shortAxis"
 
-        setFullView(false)
+        setLocalFullView(false)
 
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
-        setActivePreset(defaultPreset)
+        setLocalSliceEnabled(true)
+        setLocalShowPlaneGuide(true)
+        setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
-            setPitch(-90)
-            setYaw(0)
-            setSliceDistance(-18)
+            setLocalPitch(-90)
+            setLocalYaw(0)
+            setLocalSliceDistance(-18)
         } else {
-            setPitch(0)
-            setYaw(40)
-            setSliceDistance(0)
+            setLocalPitch(0)
+            setLocalYaw(40)
+            setLocalSliceDistance(0)
         }
 
         setResetTrigger(prev => prev + 1)
     }, [frameFolder])
 
     // sets the preset independent depth slices per selection
-    const [activePreset, setActivePreset] = useState(defaultPreset)
     const [presetDepths, setPresetDepths] = useState({
         frontal: 0,
         sagittal: -3,
@@ -122,6 +236,36 @@ export default function HeartViewer({
             }
         }
     }
+    useEffect(() => {
+        if (!useSharedControls) return
+
+        if (fullView) {
+            // Enter Full View
+            setVentricleOnly(false)
+            setShowEpi(true)
+
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+            setActivePreset(defaultPreset)
+        } else {
+            // Return to this heart's predetermined view
+            const shortAxis = defaultPreset === "shortAxis"
+
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+            setActivePreset(defaultPreset)
+
+            if (shortAxis) {
+                setPitch(-90)
+                setYaw(0)
+                setSliceDistance(-18)
+            } else {
+                setPitch(0)
+                setYaw(40)
+                setSliceDistance(0)
+            }
+        }
+    }, [fullView, useSharedControls])
 
     const handleResetView = () => {
         const shortAxis = defaultPreset === "shortAxis"
@@ -293,7 +437,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!syncEnabled && (
+            {!useSharedControls && (
                 <>
                     <HeartController
                         isPaused={isPaused}
