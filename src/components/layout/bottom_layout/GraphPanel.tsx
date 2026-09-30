@@ -1,12 +1,12 @@
-import "./GraphBar.css"
+import "./GraphPanel.css"
 import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
 import { ecgProfiles, type ECGProfile } from "../../../data/ECGParameters.ts"
 import type { HeartState } from "../../types/states.ts"
+import type { CompareState } from "../../types/compare.ts"
 import { pressureProfiles, type PressureProfile } from "../../../data/PressureParameters.ts"
-import { useState } from "react"
+import { useId, useState } from "react"
 const BEAT_COUNT = GRAPH_BEAT_COUNT
 const VIEWBOX_WIDTH = 500
-
 
 type GraphBarProps = {
     active: HeartState,
@@ -14,7 +14,45 @@ type GraphBarProps = {
     glowActive: boolean,
 }
 
-export default function GraphBar({ active, graphActive, glowActive}: GraphBarProps) {
+export default function GraphPanel({compareState, graphActive, glowActive}
+                         : {compareState : CompareState, graphActive : boolean, glowActive : boolean}) {
+    const { selection1, selection2, isComparing } = compareState
+    const [frontGraph, setFrontGraph] = useState(0)
+
+    if (!graphActive) return null
+
+    const selections = isComparing ? [selection1, selection2] : [selection1]
+
+    return (
+        <div className={`graph-panel ${isComparing ? "comparing" : ""}`}>
+            {selections.map((selection, index) => {
+                const isFront = !isComparing || frontGraph === index
+
+                return (
+                    <section
+                        key={index}
+                        className={`graph-card ${isFront ? "front" : "back"}`}
+                    >
+                        <div className="graph-card-content" inert={!isFront}>
+                            <GraphBar active={selection} graphActive={graphActive} glowActive={glowActive}/>
+                        </div>
+                        {!isFront && (
+                            <button
+                                className="graph-card-select"
+                                onClick={() => setFrontGraph(index)}
+                            >
+                                <span>Click to Show</span>
+                            </button>
+                        )}
+                    </section>
+                )
+            })}
+        </div>
+    )
+
+}
+
+function GraphBar({ active, graphActive, glowActive}: GraphBarProps) {
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
@@ -74,6 +112,7 @@ export default function GraphBar({ active, graphActive, glowActive}: GraphBarPro
     if (!graphActive) return null
     return (
         <footer className={`graphs mobile_${visibleGraph}`}>
+            <h3 className="graph-bar-label">{active.option}</h3>
             <ICUContainer
                 phase={graphPhase}
                 type="ecg"
@@ -348,6 +387,7 @@ function generatePressurePath(profile2: PressureProfile) {
 }
 
 function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume, onToggleVolume, showPressure, onTogglePressure, showHealthyPressure, onToggleHealthyPressure, isFibrillation, glowActive }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major', volumeD?: string, showVolume?: boolean, onToggleVolume?: () => void, showPressure?: boolean, onTogglePressure?: () => void, showHealthyPressure?: boolean, onToggleHealthyPressure?: () => void, isFibrillation?: boolean, glowActive?: boolean }) {
+    const graphId = useId()
     const safePhase = isNaN(phase) ? 0 : phase
     const xPos = safePhase * 100
 
@@ -356,6 +396,10 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
 
     const trailStart = Math.max(0, scannerX - trailLength)
     const trailWidth = scannerX - trailStart
+
+    const gapWidth = 10
+    const gapEnd = scannerX + gapWidth
+    const wrappedGapEnd = Math.max(0, gapEnd - VIEWBOX_WIDTH)
 
     return (
         <div className={`${type} container`}>
@@ -385,16 +429,24 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                         marginRight: type === "pressure" ? "35px" : "0" }}>
                         <svg className="monitor-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} 150`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
                             <defs>
-                                <clipPath id={`waveform-reveal-${type}`}>
+                                <clipPath id={`waveform-reveal-${graphId}`}>
                                     <rect
-                                        x="0"
+                                        x={wrappedGapEnd}
                                         y="0"
-                                        width={safePhase * VIEWBOX_WIDTH}
+                                        width={Math.max(0, scannerX - wrappedGapEnd)}
                                         height="150"
                                     />
+                                    {gapEnd < VIEWBOX_WIDTH && (
+                                        <rect
+                                            x={gapEnd}
+                                            y="0"
+                                            width={VIEWBOX_WIDTH - gapEnd}
+                                            height="150"
+                                        />
+                                    )}
                                 </clipPath>
                                 <linearGradient
-                                    id={`trail-gradient-${type}`}
+                                    id={`trail-gradient-${graphId}`}
                                     x1="0%"
                                     y1="0%"
                                     x2="100%"
@@ -406,26 +458,26 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                     <stop offset="100%" stopColor="white" stopOpacity="1" />
                                 </linearGradient>
 
-                                <mask id={`waveform-trail-${type}`}>
+                                <mask id={`waveform-trail-${graphId}`}>
                                     <rect
                                         x={trailStart}
                                         y="0"
                                         width={trailWidth}
                                         height="150"
-                                        fill={`url(#trail-gradient-${type})`}
+                                        fill={`url(#trail-gradient-${graphId})`}
                                     />
                                 </mask>
                             </defs>
                             {/* ECG */}
                             {type === "ecg" && (
                                 <>
-                                    <path d={d} className="ecg-waveform" clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={d} className="ecg-waveform" clipPath={`url(#waveform-reveal-${graphId})`} />
                                     {glowActive && (
-                                        <path d={d} className="ecg-waveform waveform-trail" mask={`url(#waveform-trail-${type})`}/>
+                                        <path d={d} className="ecg-waveform waveform-trail" mask={`url(#waveform-trail-${graphId})`}/>
                                     )}
-                                    {overlayD && (<path d={overlayD} className={`ecg-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${type})`} />)}
+                                    {overlayD && (<path d={overlayD} className={`ecg-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${graphId})`} />)}
                                     {overlayD && glowActive && (
-                                        <path d={overlayD} className={`ecg-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />
+                                        <path d={overlayD} className={`ecg-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${graphId})`} />
                                     )}
                                 </>
                             )}
@@ -433,9 +485,9 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                             {/* Healthy pressure */}
                             {type === "pressure" && (overlayD? showHealthyPressure : showPressure) && (
                                 <>
-                                    <path d={d} className="pressure-waveform" clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={d} className="pressure-waveform" clipPath={`url(#waveform-reveal-${graphId})`} />
                                     {glowActive && (
-                                        <path d={d} className="pressure-waveform waveform-trail" mask={`url(#waveform-trail-${type})`} />
+                                        <path d={d} className="pressure-waveform waveform-trail" mask={`url(#waveform-trail-${graphId})`} />
                                     )}
                                 </>
                                 
@@ -443,18 +495,18 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                             {/* Selected condition pressure */}
                             {type === "pressure" && showPressure && overlayD && (
                                 <>
-                                    <path d={overlayD} className={`pressure-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={overlayD} className={`pressure-waveform condition-waveform ${severity === "minor" ? "minor" : "major"}`} clipPath={`url(#waveform-reveal-${graphId})`} />
                                     {glowActive && (
-                                        <path d={overlayD} className={`pressure-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${type})`} />
+                                        <path d={overlayD} className={`pressure-waveform condition-waveform waveform-trail ${severity === "minor" ? "minor" : "major"}`} mask={`url(#waveform-trail-${graphId})`} />
                                     )}
                                 </>
                             )}
                             {/* Volume */}
                             {type === "pressure" && showVolume && volumeD && (
                                 <>
-                                    <path d={volumeD} className="volume-waveform" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} clipPath={`url(#waveform-reveal-${type})`} />
+                                    <path d={volumeD} className="volume-waveform" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} clipPath={`url(#waveform-reveal-${graphId})`} />
                                     {glowActive && (
-                                        <path d={volumeD} className="volume-waveform waveform-trail" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} mask={`url(#waveform-trail-${type})`} />
+                                        <path d={volumeD} className="volume-waveform waveform-trail" transform={isFibrillation ? undefined : "translate(0 150) scale(1 -1)"} mask={`url(#waveform-trail-${graphId})`} />
                                     )}
                                 </>
                             )}
@@ -470,7 +522,27 @@ function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume,
                                 bottom: 0,
                                 left: `${xPos}%`,
                                 width: '0.15%',
-                                background: '#b8362a',
+                                background: 'var(--divider)',
+                                opacity: 0.98,
+                                pointerEvents: 'none',
+                                transition: 'none',
+                                borderRadius: '20px',
+                            }}
+                        />
+                        <div
+                            className="graph-marker"
+                            style={{
+                                left: `${(xPos + (gapWidth / VIEWBOX_WIDTH) * 100) % 100}%`,
+                            }}
+                        />
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                bottom: 0,
+                                left: `${xPos+(gapWidth / VIEWBOX_WIDTH) * 100}%`,
+                                width: '0.15%',
+                                background: 'var(--divider)',
                                 opacity: 0.98,
                                 pointerEvents: 'none',
                                 transition: 'none',

@@ -1,5 +1,6 @@
 export default function SliceControls({
     index,
+    shared = false,
     sliceControlEnabled,
     setSliceControlEnabled,
     sliceEnabled,
@@ -19,12 +20,24 @@ export default function SliceControls({
     return (
         <div
             style={{
-                position: 'absolute',
-                bottom: '50%',
-                transform: 'translateY(50%)',
-                ...(index === 0
-                    ? { left: '24px', direction: 'ltr' }
-                    : { right: '24px', direction: 'rtl' }
+                position: shared ? 'relative' : 'absolute',
+
+                ...(shared
+                    ? {
+                        bottom: 'auto',
+                        left: 'auto',
+                        right: 'auto',
+                        transform: 'none',
+                        direction: 'ltr',
+                    }
+                    : {
+                        bottom: '50%',
+                        transform: 'translateY(50%)',
+                        ...(index === 0
+                            ? { left: '24px', direction: 'ltr' }
+                            : { right: '24px', direction: 'rtl' }
+                        ),
+                    }
                 ),
                 padding: '0',
                 alignItems: 'center',
@@ -62,27 +75,34 @@ export default function SliceControls({
                     padding: '8px',
                     boxSizing: 'border-box',
                 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
-                        <span style={{ fontWeight: 600 }}>Enable Oblique Slice</span>
-                        <input
-                            type="checkbox"
-                            checked={sliceEnabled}
-                            onChange={(e) => setSliceEnabled(e.target.checked)}
-                            style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                        />
-                    </label>
+                    
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        {/* Guide Plane Visibility Toggle */}
-                        <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: 'black' }}>
-                            <span>Show Slice Indicator</span>
-                            <input
-                                type="checkbox"
-                                checked={showPlaneGuide}
-                                onChange={(e) => setShowPlaneGuide(e.target.checked)}
-                                style={{ cursor: 'pointer', accentColor: '#3498db' }}
-                            />
-                        </label>
+                    <div style={{ display: 'flex', flexDirection: shared ? 'row' : 'column', alignItems: shared ? 'center' : 'stretch', gap: shared ? '16px' : '10px'}}>
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '4px',
+                        }}>
+                            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}>
+                                <span style={{ fontWeight: 600 }}>Enable Oblique Slice</span>
+                                <input
+                                    type="checkbox"
+                                    checked={sliceEnabled}
+                                    onChange={(e) => setSliceEnabled(e.target.checked)}
+                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                                />
+                            </label>
+                            {/* Guide Plane Visibility Toggle */}
+                            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', fontSize: '12px', color: 'black' }}>
+                                <span>Show Slice Indicator</span>
+                                <input
+                                    type="checkbox"
+                                    checked={showPlaneGuide}
+                                    onChange={(e) => setShowPlaneGuide(e.target.checked)}
+                                    style={{ cursor: 'pointer', accentColor: '#3498db' }}
+                                />
+                            </label>
+                        </div>
 
                         {/* Quick Clinical Views */}
                         <div style={{ display: 'flex', gap: '4px', justifyContent: 'space-between' }}>

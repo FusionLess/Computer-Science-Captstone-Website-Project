@@ -3,7 +3,7 @@
     flex: 1;
     min-height: 0;
     align-items: stretch;
-    background: #fffdfd;
+    background: var(--home-background);
 }
 
 .column {
@@ -13,9 +13,6 @@
     padding: 10px;
     box-sizing: border-box;
     gap: 10px;
-}
-
-.main.column {
 }
 
 .left.column {
@@ -36,8 +33,8 @@
     padding: 18px 20px;
     font-family: inherit;
     text-align: left;
-    background: #fffafa;
-    color: #b33300;
+    background: var(--cards-background);
+    color: var(--primary-headings);
     border-radius: 14px;
     cursor: pointer;
     position: relative;
@@ -65,7 +62,7 @@
     position: absolute;
     height: 3px;
     width: 20%;
-    background: #b33300;
+    background: var(--selected-condition-background);
     border-radius: 12px;
     bottom: 6px;
     transform-origin: left;
@@ -82,7 +79,7 @@
     min-height: 88px;
     padding: 18px 20px;
     gap: 8px;
-    border: 3px solid #9e0000;
+    border: 3px solid var(--selected-condition-background);
 }
 
 .about-layout .left button:hover {
@@ -93,12 +90,11 @@
 
 .about-layout .left button.active {
     min-height: 144px;
-    background: #9e0000;
-    color: #fff8f0;
-    border: 3px solid #fff8f0;
+    background: var(--selected-condition-background);
+    color: #fff;
+    border: 3px solid var(--selected-suboptions);
     box-shadow: 0 5px 14px rgb(0 0 0 / 12%);
 }
-
 
 .about-option-index {
     max-height: 0;
@@ -114,7 +110,7 @@
     line-height: 1.4;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #ad5050  ;
+    color: var(--secondary-labels);
 }
 
 .about-layout .left button:hover .about-option-index,
@@ -134,7 +130,7 @@
 }
 
 .about-layout .left button.active .about-option-index {
-        color: #d67b74;
+        color: var(--secondary-labels) ;
 }
 
 .about-layout .left button.active .about-option-title {
