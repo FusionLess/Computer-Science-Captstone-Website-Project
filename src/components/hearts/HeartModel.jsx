@@ -177,7 +177,7 @@ export function HeartModel({
 
   useFrame((_, delta) => {
     // stop advancing the animation timeline if paused
-    if (isPaused) return
+    if (isPaused || bpm <= 0) return
 
     // Cap delta to prevent frame spikes when dragging the slider
     const dt = Math.min(delta, 0.05)
