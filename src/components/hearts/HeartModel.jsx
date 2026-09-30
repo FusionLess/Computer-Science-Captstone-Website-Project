@@ -3,7 +3,8 @@ import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 
-const NUM_FRAMES = 25
+const NUM_FRAMES = 75
+const ES_FRAME = 25
 // loads all the frames path into an array and iterates over all of them
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
@@ -47,7 +48,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       }
     })
   }, [model, ventricleOnly, showEpi, isUnhealthy])
-  
+
   useEffect(() => {
     model.traverse((child) => {
       if (child.isMesh) {
@@ -60,6 +61,9 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
         if (child.material) {
           child.material.side = THREE.DoubleSide
           child.material.flatShading = false
+          // Solid opaque rendering prevents see-through ghosting
+          child.material.transparent = false
+          child.material.depthWrite = true
 
           // forces GPU to prioritize outer shell over inner cavities when facing camera
           if (isEpi) {
@@ -105,7 +109,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       event.stopPropagation()
 
       const rawMeshName = event.object.name
-      const meshName = newMeshName(rawMeshName) 
+      const meshName = newMeshName(rawMeshName)
 
       if (!showEpi && meshName === 'mesh0') {
         return
@@ -127,7 +131,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       event.stopPropagation()
       const rawMeshName = event.object.name
       const meshName = newMeshName(rawMeshName)
-      
+
       if (!showEpi && meshName === 'mesh0') {
         return
       }
@@ -151,29 +155,59 @@ export function HeartModel({
 }) {
   const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+18) % NUM_FRAMES}.glb`)
   const [activeFrame, setActiveFrame] = useState(0)
-  const animState = useRef({ elapsed: 0, currentFrame: 0 })
-  const isUnhealthy = frameFolder !== "frames"
+  const animElapsed = useRef(0)
+  const totalElapsed = useRef(0)
+  const currentFrameRef = useRef(0)
 
+  const safeBpm = Number(bpm) || 60
+  const isUnhealthy = frameFolder !== "frames"
 
   useFrame((_, delta) => {
     // stop advancing the animation timeline if paused
     if (isPaused) return
 
-    // how long should the frame be showm? calculated below
-    const cycleDuration = 60.0 / bpm
-    const frameInterval = cycleDuration / NUM_FRAMES
+    // Cap delta to prevent frame spikes when dragging the slider
+    const dt = Math.min(delta, 0.05)
 
-    animState.current.elapsed += delta
-    beatInterval?.(animState.current.elapsed)
+    // The graph spans multiple beats, so its elapsed time must not wrap each cycle.
+    totalElapsed.current += dt
+    beatInterval?.(totalElapsed.current)
 
-    const targetFrame = Math.floor(
-      (animState.current.elapsed % cycleDuration) / frameInterval
-    )
+    // 1. Total R-R interval in seconds
+    const tCycle = 60.0 / safeBpm
 
-    //checks if the current frame is the correct frame, if not
-    //set the frame to the correct frame
-    if (targetFrame !== animState.current.currentFrame) {
-      animState.current.currentFrame = targetFrame
+    // 2. Weissler's formula for true physiological systolic duration
+    // Scale smoothly so systole never takes more than 50% of the cycle at extreme BPMs
+    const maxSysFraction = tCycle * 0.48
+    const tSysCalculated = 0.413 - 0.0017 * safeBpm
+    const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
+
+    // 3. Diastolic duration absorbs the rest of the cardiac interval
+    const tDia = tCycle - tSys
+
+    animElapsed.current = (animElapsed.current + dt) % tCycle
+    const tLocal = animElapsed.current
+
+    let targetFrame = 0
+
+    if (tLocal < tSys) {
+      // --- SYSTOLIC PHASE (Frames 0 -> ES_FRAME) ---
+      // Rapid contraction & ejection
+      const progressSys = tLocal / tSys
+      targetFrame = Math.floor(progressSys * ES_FRAME)
+    } else {
+      // --- DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES) ---
+      // Variable relaxation & passive/active filling
+      const tDiaElapsed = tLocal - tSys
+      const progressDia = tDiaElapsed / tDia
+      targetFrame = ES_FRAME + Math.floor(progressDia * (NUM_FRAMES - ES_FRAME))
+    }
+
+    targetFrame = Math.min(Math.max(targetFrame, 0), NUM_FRAMES - 1)
+
+    // Direct ref check prevents frame thrashing and guarantees state stability
+    if (targetFrame !== currentFrameRef.current) {
+      currentFrameRef.current = targetFrame
       setActiveFrame(targetFrame)
     }
   })
@@ -192,7 +226,7 @@ export function HeartModel({
           onHover={onHover}
           onSelect={onSelect}
           isUnhealthy={isUnhealthy}
-      
+
         />
       ))}
     </group>
