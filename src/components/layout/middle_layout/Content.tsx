@@ -10,8 +10,8 @@
     import RightBox from "./RightPanel.tsx";
     import type { Complexity } from "../../types/complexities.ts";
   
-function Content({compareState, complexity, setComplexity} :
-                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
+function Content({compareState, complexity} :
+                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, complexity: Complexity}) {
     const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
     useEffect(() => {

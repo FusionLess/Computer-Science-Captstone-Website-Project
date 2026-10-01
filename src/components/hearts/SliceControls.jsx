@@ -1,5 +1,6 @@
 import './Controller.css'
 import './SliceController.css'
+
 import { useId, useState } from 'react'
 
 export default function SliceController({
@@ -18,7 +19,9 @@ export default function SliceController({
     sliceDistance,
     handlePresetSelect,
     handleDepthSliderChange,
+    complexity
 }) {
+
     const [controlsShowing, setControlsShowing] = useState(true)
     const controlsId = useId()
 
@@ -37,7 +40,7 @@ export default function SliceController({
                 aria-expanded={controlsShowing}
                 aria-controls={controlsId}
             >
-                {controlsShowing ? 'HIDE' : 'SHOW SLICE'}
+                {controlsShowing ? 'HIDE' : 'SLICE CONTROLS'}
             </button>
 
             <div
@@ -92,61 +95,66 @@ export default function SliceController({
                     </button>
                 </div>
 
-                <div className="controller-divider" />
+                {complexity === 'advanced' && (
+                    <>
+                    
+                        <div className="controller-divider" />
 
-                <div className="slice-adjustments">
-                    <div className="slice-slider">
-                        <div className="slice-slider-label">
-                            <span>PITCH</span>
-                            <span>{pitch}°</span>
+                        <div className="slice-adjustments">
+                            <div className="slice-slider">
+                                <div className="slice-slider-label">
+                                    <span>PITCH</span>
+                                    <span>{pitch}°</span>
+                                </div>
+
+                                <input
+                                    type="range"
+                                    min="-90"
+                                    max="90"
+                                    value={pitch}
+                                    onChange={(e) => {
+                                        setPitch(Number(e.target.value))
+                                        setActivePreset(null)
+                                    }}
+                                />
+                            </div>
+
+                            <div className="slice-slider">
+                                <div className="slice-slider-label">
+                                    <span>YAW</span>
+                                    <span>{yaw}°</span>
+                                </div>
+
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="360"
+                                    value={yaw}
+                                    onChange={(e) => {
+                                        setYaw(Number(e.target.value))
+                                        setActivePreset(null)
+                                    }}
+                                />
+                            </div>
+
+                            <div className="slice-slider">
+                                <div className="slice-slider-label">
+                                    <span>DEPTH</span>
+                                    <span>{sliceDistance} mm</span>
+                                </div>
+
+                                <input
+                                    type="range"
+                                    min="-100"
+                                    max="100"
+                                    value={sliceDistance}
+                                    onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
+                                />
+                            </div>
+
                         </div>
-
-                        <input
-                            type="range"
-                            min="-90"
-                            max="90"
-                            value={pitch}
-                            onChange={(e) => {
-                                setPitch(Number(e.target.value))
-                                setActivePreset(null)
-                            }}
-                        />
-                    </div>
-
-                    <div className="slice-slider">
-                        <div className="slice-slider-label">
-                            <span>YAW</span>
-                            <span>{yaw}°</span>
-                        </div>
-
-                        <input
-                            type="range"
-                            min="0"
-                            max="360"
-                            value={yaw}
-                            onChange={(e) => {
-                                setYaw(Number(e.target.value))
-                                setActivePreset(null)
-                            }}
-                        />
-                    </div>
-
-                    <div className="slice-slider">
-                        <div className="slice-slider-label">
-                            <span>DEPTH</span>
-                            <span>{sliceDistance} mm</span>
-                        </div>
-
-                        <input
-                            type="range"
-                            min="-100"
-                            max="100"
-                            value={sliceDistance}
-                            onChange={(e) => handleDepthSliderChange(Number(e.target.value))}
-                        />
-                    </div>
-
-                </div>
+                    </>
+                )}
             </div>
         </div>
     )
