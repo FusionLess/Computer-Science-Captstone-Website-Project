@@ -8,9 +8,10 @@
     import LeftBox from "./LeftPanel.tsx"
     import MiddlePanel from "./MiddlePanel.tsx"
     import RightBox from "./RightPanel.tsx";
+    import type { Complexity } from "../../types/complexities.ts";
   
-function Content({compareState} :
-                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState}) {
+function Content({compareState, complexity, setComplexity} :
+                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
     const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
     useEffect(() => {
@@ -19,13 +20,14 @@ function Content({compareState} :
         compareState.selection1,
             compareState.selection2,
             compareState.isComparing,
+            complexity,
     ])
 
     return (
         <main className="content">
-            <LeftBox compareState={compareState}/>
-            <MiddlePanel compareState={compareState} setSelectedPart={setSelectedPart}/>
-            <RightBox compareState={compareState} selectedPart={selectedPart} />
+            <LeftBox compareState={compareState} complexity={complexity} />
+            <MiddlePanel compareState={compareState} setSelectedPart={setSelectedPart} complexity={complexity}/>
+            <RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity}/>
         </main>
     )
 }

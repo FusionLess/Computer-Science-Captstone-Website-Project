@@ -1,9 +1,10 @@
 import "./LeftPanel.css"
 import type { CompareState } from "../../types/compare.ts";
 import { PAGE_DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
+import type { Complexity } from "../../types/complexities.ts";
 
-function LeftBox({compareState} :
-                 {compareState: CompareState}) {
+function LeftBox({compareState, complexity} :
+                 {compareState: CompareState, complexity: Complexity}) {
     const {
         selection1,
         isComparing,

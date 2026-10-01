@@ -2,8 +2,9 @@ import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
 import { NavLink } from "react-router";
+import type { Complexity } from "../../types/complexities.ts";
 
-function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void}) {
+function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     return (
@@ -19,7 +20,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphA
                     graphActive={graphActive}
                     glowActive={glowActive}
                     setGlowActive={setGlowActive}
-
+                    complexity={complexity}
+                    setComplexity={setComplexity}
                 />
             </div>
 
@@ -47,6 +49,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphA
                         graphActive={graphActive}
                         glowActive={glowActive}
                         setGlowActive={setGlowActive}
+                        complexity={complexity}
+                        setComplexity={setComplexity}
                     />
                 </div>
             )}
@@ -55,7 +59,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphA
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void }) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void }) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -76,7 +80,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive}
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} />
+            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
         </div>
     )
 }

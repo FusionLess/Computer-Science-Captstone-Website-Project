@@ -3,9 +3,10 @@ import "./RightPanel.css"
 import HeartPartInfo from "../HeartPartInfo";
 import type { CompareState } from "../../types/compare.ts"
 import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
+import type { Complexity } from "../../types/complexities.ts";
 
-function RightBox({compareState, selectedPart} :
-                  {compareState : CompareState, selectedPart: string | null}) {
+function RightBox({compareState, selectedPart, complexity} :
+                  {compareState : CompareState, selectedPart: string | null, complexity: Complexity}) {
     const isMobile = window.matchMedia("(width < 800px)").matches;
     const active = compareState.selection1
 

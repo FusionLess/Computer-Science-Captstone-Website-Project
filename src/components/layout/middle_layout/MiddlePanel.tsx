@@ -14,7 +14,8 @@ import HeartButtons from "./HeartButtons.tsx";
 import HeartController from "../../hearts/HeartController.jsx"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import SliceControls from "../../hearts/SliceControls.jsx"
-export default function MiddlePanel({ compareState, setSelectedPart }: { compareState: CompareState, setSelectedPart: (part: string | null) => void }) {
+import type { Complexity } from "../../types/complexities.ts";
+export default function MiddlePanel({ compareState, setSelectedPart, complexity}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity}) {
 
     const {
         selection1,
