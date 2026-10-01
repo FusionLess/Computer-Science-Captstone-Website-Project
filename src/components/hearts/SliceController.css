@@ -1,0 +1,57 @@
+.slice-options,
+.slice-axis-presets,
+.slice-adjustments {
+    display: flex;
+    align-items: center;
+}
+
+
+.slice-options {
+    display: flex;
+}
+
+.slice-axis-presets {
+    display: flex;
+    gap: 3px;
+}
+
+
+.slice-adjustments {
+    display: flex;
+    gap: 4px;
+}
+
+.slice-slider {
+    width: 125px;
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.slice-slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: grey;
+}
+
+.slice-slider input[type="range"] {
+    width: 100%;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--active-labels);
+}
+
+.slice-controller.is-shared {
+    position: relative;
+}
+.slice-slider input[type="range"] {
+    width: 100%;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--active-labels);
+
+    pointer-events: auto;
+}

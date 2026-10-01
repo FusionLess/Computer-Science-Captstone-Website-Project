@@ -34,7 +34,6 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
     const [sharedFullView, setSharedFullView] = useState(false)
 
     const useSharedControls = isComparing && syncEnabled
-    const [sharedSliceControlEnabled, setSharedSliceControlEnabled] = useState(false)
     const [sharedSliceEnabled, setSharedSliceEnabled] = useState(true)
     const [sharedShowPlaneGuide, setSharedShowPlaneGuide] = useState(true)
 
@@ -212,9 +211,6 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
                     <SliceControls
                         shared
                         index={0}
-
-                        sliceControlEnabled={sharedSliceControlEnabled}
-                        setSliceControlEnabled={setSharedSliceControlEnabled}
 
                         sliceEnabled={sharedSliceEnabled}
                         setSliceEnabled={setSharedSliceEnabled}

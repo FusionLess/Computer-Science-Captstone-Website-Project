@@ -439,37 +439,40 @@ export default function HeartViewer({
 
             {!useSharedControls && (
                 <>
-                    <HeartController
-                        isPaused={isPaused}
-                        setIsPaused={setIsPaused}
-                        syncEnabled={syncEnabled}
-                        showEpi={showEpi}
-                        setShowEpi={setShowEpi}
-                        ventricleOnly={ventricleOnly}
-                        setVentricleOnly={setVentricleOnly}
-                        fullView={fullView}
-                        handleFullView={handleFullView}
-                        handleResetView={handleResetView}
-                        handleVentricleView={handleVentricleView}
-                    />
-                    <SliceControls
-                        index={index}
-                        sliceControlEnabled={sliceControlEnabled}
-                        setSliceControlEnabled={setSliceControlEnabled}
-                        sliceEnabled={sliceEnabled}
-                        setSliceEnabled={setSliceEnabled}
-                        showPlaneGuide={showPlaneGuide}
-                        setShowPlaneGuide={setShowPlaneGuide}
-                        activePreset={activePreset}
-                        setActivePreset={setActivePreset}
-                        pitch={pitch}
-                        setPitch={setPitch}
-                        yaw={yaw}
-                        setYaw={setYaw}
-                        sliceDistance={sliceDistance}
-                        handlePresetSelect={handlePresetSelect}
-                        handleDepthSliderChange={handleDepthSliderChange}
-                    />
+                    <div className="viewer-controls">
+
+                        <HeartController
+                            isPaused={isPaused}
+                            setIsPaused={setIsPaused}
+                            syncEnabled={syncEnabled}
+                            showEpi={showEpi}
+                            setShowEpi={setShowEpi}
+                            ventricleOnly={ventricleOnly}
+                            setVentricleOnly={setVentricleOnly}
+                            fullView={fullView}
+                            handleFullView={handleFullView}
+                            handleResetView={handleResetView}
+                            handleVentricleView={handleVentricleView}
+                        />
+                        <SliceControls
+                            index={index}
+                            sliceControlEnabled={sliceControlEnabled}
+                            setSliceControlEnabled={setSliceControlEnabled}
+                            sliceEnabled={sliceEnabled}
+                            setSliceEnabled={setSliceEnabled}
+                            showPlaneGuide={showPlaneGuide}
+                            setShowPlaneGuide={setShowPlaneGuide}
+                            activePreset={activePreset}
+                            setActivePreset={setActivePreset}
+                            pitch={pitch}
+                            setPitch={setPitch}
+                            yaw={yaw}
+                            setYaw={setYaw}
+                            sliceDistance={sliceDistance}
+                            handlePresetSelect={handlePresetSelect}
+                            handleDepthSliderChange={handleDepthSliderChange}
+                        />
+                    </div>
                 </>
             )}
         </div>
