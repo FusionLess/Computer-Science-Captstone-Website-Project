@@ -45,9 +45,9 @@ function RightBox({compareState, selectedPart, complexity} :
                     <h3>
                         {DESCRIPTIONS[active.option as keyof typeof DESCRIPTIONS].heading}
                     </h3>
-                    { DESCRIPTIONS[ active.option as keyof typeof DESCRIPTIONS].description}
+                    { DESCRIPTIONS[ active.option as keyof typeof DESCRIPTIONS].description[complexity]}
                 </div>
-                <HeartPartInfo selectedPart={selectedPart} />
+                <HeartPartInfo selectedPart={selectedPart} complexity={complexity} />
 
             </div>
         </aside>

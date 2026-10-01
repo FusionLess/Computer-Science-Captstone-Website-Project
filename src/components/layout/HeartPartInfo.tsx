@@ -1,10 +1,11 @@
 import { HeartParts } from "../../data/HeartParts"
 import "./HeartPartInfo.css"
-
+import type { Complexity } from "../types/complexities"
 function HeartPartInfo({
-    selectedPart,
+    selectedPart, complexity
 }: {
     selectedPart: string | null
+    complexity: Complexity
 }) {
     const info = selectedPart
         ? HeartParts[
@@ -20,11 +21,11 @@ function HeartPartInfo({
                 <div className="heart_part_description">
                     <h4>{info.name}</h4>
 
-                    <p>{info.description}</p>
+                    <p>{info.description[complexity]}</p>
 
                     <h4>Function</h4>
 
-                    <p>{info.function}</p>
+                    <p>{info.function[complexity]}</p>
                 </div>
             ) : (
                 <p>

@@ -18,7 +18,7 @@ function LeftBox({compareState, complexity} :
             <aside className="left">
                 <h5 className="left_subheading">{section.subheading}</h5>
                 <h5 className="left_heading">{section.heading}</h5>
-                <p className="left_body">{section.description}</p>
+                <p className="left_body">{section.description[complexity]}</p>
             </aside>
         </>
     )
