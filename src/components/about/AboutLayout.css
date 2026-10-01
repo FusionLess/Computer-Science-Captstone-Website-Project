@@ -21,6 +21,7 @@
     overflow-y: auto;
     padding: 16px;
     gap: 8px;
+    justify-content: flex-start;
 }
 
 .about-layout .left button {
@@ -149,6 +150,7 @@
     .about-layout .left.column {
         flex: 0 0 auto;
         width: 100%;
+        margin-top: var(--bar-height);
         overflow: visible;
         border-right: 0;
         border-bottom: 1px solid #d5ceca;

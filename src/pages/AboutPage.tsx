@@ -3,7 +3,7 @@ import TopBar from '../components/layout/top_layout/TopBar.tsx'
 import AboutLayout from "../components/about/AboutLayout.tsx";
 import { useState } from 'react'
 
-export default function HomePage() {
+export default function AboutPage() {
 
     const [graphActive, setGraphActive] = useState<boolean>(true)
 

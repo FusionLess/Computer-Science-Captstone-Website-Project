@@ -1,0 +1,21 @@
+.mri-layout {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+    background: var(--home-background);
+    overflow: hidden;
+}
+
+.heart-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-right: 2px solid var(--divider);
+}
+
+.mri-container {
+    display: flex;
+    flex: 1;
+}

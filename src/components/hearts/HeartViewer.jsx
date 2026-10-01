@@ -19,37 +19,40 @@ const CAMERA_POSITIONS = {
 }
 
 export default function HeartViewer({
-    frameFolder,
-    setSelectedPart,
-    title,
-    syncEnabled,
-    syncedCameraRef,
-    index,
-    sharedResetTrigger,
-    setSharedResetTrigger,
-    useSharedControls,
+    frameFolder = "frames",
+    showControls = true,
+    setSelectedPart = undefined,
+    title = undefined,
+    syncEnabled = false,
+    syncedCameraRef = undefined,
+    index = 0,
+    sharedResetTrigger = undefined,
+    setSharedResetTrigger = undefined,
+    useSharedControls = false,
 
-    sharedShowEpi,
-    setSharedShowEpi,
+    sharedShowEpi = undefined,
+    setSharedShowEpi = undefined,
 
-    sharedVentricleOnly,
-    setSharedVentricleOnly,
+    sharedVentricleOnly = undefined,
+    setSharedVentricleOnly = undefined,
 
-    sharedFullView,
-    setSharedFullView,
+    sharedFullView = undefined,
+    setSharedFullView = undefined,
 
-    sharedSliceEnabled,
-    setSharedSliceEnabled,
-    sharedShowPlaneGuide,
-    setSharedShowPlaneGuide,
-    sharedActivePreset,
-    setSharedActivePreset,
-    sharedPitch,
-    setSharedPitch,
-    sharedYaw,
-    setSharedYaw,
-    sharedSliceDistance,
-    setSharedSliceDistance,
+    sharedSliceEnabled = undefined,
+    setSharedSliceEnabled = undefined,
+    sharedShowPlaneGuide = undefined,
+    setSharedShowPlaneGuide = undefined,
+    sharedActivePreset = undefined,
+    setSharedActivePreset = undefined,
+    sharedPitch = undefined,
+    setSharedPitch = undefined,
+    sharedYaw = undefined,
+    setSharedYaw = undefined,
+    sharedSliceDistance = undefined,
+    setSharedSliceDistance = undefined,
+
+    mriClipPlane = null,
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -323,7 +326,7 @@ export default function HeartViewer({
     const [hoverInfo, setHoverInfo] = useState(null)
 
     // compute arbitrary 3d normal vector from pitch and yaw
-    const clipPlane = useMemo(() => {
+    const modelClipPlane = useMemo(() => {
         if (!sliceEnabled) return null
 
         const radPitch = THREE.MathUtils.degToRad(pitch)
@@ -339,6 +342,8 @@ export default function HeartViewer({
         // slices everything on the side the normal points towards
         return new THREE.Plane(normal, sliceDistance)
     }, [sliceEnabled, pitch, yaw, sliceDistance])
+
+    const clipPlane = mriClipPlane ?? modelClipPlane
 
     return (
       
@@ -438,7 +443,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!useSharedControls && (
+            {showControls && !useSharedControls && (
                 <>
                     <HeartController
                         isPaused={isPaused}

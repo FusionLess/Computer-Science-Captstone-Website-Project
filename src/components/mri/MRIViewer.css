@@ -1,0 +1,48 @@
+.mri-viewer {
+    display: flex;
+    flex: 1;
+    position: relative;
+    background: none;
+    overflow: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+}
+.viewer-container {
+    position: relative;
+    width: min(65vh, 480px);
+    height: min(65vh, 480px);
+    border-radius: 20px;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.mri-viewer-image {
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.mri-viewer-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    font-weight: 700;
+    background: none;
+}
+
+.mri-viewer-label.mri-right {
+    left: 12px;
+}
+
+.mri-viewer-label.mri-left {
+    right: 12px;
+}
