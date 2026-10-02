@@ -21,6 +21,8 @@
     overflow-y: auto;
     padding: 16px;
     gap: 8px;
+    display: flex;
+    justify-content: flex-start;
 }
 
 .about-layout .left button {
@@ -144,6 +146,7 @@
     .about-layout {
         flex-direction: column;
         overflow-y: auto;
+        padding-top: var(--bar-height);
     }
 
     .about-layout .left.column {
