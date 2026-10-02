@@ -1,11 +1,12 @@
-.mri-layout {
+.mri-page-layout {
     position: relative;
     display: flex;
     flex: 1;
     min-height: 0;
     align-items: stretch;
+    flex-direction: row;
     background: var(--home-background);
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 .heart-container {
@@ -18,4 +19,26 @@
 .mri-container {
     display: flex;
     flex: 1;
+}
+
+.mri-controller {
+    display: flex;
+    /*flex: 1;*/
+    background: var(--cards-background);
+    box-sizing: border-box;
+    border-radius: 20px;
+    margin: 40px 0 40px 40px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    width: 400px;
+}
+
+.heart-mri-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    margin: 40px;
+    background: var(--cards-background);
+    border-radius: 20px ;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+
 }

@@ -9,6 +9,7 @@
     align-items: center;
     justify-content: center;
 }
+
 .viewer-container {
     position: relative;
     width: min(65vh, 480px);

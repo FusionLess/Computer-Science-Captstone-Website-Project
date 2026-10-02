@@ -25,8 +25,8 @@ export default function MRILayout() {
     }, [isPlaying, totalFrames]);
 
     const mriClipPlane = useMemo(() => {
-        const firstSliceY = 40
-        const lastSliceY = -40
+        const firstSliceY = 20
+        const lastSliceY = -45
 
         const progress = totalSlices > 1
             ? slice / (totalSlices - 1)
@@ -46,25 +46,26 @@ export default function MRILayout() {
 
 
     return (
-        <main className="mri-layout">
-            <div className="heart-container" >
-                <HeartViewer frameFolder="frames" showControls={false} mriClipPlane={mriClipPlane} />
-            </div>
-            <div className="mri-container" >
-                <MRIViewer slice={slice} frame={frame} totalFrames={totalFrames} />
-            </div>
-            <div className="mri-controller">
-                <MRIController
-                    slice={slice}
-                    totalSlices={totalSlices}
-                    setSlice={setSlice}
-                    frame={frame}
-                    totalFrames={totalFrames}
-                    setFrame={setFrame}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                />
-            </div>
-        </main>
+            <main className="mri-page-layout">
+                <div className="mri-controller">
+                    <MRIController
+                        slice={slice}
+                        totalSlices={totalSlices}
+                        setSlice={setSlice}
+                        frame={frame}
+                        totalFrames={totalFrames}
+                        setFrame={setFrame}
+                        isPlaying={isPlaying}
+                        setIsPlaying={setIsPlaying}/>
+                </div>
+                <div className="heart-mri-container">
+                    <div className="heart-container">
+                        <HeartViewer frameFolder="frames" showControls={false} mriClipPlane={mriClipPlane}/>
+                    </div>
+                    <div className="mri-container">
+                        <MRIViewer slice={slice} frame={frame} totalFrames={totalFrames}/>
+                    </div>
+                </div>
+            </main>
     )
 }
