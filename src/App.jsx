@@ -5,6 +5,7 @@ import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel'
 import { SlicePlaneHelper } from './SlicePlaneHelper'
 import MRIViewer from './MRIViewer'
+import { SliceCap } from './SliceCap'
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
 
@@ -196,6 +197,7 @@ export default function App() {
               logarithmicDepthBuffer: true,
               antialias: true,
               localClippingEnabled: true,
+              stencil: true,
             }}
           >
             <ambientLight intensity={0.8} />
@@ -231,6 +233,8 @@ export default function App() {
               size={180}
               visible={sliceEnabled && showPlaneGuide}
             />
+
+            <SliceCap clipPlane={clipPlane} />
 
             <CameraController resetTrigger={resetTrigger} initialPos={INITIAL_CAMERA_POS} />
           </Canvas>

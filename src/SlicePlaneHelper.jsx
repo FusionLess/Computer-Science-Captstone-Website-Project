@@ -4,6 +4,10 @@ import { useFrame } from '@react-three/fiber'
 
 const defaultNormal = new THREE.Vector3(0, 0, 1)
 
+// The indicator sits this far (in model units) toward the removed side of the cut,
+// so it never shares depth values with the cap
+const CAP_SEPARATION = 0.6
+
 export function SlicePlaneHelper({ clipPlane, size = 180, visible = true }) {
   const groupRef = useRef(null)
 
@@ -13,8 +17,9 @@ export function SlicePlaneHelper({ clipPlane, size = 180, visible = true }) {
     const normal = clipPlane.normal.clone().normalize()
     const constant = clipPlane.constant
 
-    // position on the plane closest to world origin: P = -constant * normal
-    const planeOrigin = normal.clone().multiplyScalar(-constant)
+    // position on the plane closest to world origin: P = -constant * normal,
+    // then pushed slightly off the cut surface
+    const planeOrigin = normal.clone().multiplyScalar(-constant - CAP_SEPARATION)
     groupRef.current.position.copy(planeOrigin)
 
     // precisely rotate default +Z normal of PlaneGeometry to match clipPlane.normal

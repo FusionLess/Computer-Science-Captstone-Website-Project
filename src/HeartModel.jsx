@@ -1,60 +1,122 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { capStyle } from './SliceCap'
 
 const NUM_FRAMES = 75
 const ES_FRAME = 25
 // loads all the frames path into an array and iterates over all of them
-const FRAME_PATHS = Array.from({ length: NUM_FRAMES }, (_, i) => `/frames/frame_${i}.glb`)
+
+// builds the list of frame paths for a given public folder, e.g. '/frames' or '/compensated_heart'
+const buildFramePaths = (dir) =>
+  Array.from({ length: NUM_FRAMES }, (_, i) => `${dir}/frame_${i}.glb`)
+
+// Render order: stencil pass (10) -> cap plane (11, see SliceCap) -> myocardium (12) -> chambers/vessels (13)
+// Chambers draw AFTER the myocardium because the myo's inner cavity walls coincide with
+// lv_endo / rv_endo; the later draw wins, so the chamber colours show through.
+const RO_STENCIL = 10
+const RO_MYO = 12
+const RO_OTHER = 13
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 75 frames are loaded into gpu memory but only active frame is visible
-function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
+function SingleFrame({ url, isVisible, showEpi, clipPlane, capColor }) {
   const { scene } = useGLTF(url)
-  const epiMeshRef = useRef(null)
+  const myoMeshRef = useRef(null)
+  const hasClip = !!clipPlane
 
   useEffect(() => {
     scene.traverse((child) => {
-      if (child.isMesh) {
-        const isEpi = child.name === 'mesh0' || child.name.toLowerCase().includes('epi')
+      if (!child.isMesh || child.name === 'stencilHelper') return
 
-        if (isEpi) {
-          epiMeshRef.current = child
+      const isMyo = child.name === 'mesh0'
+      if (isMyo) myoMeshRef.current = child
+
+      if (isMyo && child.material) {
+        // The cap copies the muscle's real material, unless the myocardium is painted with
+        // per-vertex colours (infarct hearts): then the material colour is white, so use capColor.
+        const hasVertexColors = !!child.geometry?.attributes?.color
+        if (capColor) {
+          capStyle.color = new THREE.Color(capColor)
+        } else if (!hasVertexColors && child.material.color) {
+          capStyle.color = child.material.color.clone()
         }
+        capStyle.roughness = child.material.roughness ?? null
+        capStyle.metalness = child.material.metalness ?? null
+      }
 
-        if (child.material) {
-          child.material.side = THREE.DoubleSide
-          child.material.flatShading = false
-          // Solid opaque rendering prevents see-through ghosting
-          child.material.transparent = false
-          child.material.depthWrite = true
+      if (child.material) {
+        child.material.side = THREE.DoubleSide
+        child.material.flatShading = false
+        child.material.transparent = false
+        child.material.depthWrite = true
 
-          // forces GPU to prioritize outer shell over inner cavities when facing camera
-          if (isEpi) {
-            child.renderOrder = 2
-            child.material.polygonOffset = true
-            child.material.polygonOffsetFactor = -1.0 // pulls epicardium closer to camera
-            child.material.polygonOffsetUnits = -1.0
-          } else {
-            child.renderOrder = 1
-            child.material.polygonOffset = true
-            child.material.polygonOffsetFactor = 1.0  // pushes internal chambers back
-            child.material.polygonOffsetUnits = 1.0
-          }
-
-          child.material.needsUpdate = true
-        }
+        child.renderOrder = isMyo ? RO_MYO : RO_OTHER
+        child.material.polygonOffset = true
+        // myo pulled toward camera, internal chambers pushed back
+        child.material.polygonOffsetFactor = isMyo ? -1.0 : 1.0
+        child.material.polygonOffsetUnits = isMyo ? -1.0 : 1.0
+        child.material.needsUpdate = true
       }
     })
-  }, [scene])
 
+    if (!myoMeshRef.current) {
+      console.warn('[HeartModel] mesh0 (myocardium) not found in', url)
+    }
+
+    // Diagnostic: the myocardium should be the largest mesh (~11k triangles in the Python log)
+    if (url.endsWith('frame_0.glb')) {
+      scene.traverse((c) => {
+        if (c.isMesh && c.name !== 'stencilHelper') {
+          const g = c.geometry
+          const tris = (g.index ? g.index.count : g.attributes.position.count) / 3
+          console.log('[HeartModel] frame_0 mesh:', c.name, 'triangles:', tris)
+        }
+      })
+    }
+  }, [scene, url, capColor])
+
+  // Myocardium visibility toggle
   useEffect(() => {
-    if (epiMeshRef.current) {
-      epiMeshRef.current.visible = showEpi
+    if (myoMeshRef.current) {
+      myoMeshRef.current.visible = showEpi
     }
   }, [showEpi])
 
+  // Stencil helper meshes: count back faces (+1) and front faces (-1) of the closed myo volume.
+  // Pixels that end up non-zero are inside muscle. MUST be declared before the clipping effect
+  // so the clipping planes also get applied to these helper materials.
+  useEffect(() => {
+    if (!hasClip) return
+    const myo = myoMeshRef.current
+    if (!myo || !myo.isMesh) return
+
+    // Parity counting: every surface crossed flips the stencil bits, so muscle = odd, cavity = even.
+    // Independent of face winding, so it works even if the cavity walls aren't inverted in the GLB.
+    const mat = new THREE.MeshBasicMaterial({
+      side: THREE.DoubleSide,
+      colorWrite: false,
+      depthWrite: false,
+      depthTest: false,
+      stencilWrite: true,
+      stencilFunc: THREE.AlwaysStencilFunc,
+      stencilFail: THREE.InvertStencilOp,
+      stencilZFail: THREE.InvertStencilOp,
+      stencilZPass: THREE.InvertStencilOp,
+    })
+    const helper = new THREE.Mesh(myo.geometry, mat)
+    helper.renderOrder = RO_STENCIL
+    helper.name = 'stencilHelper'
+    myo.add(helper) // child inherits the heart's transform
+
+    return () => {
+      myo.remove(helper)
+      mat.dispose()
+    }
+  }, [scene, hasClip])
+
+  // Clipping planes (applies to every mesh in the frame, including the stencil helpers)
   useEffect(() => {
     const planes = clipPlane ? [clipPlane] : []
     scene.traverse((child) => {
@@ -63,7 +125,7 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane }) {
         child.material.needsUpdate = true
       }
     })
-  }, [scene, clipPlane])
+  }, [scene, clipPlane, hasClip])
 
   return <primitive object={scene} visible={isVisible} />
 }
@@ -74,8 +136,11 @@ export function HeartModel({
   clipPlane = null,
   isPaused = false,
   forcedFrame = null,
+  framesDir = '/frames',
+  capColor = null,
   ...props
 }) {
+  const framePaths = useMemo(() => buildFramePaths(framesDir), [framesDir])
   const [activeFrame, setActiveFrame] = useState(0)
   const animElapsed = useRef(0)
   const currentFrameRef = useRef(0)
@@ -120,13 +185,11 @@ export function HeartModel({
     let targetFrame = 0
 
     if (tLocal < tSys) {
-      // SYSTOLIC PHASE (Frames 0 -> ES_FRAME) ---
-      // Rapid contraction & ejection
+      // SYSTOLIC PHASE (Frames 0 -> ES_FRAME)
       const progressSys = tLocal / tSys
       targetFrame = Math.floor(progressSys * ES_FRAME)
     } else {
-      // DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES) ---
-      // Variable relaxation & passive/active filling
+      // DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES)
       const tDiaElapsed = tLocal - tSys
       const progressDia = tDiaElapsed / tDia
       targetFrame = ES_FRAME + Math.floor(progressDia * (NUM_FRAMES - ES_FRAME))
@@ -143,17 +206,16 @@ export function HeartModel({
 
   return (
     <group {...props}>
-      {FRAME_PATHS.map((path, idx) => (
+      {framePaths.map((path, idx) => (
         <SingleFrame
           key={path}
           url={path}
           isVisible={idx === activeFrame}
           showEpi={showEpi}
           clipPlane={clipPlane}
+          capColor={capColor}
         />
       ))}
     </group>
   )
 }
-
-FRAME_PATHS.forEach((path) => useGLTF.preload(path))
