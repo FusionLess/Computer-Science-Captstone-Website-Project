@@ -2,7 +2,21 @@
     position: relative;
     z-index: 1;
     display: flex;
-    padding: 0 0 10px 10px;
+    box-sizing: border-box;
+    padding: 80px var(--side-margin) 10px 0;
+}
+
+.right.collapsed {
+    flex: 0 0 0;
+    width: 0;
+    min-width: 0;
+    padding: 0;
+}
+
+.right h3{
+    color: var(--primary-headings);
+    font-size: 36px;
+    margin: 12px 0;
 }
 
 .right_content {
@@ -10,12 +24,9 @@
     height: 100%;
     box-sizing: border-box;
     padding: 10px 0 10px 10px;
-    border: 1px solid var(--box-border);
-    border-top: none;
-    border-right: 0;
-    border-radius: 0 0 0 12px;
-    background: var(--right-panel);
-    box-shadow: -6px 0 12px -6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background: var(--cards-background);
+    box-shadow:  0 6px 12px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
 }
@@ -25,10 +36,14 @@
 }
 
 .heart_state_info {
-    flex: 1.4;
+    display: flex;
+    flex-direction: column;
+    flex: 1 ;
     padding: 0 20px 20px;
     white-space: pre-line;
+
     overflow-y: auto;
+    scrollbar-width: none;
 
     -webkit-mask-image: linear-gradient(
             to bottom,
@@ -42,59 +57,74 @@
     );
 }
 
-.right button svg {
-    width: 14px;
-    height: 14px;
+.heart_state_info::-webkit-scrollbar {
+    display: none;
 }
 
-.right button {
+.right button.right_toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    width: 40px;
+
+    border-radius: 20px;
+    box-shadow:  0 1px 6px rgba(0, 0, 0, 0.2);
+    background: var(--cards-background);
+}
+
+.right.collapsed > button.right_toggle {
     position: absolute;
-    left: -8.8px;
-    top: 20px;
-
-    display: grid;
-    place-items: center;
-    width: 20px;
-    height: 44px;
-    padding: 0;
-
-    border: 1px solid var(--box-border);
-    border-right: 0;
-    border-radius: 12px 0 0 12px;
-    background: var(--background-colour-2);
-    box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.08);
-
-    cursor: pointer;
+    top: 80px;
+    right: var(--side-margin);
 }
 
-@media (max-width: 768px) {
-    .right {
-        position: fixed;
-        top: var(--bar-height);
-        right: 0;
+.right button.right_toggle svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.right button.right_toggle.open{
+    margin-right: 10px;
+}
+
+@media (width < 800px) {
+    .right,
+    .right.collapsed {
+        position: absolute;
+        top: auto;
         bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 0 var(--side-margin);
+        flex-direction: column;
+        align-items: center;
         z-index: 10;
-        padding: 0;
     }
 
     .right_content {
-        width: min(350px, calc(100vw - 16px));
-        height: 100%;
-        padding: 10px 0 10px 10px;
-        border-radius: 12px 0 0 12px;
-        box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        height: 50dvh;
+        min-height: 0;
+        border-radius: 12px;
     }
 
-    .right .right_open {
-        left: auto;
-        right: 0;
-        border: 1px solid var(--box-border);
-        border-radius: 12px 0 0 12px;
+    .right > button.right_toggle,
+    .right.collapsed > button.right_toggle {
+        position: static;
+        width: 60px;
+        height: 40px;
+        flex-shrink: 0;
+        margin: 0;
     }
 
-    .right button {
-        position: absolute;
-        left: -19px;
-        top: 50px;
+    .right > button.right_toggle.open {
+        margin-bottom: 8px;
+    }
+
+    .right button.right_toggle svg {
+        transform: rotate(90deg);
     }
 }

@@ -42,6 +42,8 @@ function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActiv
                         Off
                     </button>
                 </div>
+            </div>
+            <div className="settings_section">
                 <h4>Toggle Glow On Waveforms</h4>
                 <div className="selector_section">
                     <button className={glowActive ? "active" : "inactive"} onClick={() => setGlowActive(true)} >
@@ -52,7 +54,6 @@ function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActiv
                         Off
                     </button>
                 </div>
-
             </div>
             <div className="theme_selector">
                 <button>◐</button>

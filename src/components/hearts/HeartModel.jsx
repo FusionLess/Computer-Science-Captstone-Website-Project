@@ -20,7 +20,23 @@ const UNHEALTHY_MESH_MAP = {
 }
 function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHover, onSelect, isUnhealthy}) {
   const { scene } = useGLTF(url)
-  const model = useMemo(() => scene.clone(true), [scene]);
+  const model = useMemo(() => {
+    const clonedModel = scene.clone(true)
+
+    // Returning false stops the raycaster from checking hidden frames' children.
+    clonedModel.raycast = () => clonedModel.visible ? undefined : false
+
+    clonedModel.traverse((child) => {
+      if (!child.isMesh) return
+      const originalRaycast = child.raycast
+      child.raycast = function (raycaster, intersections) {
+        if (!this.visible) return false
+        return originalRaycast.call(this, raycaster, intersections)
+      }
+    })
+
+    return clonedModel
+  }, [scene])
   const epiMeshRef = useRef(null)
 
   const newMeshName = (meshName) => {
@@ -88,10 +104,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
     if (epiMeshRef.current) {
       epiMeshRef.current.visible = showEpi
     }
-    epiMeshRef.current.raycast = showEpi
-      ? THREE.Mesh.prototype.raycast
-      : () => {}
-  }, [showEpi])
+  }, [model, showEpi])
 
   useEffect(() => {
     const planes = clipPlane ? [clipPlane] : []
@@ -127,7 +140,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       onHover?.(null)
     }}
 
-    onClick={(event) => {
+    onPointerDown={(event) => {
       event.stopPropagation()
       const rawMeshName = event.object.name
       const meshName = newMeshName(rawMeshName)
@@ -164,7 +177,7 @@ export function HeartModel({
 
   useFrame((_, delta) => {
     // stop advancing the animation timeline if paused
-    if (isPaused) return
+    if (isPaused || bpm <= 0) return
 
     // Cap delta to prevent frame spikes when dragging the slider
     const dt = Math.min(delta, 0.05)

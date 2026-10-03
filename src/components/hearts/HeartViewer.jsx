@@ -6,11 +6,11 @@ import { Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
-import ViewerControls from './ViewerControls.jsx'
 import SliceControls from './SliceControls.jsx'
 
 import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
+import HeartController from './HeartController'
 
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
@@ -27,6 +27,29 @@ export default function HeartViewer({
     index,
     sharedResetTrigger,
     setSharedResetTrigger,
+    useSharedControls,
+
+    sharedShowEpi,
+    setSharedShowEpi,
+
+    sharedVentricleOnly,
+    setSharedVentricleOnly,
+
+    sharedFullView,
+    setSharedFullView,
+
+    sharedSliceEnabled,
+    setSharedSliceEnabled,
+    sharedShowPlaneGuide,
+    setSharedShowPlaneGuide,
+    sharedActivePreset,
+    setSharedActivePreset,
+    sharedPitch,
+    setSharedPitch,
+    sharedYaw,
+    setSharedYaw,
+    sharedSliceDistance,
+    setSharedSliceDistance,
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -37,44 +60,135 @@ export default function HeartViewer({
     const initialCameraPos = CAMERA_POSITIONS[defaultPreset]
     const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
-
+    const [viewMode, setViewMode] = useState('3d')
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
-    const [showEpi, setShowEpi] = useState(true)
-    const [ventricleOnly, setVentricleOnly] = useState(false)
-    const [fullView, setFullView] = useState(false)
+
 
     // sets the preset states you can slice the heart
-    const [sliceEnabled, setSliceEnabled] = useState(false)
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
-    const [showPlaneGuide, setShowPlaneGuide] = useState(true)
-    const [pitch, setPitch] = useState(isDefaultShortAxis ? -90 : 0)
-    const [yaw, setYaw] = useState(isDefaultShortAxis ? 0 : 4)
-    const [sliceDistance, setSliceDistance] = useState(isDefaultShortAxis ? -18 : 0)
+    const [localSliceEnabled, setLocalSliceEnabled] =
+        useState(isDefaultShortAxis)
+
+    const [localShowPlaneGuide, setLocalShowPlaneGuide] =
+        useState(false)
+
+    const [localPitch, setLocalPitch] =
+        useState(isDefaultShortAxis ? -90 : 0)
+
+    const [localYaw, setLocalYaw] =
+        useState(isDefaultShortAxis ? 0 : 40)
+
+    const [localSliceDistance, setLocalSliceDistance] =
+        useState(isDefaultShortAxis ? -18 : 0)
+
+    const [localActivePreset, setLocalActivePreset] =
+        useState(defaultPreset)
+    const sliceEnabled = useSharedControls
+        ? sharedSliceEnabled
+        : localSliceEnabled
+
+    const setSliceEnabled = useSharedControls
+        ? setSharedSliceEnabled
+        : setLocalSliceEnabled
+
+
+    const showPlaneGuide = useSharedControls
+        ? sharedShowPlaneGuide
+        : localShowPlaneGuide
+
+    const setShowPlaneGuide = useSharedControls
+        ? setSharedShowPlaneGuide
+        : setLocalShowPlaneGuide
+
+
+    const pitch = useSharedControls
+        ? sharedPitch
+        : localPitch
+
+    const setPitch = useSharedControls
+        ? setSharedPitch
+        : setLocalPitch
+
+
+    const yaw = useSharedControls
+        ? sharedYaw
+        : localYaw
+
+    const setYaw = useSharedControls
+        ? setSharedYaw
+        : setLocalYaw
+
+
+    const sliceDistance = useSharedControls
+        ? sharedSliceDistance
+        : localSliceDistance
+
+    const setSliceDistance = useSharedControls
+        ? setSharedSliceDistance
+        : setLocalSliceDistance
+
+
+    const activePreset = useSharedControls
+        ? sharedActivePreset
+        : localActivePreset
+
+    const setActivePreset = useSharedControls
+        ? setSharedActivePreset
+        : setLocalActivePreset
+
+    const [localShowEpi, setLocalShowEpi] = useState(true)
+    const [localVentricleOnly, setLocalVentricleOnly] = useState(false)
+    const [localFullView, setLocalFullView] = useState(false)
+
+    const showEpi = useSharedControls
+        ? sharedShowEpi
+        : localShowEpi
+
+    const setShowEpi = useSharedControls
+        ? setSharedShowEpi
+        : setLocalShowEpi
+
+
+    const ventricleOnly = useSharedControls
+        ? sharedVentricleOnly
+        : localVentricleOnly
+
+    const setVentricleOnly = useSharedControls
+        ? setSharedVentricleOnly
+        : setLocalVentricleOnly
+
+
+    const fullView = useSharedControls
+        ? sharedFullView
+        : localFullView
+
+    const setFullView = useSharedControls
+        ? setSharedFullView
+        : setLocalFullView
 
     useEffect(() => {
         const shortAxis = defaultPreset === "shortAxis"
 
-        setFullView(false)
+        setLocalFullView(false)
 
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
-        setActivePreset(defaultPreset)
+        setLocalSliceEnabled(false)
+        setLocalShowPlaneGuide(false)
+        setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
-            setPitch(-90)
-            setYaw(0)
-            setSliceDistance(-18)
+            setLocalPitch(-90)
+            setLocalYaw(0)
+            setLocalSliceDistance(-18)
         } else {
-            setPitch(0)
-            setYaw(40)
-            setSliceDistance(0)
+            setLocalPitch(0)
+            setLocalYaw(40)
+            setLocalSliceDistance(0)
         }
 
         setResetTrigger(prev => prev + 1)
     }, [frameFolder])
 
     // sets the preset independent depth slices per selection
-    const [activePreset, setActivePreset] = useState(defaultPreset)
     const [presetDepths, setPresetDepths] = useState({
         frontal: 0,
         sagittal: -3,
@@ -103,10 +217,10 @@ export default function HeartViewer({
             setShowPlaneGuide(false)
             setActivePreset(defaultPreset)
 
-        } else {            
+        } else {
             const shortAxis = defaultPreset === "shortAxis"
             setFullView(false)
-            
+
             setSliceEnabled(true)
             setShowPlaneGuide(true)
             setActivePreset(defaultPreset)
@@ -122,6 +236,36 @@ export default function HeartViewer({
             }
         }
     }
+    useEffect(() => {
+        if (!useSharedControls) return
+
+        if (fullView) {
+            // Enter Full View
+            setVentricleOnly(false)
+            setShowEpi(true)
+
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+            setActivePreset(defaultPreset)
+        } else {
+            // Return to this heart's predetermined view
+            const shortAxis = defaultPreset === "shortAxis"
+
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+            setActivePreset(defaultPreset)
+
+            if (shortAxis) {
+                setPitch(-90)
+                setYaw(0)
+                setSliceDistance(-18)
+            } else {
+                setPitch(0)
+                setYaw(40)
+                setSliceDistance(0)
+            }
+        }
+    }, [fullView, useSharedControls])
 
     const handleResetView = () => {
         const shortAxis = defaultPreset === "shortAxis"
@@ -129,8 +273,8 @@ export default function HeartViewer({
         setVentricleOnly(false)
         setShowEpi(true)
         // Restore predetermined slicing
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
         setActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -199,22 +343,23 @@ export default function HeartViewer({
     return (
       
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
-             {title && (
-                <h3
-                    style={{
-                        position: 'absolute',
-                        top: '15px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        margin: 0,
-                        zIndex: 10,
-                        textAlign: 'center',
-                        whiteSpace: 'nowrap'
-                    }}
-                >
-                    {title}
-                </h3>
-            )}
+            {/* {title && (*/}
+            {/*    <h3*/}
+            {/*        style={{*/}
+            {/*            position: 'absolute',*/}
+            {/*            top: '15px',*/}
+            {/*            left: '50%',*/}
+            {/*            transform: 'translateX(-50%)',*/}
+            {/*            margin: 0,*/}
+            {/*            zIndex: 10,*/}
+            {/*            textAlign: 'center',*/}
+            {/*            whiteSpace: 'nowrap'*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        {title}*/}
+            {/*    </h3>*/}
+            {/*)}*/}
+
             <Canvas
                 camera={{ position: initialCameraPos, fov: 45 }}
                 gl={{
@@ -228,7 +373,7 @@ export default function HeartViewer({
                 <directionalLight position={[-250, -250, 200]} intensity={0.6} />
 
                 <Suspense fallback={null}>
-                    <Center>
+                    <Center position={[0,15,0]}>
                             <HeartModel
                             frameFolder={frameFolder}
                             bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
@@ -249,7 +394,7 @@ export default function HeartViewer({
                         position={[0, -90, 0]}   // Sits just beneath the lowest tip of the apex
                         opacity={0.65}           // Shadow intensity
                         scale={220}              // Floor shadow spread
-                        blur={2.0}               // Softness edge blur
+                        blur={5.0}               // Softness edge blur
                         far={300}                // Vertical projection distance
                         resolution={512}
                         color="#050508"
@@ -292,10 +437,10 @@ export default function HeartViewer({
                 {HeartParts[hoverInfo.name]?.name ?? hoverInfo.name}
             </div>
             )}
-            
-            {!syncEnabled && (
+
+            {!useSharedControls && (
                 <>
-                    <ViewerControls
+                    <HeartController
                         isPaused={isPaused}
                         setIsPaused={setIsPaused}
                         syncEnabled={syncEnabled}
@@ -307,7 +452,6 @@ export default function HeartViewer({
                         handleFullView={handleFullView}
                         handleResetView={handleResetView}
                         handleVentricleView={handleVentricleView}
-
                     />
                     <SliceControls
                         index={index}
