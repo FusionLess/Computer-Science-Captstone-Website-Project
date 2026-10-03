@@ -5,6 +5,7 @@ import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel'
 import { SlicePlaneHelper } from './SlicePlaneHelper'
 import MRIViewer from './MRIViewer'
+import EchoViewer from './EchoViewer'
 import { SliceCap } from './SliceCap'
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
@@ -72,7 +73,7 @@ function CameraController({ resetTrigger, initialPos = [-225, -20, -200] }) {
 }
 
 export default function App() {
-  const [viewMode, setViewMode] = useState('3d') // '3d' | 'mri'
+  const [viewMode, setViewMode] = useState('3d') // '3d' | 'mri' | 'echo'
   const [resetTrigger, setResetTrigger] = useState(0)
 
   const [bpm, setBpm] = useState(60)
@@ -184,11 +185,29 @@ export default function App() {
         >
           MRI View
         </button>
+        <button
+          type="button"
+          onClick={() => setViewMode('echo')}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '6px',
+            border: 'none',
+            background: viewMode === 'echo' ? '#0284c7' : 'transparent',
+            color: '#ffffff',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'background 0.2s',
+          }}
+        >
+          Echo View
+        </button>
       </div>
 
       {/* Viewport Switching */}
       {viewMode === 'mri' ? (
         <MRIViewer />
+      ) : viewMode === 'echo' ? (
+        <EchoViewer />
       ) : (
         <>
           <Canvas

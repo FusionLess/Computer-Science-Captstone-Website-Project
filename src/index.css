@@ -1,84 +1,10 @@
-@import '@fontsource/roboto-slab/400.css';
-@import '@fontsource/roboto-slab/500.css';
-@import '@fontsource/roboto-slab/600.css';
-@import '@fontsource/roboto-slab/700.css';
-
-:root {
-  --bar-height: 65px;
-  --graph-height: 120px;
-  --left-panel-width: 300px;
-  --right-panel-width: 450px;
-  --settings-panel-width: 300px;
-  --comparison-dialog-width: 800px;
-  --compare-menu-width: 160px;
-  --heartrate-panel-width: 148px;
-  --heartrate-panel-mobile-width: 96px;
-  --graph-switch-width: 40px;
-  --viewer-control-width: 50px;
-  --slice-control-width: 40px;
-
-  --home-background: #F7FAFD;
-  --cards-background: #ffffff;
-  --divider: #e1e8f0;
-  --primary-headings: #071B3D;
-  --body-texts: #687F9F;
-  --secondary-labels: #8491A5;
-  --selected-condition-background: #062451;
-  --active-labels: #0066FF;
-  --control-background: #252F3D;
-  --selected-suboptions: #E0EFFF;
-  --heartrate-text-slider: #0066FF;
-  --secondary-cards-background: #f7f8fa;
-
-  font-family: 'Inter', sans-serif;
-
-  --side-margin: 24px;
-  --mobile-width: 800px;
-
-  --green-gradient-start: rgba(86, 190, 123, 0.28);
-  --green-text: #176c3a;
-
-  --amber-gradient-start: rgba(241, 181, 56, 0.30);
-  --amber-text: #8b5d00;
-
-  --red-gradient-start: rgba(220, 80, 70, 0.26);
-  --red-text: #b2352b;
-}
-
-html, body {
+html,
+body,
+#root {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden;
   background-color: #141416;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto Slab', sans-serif;
-}
-
-#root {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-button {
-  border-radius: 20px;
-  border: none;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  box-sizing: border-box;
-  cursor: pointer;
-  font-weight: bolder;
-  background: var(--cards-background);
-  color: var(--body-texts);
-  font-family: inherit;
-}
-
-input, select, textarea {
-  font-family: inherit;
 }
