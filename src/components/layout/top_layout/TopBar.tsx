@@ -14,6 +14,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphA
             <div className="desktop_navigation">
                 <HomeButton />
                 <MRIButton />
+                <EchoButton />
                 <AboutButton />
                 <SettingsButton
                     setGraphActive={setGraphActive}
@@ -43,6 +44,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive}:{graphA
                 <div className="mobile_navigation">
                     <HomeButton />
                     <MRIButton />
+                    <EchoButton />
                     <AboutButton />
                     <SettingsButton
                         setGraphActive={setGraphActive}
@@ -130,6 +132,25 @@ function AboutButton() {
 }
 
 export default TopBar;
+
+function EchoButton() {
+    return (
+        <div className="echo_button">
+            <NavLink
+                to="/echo"
+                end
+                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+            >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                     strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 12h4l3-8 6 16 3-8h4" />
+                </svg>
+                <span>View Echo</span>
+            </NavLink>
+        </div>
+    )
+}
 
 function MRIButton() {
     return (
