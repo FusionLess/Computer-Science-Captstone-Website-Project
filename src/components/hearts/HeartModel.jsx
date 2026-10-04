@@ -161,6 +161,7 @@ export function HeartModel({
   ventricleOnly = false,
   clipPlane = null,
   isPaused = false,
+  animationPhase = undefined,
   beatInterval,
   onHover,
   onSelect,
@@ -174,8 +175,14 @@ export function HeartModel({
 
   const safeBpm = Number(bpm) || 60
   const isUnhealthy = frameFolder !== "frames"
+  // MRI playback supplies the cycle position so both views use the same frame clock.
+  const displayedFrame = animationPhase === undefined
+    ? activeFrame
+    : Math.min(Math.max(Math.floor(animationPhase * NUM_FRAMES), 0), NUM_FRAMES - 1)
 
   useFrame((_, delta) => {
+    if (animationPhase !== undefined) return
+
     // stop advancing the animation timeline if paused
     if (isPaused || bpm <= 0) return
 
@@ -231,7 +238,7 @@ export function HeartModel({
         <SingleFrame
           key={path}
           url={path}
-          isVisible={idx === activeFrame}
+          isVisible={idx === displayedFrame}
           showEpi={showEpi}
           ventricleOnly={ventricleOnly}
           clipPlane={clipPlane}

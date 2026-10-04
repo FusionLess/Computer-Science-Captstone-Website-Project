@@ -23,13 +23,12 @@
 
 .mri-controller {
     display: flex;
-    /*flex: 1;*/
     background: var(--cards-background);
     box-sizing: border-box;
     border-radius: 20px;
     margin: 40px 0 40px 40px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    width: 400px;
+    width: 300px;
 }
 
 .heart-mri-container {

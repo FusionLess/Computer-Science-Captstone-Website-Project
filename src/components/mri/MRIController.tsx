@@ -24,25 +24,10 @@ export default function MRIController({
 
     return (
         <>
-            <div style={{
-                position: 'absolute',
-                bottom: 24,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 20,
-                background: 'rgba(20, 20, 25, 0.9)',
-                backdropFilter: 'blur(10px)',
-                padding: '14px 24px',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                width: 'min(90vw, 520px)'
-            }}>
+            <div className="controller-panel">
                 {/* Slice Selector */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                    <span style={{ color: 'white', fontSize: 13, minWidth: '90px' }}>
+                <div className="controller-row">
+                    <span className="slice-label">
                         Slice: {slice + 1} / {totalSlices}
                         </span>
                     <input
@@ -51,32 +36,15 @@ export default function MRIController({
                         max={totalSlices - 1}
                         value={slice}
                         onChange={(e) => setSlice(Number(e.target.value))}
-                        style={{ flex: 1, cursor: 'pointer' }}
+                        className="slice-button"
                     />
                 </div>
 
                 {/* Temporal Frame & Play/Pause Controls */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                    <button
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        style={{
-                            padding: '4px 12px',
-                            borderRadius: '6px',
-                            border: 'none',
-                            background: isPlaying ? '#e11d48' : '#16a34a',
-                            color: 'white',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            minWidth: '65px'
-                        }}
-                    >
-                        {isPlaying ? 'Pause' : 'Play'}
-                    </button>
-
-                    <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, minWidth: '85px' }}>
-            Frame: {frame + 1} / {totalFrames}
-          </span>
+                <div className="controller-row">
+                    <span className="frame-label">
+                        Frame: {frame + 1} / {totalFrames}
+                    </span>
 
                     <input
                         type="range"
@@ -87,9 +55,16 @@ export default function MRIController({
                             setIsPlaying(false);
                             setFrame(Number(e.target.value));
                         }}
-                        style={{ flex: 1, cursor: 'pointer' }}
+                        className="frame-button"
                     />
                 </div>
+
+                <button
+                    onClick={() => setIsPlaying(!isPlaying)}
+                    className={isPlaying ? 'pause-button' : 'play-button'}
+                >
+                    {isPlaying ? 'Pause' : 'Play'}
+                </button>
             </div>
         </>
     )

@@ -53,6 +53,7 @@ export default function HeartViewer({
     setSharedSliceDistance = undefined,
 
     mriClipPlane = null,
+    animationPhase = undefined,
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -386,6 +387,7 @@ export default function HeartViewer({
                             ventricleOnly={ventricleOnly}
                             clipPlane={clipPlane}
                             isPaused={isPaused}
+                            animationPhase={animationPhase}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             onSelect={setSelectedPart}
                             onHover={setHoverInfo}
