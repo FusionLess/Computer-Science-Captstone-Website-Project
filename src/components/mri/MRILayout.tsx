@@ -5,6 +5,7 @@ import HeartViewer from "../hearts/HeartViewer"
 import MRIController from "./MRIController.tsx"
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 import * as THREE from 'three'
+import { HEART_FRAME_COUNT } from '../hearts/heartRendering'
 
 export default function MRILayout() {
 
@@ -17,6 +18,7 @@ export default function MRILayout() {
     const totalSlices = 10;
     const totalFrames = 30;
     const heartFrameOffset = 20;
+    const modelFrameOffset = 18;
 
     useEffect(() => {
         if (!isPlaying || bpm <= 0) return;
@@ -69,8 +71,8 @@ export default function MRILayout() {
                             showControls={false}
                             mriClipPlane={mriClipPlane}
                             animationPhase={
-                                (((frame + heartFrameOffset) % totalFrames + totalFrames) % totalFrames)
-                                / totalFrames
+                                ((frame + heartFrameOffset) / totalFrames
+                                    + modelFrameOffset / HEART_FRAME_COUNT) % 1
                             }
                         />
                     </div>

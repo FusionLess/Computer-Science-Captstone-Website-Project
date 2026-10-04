@@ -2,15 +2,15 @@ import React, { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Center } from '@react-three/drei';
 import * as THREE from 'three';
-import { HeartModel as RawHeartModel } from './HeartModel';
-import { SliceCap } from './SliceCap';
+import { HeartModel as RawHeartModel } from '../hearts/HeartModel';
+import { SliceCap } from '../hearts/SliceCap';
 
 const HeartModel = RawHeartModel as React.FC<{
   bpm?: number;
   showEpi?: boolean;
   clipPlane?: THREE.Plane | null;
   isPaused?: boolean;
-  forcedFrame?: number | null;
+  animationPhase?: number;
   rotation?: [number, number, number];
   [key: string]: any;
 }>;
@@ -23,6 +23,7 @@ export const EchoViewer: React.FC = () => {
   const [activeView, setActiveView] = useState<EchoView>('4CH');
   const [frame, setFrame] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const capStyleRef = useRef(null);
 
   const totalFrames = 30;
 
@@ -94,11 +95,12 @@ export const EchoViewer: React.FC = () => {
             <Center>
               <HeartModel
                 clipPlane={clipPlane}
-                forcedFrame={frame}
+                animationPhase={frame / totalFrames}
+                capStyleRef={capStyleRef}
                 rotation={[-Math.PI / 12, -Math.PI / 3, 0]}
               />
             </Center>
-            <SliceCap clipPlane={clipPlane} />
+            <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
           </Suspense>
 
           <OrbitControls enableDamping dampingFactor={0.05} />

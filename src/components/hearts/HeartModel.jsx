@@ -2,13 +2,11 @@ import React, { useRef, useState, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { HEART_FRAME_COUNT, phaseToFrame, cloneHeartScene, addStencilHelpers, materialsOf, isMuscle } from './heartRendering'
 
-const NUM_FRAMES = 75
+const NUM_FRAMES = HEART_FRAME_COUNT
 const ES_FRAME = 25
-// loads all the frames path into an array and iterates over all of them
-
-// function essentially displays only one frame at a time and only loads one frame at a time.
-// all 25 frames are loaded into gpu memory but only active frame is visible
+// All frames are loaded; only the active frame is displayed.
 const UNHEALTHY_MESH_MAP = {
   mesh0: 'mesh0',
   mesh1: 'mesh4',
@@ -18,142 +16,102 @@ const UNHEALTHY_MESH_MAP = {
   mesh5: 'mesh6',
   mesh6: 'mesh3',
 }
-function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHover, onSelect, isUnhealthy}) {
+function meshNameFor(name, isUnhealthy) {
+  return isUnhealthy ? (UNHEALTHY_MESH_MAP[name] ?? name) : name
+}
+
+function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHover, onSelect, isUnhealthy, capStyleRef, capColor }) {
   const { scene } = useGLTF(url)
-  const model = useMemo(() => {
-    const clonedModel = scene.clone(true)
-
-    // Returning false stops the raycaster from checking hidden frames' children.
-    clonedModel.raycast = () => clonedModel.visible ? undefined : false
-
-    clonedModel.traverse((child) => {
-      if (!child.isMesh) return
-      const originalRaycast = child.raycast
-      child.raycast = function (raycaster, intersections) {
-        if (!this.visible) return false
-        return originalRaycast.call(this, raycaster, intersections)
-      }
-    })
-
-    return clonedModel
-  }, [scene])
-  const epiMeshRef = useRef(null)
-
-  const newMeshName = (meshName) => {
-    if (!isUnhealthy) return meshName
-    return UNHEALTHY_MESH_MAP[meshName] ?? meshName
-  }
-  useEffect(() => {
-    model.traverse((child) => {
-      if (!child.isMesh) return
-      const meshName = newMeshName(child.name)
-
-      if (meshName === "mesh0") {
-        child.visible = showEpi
-        return
-      }
-
-      if (ventricleOnly) {
-        // Only LV + RV
-        child.visible =
-          meshName === "mesh1" ||
-          meshName === "mesh4"
-      } else {
-        // Show all internal structures
-        child.visible = true
-      }
-    })
-  }, [model, ventricleOnly, showEpi, isUnhealthy])
+  const model = useMemo(() => cloneHeartScene(scene), [scene])
 
   useEffect(() => {
     model.traverse((child) => {
-      if (child.isMesh) {
-        const isEpi = child.name === 'mesh0' || child.name.toLowerCase().includes('epi')
-        
-        if (isEpi) {
-          epiMeshRef.current = child
-        }
-
-        if (child.material) {
-          child.material.side = THREE.DoubleSide
-          child.material.flatShading = false
-          // Solid opaque rendering prevents see-through ghosting
-          child.material.transparent = false
-          child.material.depthWrite = true
-
-          // forces GPU to prioritize outer shell over inner cavities when facing camera
-          if (isEpi) {
-            child.renderOrder = 2
-            child.material.polygonOffset = true
-            child.material.polygonOffsetFactor = -1.0 // pulls epicardium closer to camera
-            child.material.polygonOffsetUnits = -1.0
-          } else {
-            child.renderOrder = 1
-            child.material.polygonOffset = true
-            child.material.polygonOffsetFactor = 1.0  // pushes internal chambers back
-            child.material.polygonOffsetUnits = 1.0
-          }
-
-          child.material.needsUpdate = true
-        }
-      }
+      if (!child.isMesh || child.name === 'stencilHelper') return
+      const muscle = isMuscle(child)
+      child.renderOrder = muscle ? 12 : 13
+      materialsOf(child).forEach((material) => {
+        material.side = THREE.DoubleSide
+        material.flatShading = false
+        material.transparent = false
+        material.depthWrite = true
+        material.polygonOffset = true
+        material.polygonOffsetFactor = muscle ? -1 : 1
+        material.polygonOffsetUnits = muscle ? -1 : 1
+        material.needsUpdate = true
+      })
     })
+    return () => {
+      model.traverse((child) => {
+        if (child.isMesh && child.name !== 'stencilHelper') {
+          materialsOf(child).forEach((material) => material.dispose())
+        }
+      })
+    }
   }, [model])
 
   useEffect(() => {
-    if (epiMeshRef.current) {
-      epiMeshRef.current.visible = showEpi
-    }
-  }, [model, showEpi])
+    model.traverse((child) => {
+      if (!child.isMesh || child.name === 'stencilHelper') return
+      const name = meshNameFor(child.name, isUnhealthy)
+      child.visible = isMuscle(child)
+        ? showEpi
+        : !ventricleOnly || name === 'mesh1' || name === 'mesh4'
+    })
+  }, [model, showEpi, ventricleOnly, isUnhealthy])
+
+  useEffect(() => {
+    if (!clipPlane) return
+    return addStencilHelpers(model, clipPlane)
+  }, [model, clipPlane])
 
   useEffect(() => {
     const planes = clipPlane ? [clipPlane] : []
     model.traverse((child) => {
-      if (child.isMesh && child.material) {
-        child.material.clippingPlanes = planes
-        child.material.needsUpdate = true
-      }
+      if (!child.isMesh) return
+      materialsOf(child).forEach((material) => {
+        material.clippingPlanes = planes
+        material.needsUpdate = true
+      })
     })
   }, [model, clipPlane])
 
-  return  (
+  useEffect(() => {
+    if (!isVisible || !capStyleRef) return
+    capStyleRef.current = null
+    model.traverse((child) => {
+      if (!child.isMesh || !isMuscle(child)) return
+      const material = materialsOf(child)[0]
+      capStyleRef.current = {
+        color: capColor
+          ? new THREE.Color(capColor)
+          : child.geometry.attributes.color ? null : material.color?.clone(),
+        roughness: material.roughness,
+        metalness: material.metalness,
+      }
+    })
+  }, [model, isVisible, capStyleRef, capColor])
+
+  return (
     <primitive object={model} visible={isVisible}
       onPointerMove={(event) => {
-      event.stopPropagation()
-
-      const rawMeshName = event.object.name
-      const meshName = newMeshName(rawMeshName)
-
-      if (!showEpi && meshName === 'mesh0') {
-        return
-      }
-
-      onHover?.({
-        name: meshName,
-        x: event.clientX,
-        y: event.clientY
-      })
-    }}
-
-    onPointerOut={(event) => {
-      event.stopPropagation()
-      onHover?.(null)
-    }}
-
-    onPointerDown={(event) => {
-      event.stopPropagation()
-      const rawMeshName = event.object.name
-      const meshName = newMeshName(rawMeshName)
-
-      if (!showEpi && meshName === 'mesh0') {
-        return
-      }
-      onSelect?.(meshName)
-    }}
+        event.stopPropagation()
+        onHover?.({
+          name: meshNameFor(event.object.name, isUnhealthy),
+          x: event.clientX,
+          y: event.clientY,
+        })
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation()
+        onHover?.(null)
+      }}
+      onPointerDown={(event) => {
+        event.stopPropagation()
+        onSelect?.(meshNameFor(event.object.name, isUnhealthy))
+      }}
     />
   )
 }
-
 export function HeartModel({
   frameFolder = "frames",
   bpm = 60,
@@ -162,12 +120,16 @@ export function HeartModel({
   clipPlane = null,
   isPaused = false,
   animationPhase = undefined,
+  capStyleRef,
+  capColor = null,
   beatInterval,
   onHover,
   onSelect,
   ...props
 }) {
-  const framePath = Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+18) % NUM_FRAMES}.glb`)
+  const framePath = useMemo(() => Array.from(
+    { length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${i}.glb`
+  ), [frameFolder])
   const [activeFrame, setActiveFrame] = useState(0)
   const animElapsed = useRef(0)
   const totalElapsed = useRef(0)
@@ -178,7 +140,7 @@ export function HeartModel({
   // MRI playback supplies the cycle position so both views use the same frame clock.
   const displayedFrame = animationPhase === undefined
     ? activeFrame
-    : Math.min(Math.max(Math.floor(animationPhase * NUM_FRAMES), 0), NUM_FRAMES - 1)
+    : phaseToFrame(animationPhase)
 
   useFrame((_, delta) => {
     if (animationPhase !== undefined) return
@@ -242,6 +204,8 @@ export function HeartModel({
           showEpi={showEpi}
           ventricleOnly={ventricleOnly}
           clipPlane={clipPlane}
+          capStyleRef={capStyleRef}
+          capColor={capColor}
 
           onHover={onHover}
           onSelect={onSelect}

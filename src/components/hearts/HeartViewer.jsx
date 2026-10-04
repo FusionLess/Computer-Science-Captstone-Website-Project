@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { Center, ContactShadows } from '@react-three/drei'
 
 import { HeartModel } from './HeartModel.jsx'
+import { SliceCap } from './SliceCap.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
 import SliceControls from './SliceControls.jsx'
@@ -64,6 +65,7 @@ export default function HeartViewer({
     const initialCameraPos = CAMERA_POSITIONS[defaultPreset]
     const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
+    const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
@@ -367,11 +369,15 @@ export default function HeartViewer({
             {/*)}*/}
 
             <Canvas
+                onCreated={({ camera }) => {
+                    camera.layers.enable(1)
+                }}
                 camera={{ position: initialCameraPos, fov: 45 }}
                 gl={{
                     logarithmicDepthBuffer: true,
                     antialias: true,
                     localClippingEnabled: true,
+                    stencil: true,
                 }}
             >
                 <ambientLight intensity={0.8} />
@@ -386,6 +392,7 @@ export default function HeartViewer({
                             showEpi={showEpi}
                             ventricleOnly={ventricleOnly}
                             clipPlane={clipPlane}
+                            capStyleRef={capStyleRef}
                             isPaused={isPaused}
                             animationPhase={animationPhase}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
@@ -395,6 +402,7 @@ export default function HeartViewer({
                             beatInterval={beatInterval}
                         />
                     </Center>
+                    <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
 
                     {/* Soft contact floor shadow */}
                     <ContactShadows
