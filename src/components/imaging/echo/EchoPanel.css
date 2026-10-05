@@ -1,0 +1,94 @@
+.echo-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+}
+
+.echo-panel h2 {
+    margin: 0;
+    color: var(--primary-headings);
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.echo-panel-viewers {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    min-height: 0;
+    min-width: 0;
+}
+
+.echo-panel-viewer {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+}
+
+.echo-panel-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--divider);
+    border-radius: 16px;
+    background: var(--secondary-cards-background);
+    color: var(--primary-headings);
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.echo-panel-controls .controller-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.echo-panel-controls .view-label,
+.echo-panel-controls .frame-label {
+    flex-shrink: 0;
+    color: var(--body-texts);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.echo-panel-controls .frame-slider {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    accent-color: var(--active-labels);
+    cursor: pointer;
+}
+
+.echo-panel-controls button {
+    flex-shrink: 0;
+    min-width: 76px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+}
+
+.echo-view-buttons {
+    display: flex;
+    flex: 1;
+    gap: 8px;
+}
+
+.echo-view-buttons button {
+    flex: 1;
+    background: var(--selected-suboptions);
+    color: var(--primary-headings);
+}
+
+.echo-view-buttons button[aria-pressed="true"] {
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+}
