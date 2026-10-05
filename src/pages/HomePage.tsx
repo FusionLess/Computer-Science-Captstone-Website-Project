@@ -5,6 +5,7 @@ import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
 import { useState } from 'react'
 import type { HeartState } from "../components/types/states.ts";
 import type { CompareState } from "../components/types/compare.ts"
+import type { Complexity } from '../components/types/complexities.ts'
 
 export default function HomePage() {
     const [active, setActive] = useState<HeartState>({
@@ -26,6 +27,8 @@ export default function HomePage() {
         category: "healthy",
         option: "Healthy",
     })
+    const [complexity, setComplexity] =
+        useState<Complexity>("standard")
 
     const compareState: CompareState = {
         selection1,
@@ -43,11 +46,15 @@ export default function HomePage() {
                 setGraphActive={setGraphActive}
                 glowActive={glowActive}
                 setGlowActive={setGlowActive}
+                complexity={complexity}
+                setComplexity={setComplexity}
 
             />
             <Content active={active} 
                 setActive={setActive}
                 compareState={compareState}
+                complexity={complexity}
+                setComplexity={setComplexity}
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>

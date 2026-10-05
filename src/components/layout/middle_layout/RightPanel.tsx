@@ -3,13 +3,17 @@ import "./RightPanel.css"
 import HeartPartInfo from "../HeartPartInfo";
 import type { CompareState } from "../../types/compare.ts"
 import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
+import type { Complexity } from "../../types/complexities.ts";
+import PopUpInfoBox from "./PopUpInfoBox"
 
-function RightBox({compareState, selectedPart} :
-                  {compareState : CompareState, selectedPart: string | null}) {
+function RightBox({compareState, selectedPart, complexity} :
+                  {compareState : CompareState, selectedPart: string | null, complexity: Complexity}) {
     const isMobile = window.matchMedia("(width < 800px)").matches;
     const active = compareState.selection1
 
     const [isOpen, setIsOpen] = useState(!isMobile);
+    const [showPopup, setShowPopup] = useState(false)
+    const description =DESCRIPTIONS[active.option as keyof typeof DESCRIPTIONS]
 
     useEffect(() => {
         if (compareState.isComparing) {
@@ -44,11 +48,43 @@ function RightBox({compareState, selectedPart} :
                     <h3>
                         {DESCRIPTIONS[active.option as keyof typeof DESCRIPTIONS].heading}
                     </h3>
-                    { DESCRIPTIONS[ active.option as keyof typeof DESCRIPTIONS].description}
-                </div>
-                <HeartPartInfo selectedPart={selectedPart} />
 
+                    {DESCRIPTIONS[active.option as keyof typeof DESCRIPTIONS]
+                        .description[complexity]}
+                
+                    <button className="explore_button" onClick={() => setShowPopup(true)}>
+                        <span className="explore_button_label">
+                            Explore
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                        </span>
+                    </button>
+                    
+                </div>
+                <HeartPartInfo selectedPart={selectedPart} complexity={complexity} />
             </div>
+            {showPopup && (
+                <PopUpInfoBox
+                    variant="description"
+                    title={description.heading}
+                    description={description.description[complexity]}
+                    media={description.media}
+                    onClose={() => setShowPopup(false)}
+                />
+            )}
         </aside>
     )
 }

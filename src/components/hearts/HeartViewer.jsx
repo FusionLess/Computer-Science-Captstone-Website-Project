@@ -12,6 +12,7 @@ import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 import HeartController from './HeartController'
 
+
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
     frontal: [-225, -20, -200],
@@ -50,6 +51,8 @@ export default function HeartViewer({
     setSharedYaw,
     sharedSliceDistance,
     setSharedSliceDistance,
+    showControls,
+    complexity
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -171,8 +174,13 @@ export default function HeartViewer({
 
         setLocalFullView(false)
 
-        setLocalSliceEnabled(false)
-        setLocalShowPlaneGuide(false)
+        if (complexity === "basic") {
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+        } else {
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+        }
         setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -186,7 +194,7 @@ export default function HeartViewer({
         }
 
         setResetTrigger(prev => prev + 1)
-    }, [frameFolder])
+    }, [frameFolder, complexity])
 
     // sets the preset independent depth slices per selection
     const [presetDepths, setPresetDepths] = useState({
@@ -273,8 +281,13 @@ export default function HeartViewer({
         setVentricleOnly(false)
         setShowEpi(true)
         // Restore predetermined slicing
-        setSliceEnabled(false)
-        setShowPlaneGuide(false)
+        if (complexity === "basic") {
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+        } else {
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+        }
         setActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -437,7 +450,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!useSharedControls && (
+            {!useSharedControls && showControls && (
                 <>
                     <div className="viewer-controls">
 
@@ -471,6 +484,9 @@ export default function HeartViewer({
                             sliceDistance={sliceDistance}
                             handlePresetSelect={handlePresetSelect}
                             handleDepthSliderChange={handleDepthSliderChange}
+
+                            complexity={complexity}
+
                         />
                     </div>
                 </>
