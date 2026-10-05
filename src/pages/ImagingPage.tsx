@@ -1,14 +1,14 @@
-import MRILayout from "../components/mri/MRILayout.tsx"
+import ImagingLayout from "../components/imaging/ImagingLayout.tsx"
 import TopBar from "../components/layout/top_layout/TopBar.tsx";
 import {useState} from "react";
 
-export default function MRIPage() {
+export default function ImagingPage() {
     const [graphActive, setGraphActive] = useState<boolean>(true)
 
     return (
-        <>
+        <main className = "app">
             <TopBar graphActive={graphActive} setGraphActive={setGraphActive}/>
-            <MRILayout />
-        </>
+            <ImagingLayout />
+        </main>
     )
 }

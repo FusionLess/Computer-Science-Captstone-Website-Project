@@ -16,7 +16,10 @@ import HeartController from './HeartController'
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
     frontal: [-225, -20, -200],
-    shortAxis: [-180, 150, -220]
+    shortAxis: [-180, 150, -220],
+
+    topDown: [0.1, 300, 0.02],
+    titledShortAxis: [280, 150, 56],
 }
 
 export default function HeartViewer({
@@ -53,8 +56,10 @@ export default function HeartViewer({
     sharedSliceDistance = undefined,
     setSharedSliceDistance = undefined,
 
-    mriClipPlane = null,
+    externalClipPlane = null,
     animationPhase = undefined,
+    cameraView = undefined,
+    cameraViewResetTrigger = 0,
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -62,7 +67,8 @@ export default function HeartViewer({
             ? "frontal"
             : "shortAxis"
 
-    const initialCameraPos = CAMERA_POSITIONS[defaultPreset]
+    const viewPreset = cameraView ?? defaultPreset
+    const initialCameraPos = CAMERA_POSITIONS[viewPreset] ?? CAMERA_POSITIONS[defaultPreset]
     const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
     const capStyleRef = useRef(null)
@@ -346,7 +352,7 @@ export default function HeartViewer({
         return new THREE.Plane(normal, sliceDistance)
     }, [sliceEnabled, pitch, yaw, sliceDistance])
 
-    const clipPlane = mriClipPlane ?? modelClipPlane
+    const clipPlane = externalClipPlane ?? modelClipPlane
 
     return (
       
@@ -424,9 +430,9 @@ export default function HeartViewer({
                 />
 
                 <CameraController
-                    resetTrigger={resetTrigger}
+                    resetTrigger={resetTrigger + cameraViewResetTrigger}
                     initialPos={initialCameraPos}
-                    preset={defaultPreset}
+                    preset={viewPreset}
                     syncEnabled={syncEnabled}
                     syncedCameraRef={syncedCameraRef}
                     index={index}

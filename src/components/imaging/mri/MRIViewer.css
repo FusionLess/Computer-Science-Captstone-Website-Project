@@ -1,25 +1,12 @@
 .mri-viewer {
     display: flex;
     flex: 1;
+    aspect-ratio: 1 / 1;
     position: relative;
-    background: none;
     overflow: hidden;
-    padding: 20px;
     box-sizing: border-box;
     align-items: center;
     justify-content: center;
-}
-
-.viewer-container {
-    position: relative;
-    width: min(65vh, 480px);
-    height: min(65vh, 480px);
-    border-radius: 20px;
-    background: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
 .mri-viewer-image {
@@ -37,7 +24,6 @@
     color: rgba(255, 255, 255, 0.4);
     font-size: 13px;
     font-weight: 700;
-    background: none;
 }
 
 .mri-viewer-label.mri-right {

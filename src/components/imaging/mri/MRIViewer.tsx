@@ -13,8 +13,6 @@ export const MRIViewer = ({ slice, frame, totalFrames }: MRIViewerProps) => {
   const paddedFrame = String(frame).padStart(2, '0');
   const activeImagePath = `/mri_cine/slice_${paddedSlice}_frame_${paddedFrame}.png`;
 
-  // Memory Preloading Engine
-  // Keeps Image objects alive in memory across renders so the browser doesn't refetch or flash white
   const preloadedCache = useRef<Map<string, HTMLImageElement>>(new Map());
 
   useEffect(() => {
@@ -34,18 +32,15 @@ export const MRIViewer = ({ slice, frame, totalFrames }: MRIViewerProps) => {
 
   return (
     <div className="mri-viewer">
-      <div className="viewer-container">
-          <img
-              src={activeImagePath}
-              alt={`Cine MRI Slice ${slice + 1} Frame ${frame + 1}`}
-              draggable={false}
-              className="mri-viewer-image"
-          />
-          {/* Standard Radiological Orientation Labels */}
-          <span className="mri-viewer-label mri-right">R</span>
-          <span className="mri-viewer-label mri-left">L</span>
-      </div>
-
+      <img
+          src={activeImagePath}
+          alt={`Cine MRI Slice ${slice + 1} Frame ${frame + 1}`}
+          draggable={false}
+          className="mri-viewer-image"
+      />
+      {/* Standard Radiological Orientation Labels */}
+      <span className="mri-viewer-label mri-right">R</span>
+      <span className="mri-viewer-label mri-left">L</span>
     </div>
   );
 };

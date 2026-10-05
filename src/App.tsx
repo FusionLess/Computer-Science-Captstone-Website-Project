@@ -1,8 +1,7 @@
 import './App.css'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
-import EchoPage from './pages/EchoPage'
-import MRIViewer from './pages/MRIPage.tsx'
+import ImagingPage from './pages/ImagingPage.tsx'
 import { HeartMonitorProvider } from './components/context/HeartMonitorContext'
 import { BrowserRouter, Routes, Route } from 'react-router';
 
@@ -16,12 +15,11 @@ export default function App() {
                     </HeartMonitorProvider>
                 }/>
                 <Route path="/about" element={<AboutPage />} />
-                <Route path="/echo" element={<EchoPage />} />
                 <Route
-                    path="/mri"
+                    path="/imaging"
                     element={
                         <HeartMonitorProvider>
-                            <MRIViewer />
+                            <ImagingPage />
                         </HeartMonitorProvider>
                     }
                 />
