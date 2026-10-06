@@ -25,6 +25,27 @@ export default function HeartController2({ compareState, setSelectedPart, comple
         isComparing,
         setIsComparing,
     } = compareState
+
+    const handleCompare = () => {
+        if (isComparing) {
+            setIsComparing(false)
+            return
+        }
+
+        if (selection1.category === "healthy") {
+            chooseSelection2({
+                category: "attack",
+                option: "Minor",
+            })
+        } else {
+            chooseSelection2({
+                category: "healthy",
+                option: "Healthy",
+            })
+        }
+        setIsComparing(true)
+    }
+
     const showControls = complexity !== "basic"
 
     const [syncEnabled, setSyncEnabled] = useState(false)
@@ -103,7 +124,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                 type="button"
                 className={`compare-button ${isComparing ? "" : "not-comparing"}`}
                 aria-pressed={isComparing}
-                onClick={() => setIsComparing(!isComparing)}
+                onClick={handleCompare}
             >
                 {isComparing ? "Stop Comparing" : "Compare"}
             </button>

@@ -44,6 +44,45 @@
     overflow: hidden;
 }
 
+.middle-panel button.compare-button {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background-color 180ms ease;
+}
+
+.middle-panel button.compare-button:hover {
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.middle-panel button.compare-button:active {
+    transform: translateX(50%) scale(0.97);
+}
+
+.middle-panel button.compare-button.not-comparing:hover {
+    transform: scale(1.05);
+}
+
+.middle-panel button.compare-button.not-comparing:active {
+    transform: scale(0.97);
+}
+
+.middle-panel .sync {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background-color 180ms ease;
+}
+
+.middle-panel .sync:hover {
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.middle-panel .sync:active {
+    transform: translateX(50%) scale(0.97);
+}
 
 button.compare-button {
     position: absolute;
