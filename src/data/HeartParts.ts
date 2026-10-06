@@ -15,7 +15,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     name: "Epicardium",
     description: {
       basic: "This is a thin layer on the outside of the heart",
-      standard: "The epicardium is the hearts outer layer",
+      standard: "The epicardium is the heart's outer layer",
       advanced: "The epicardium is the outermost layer of the heart wall"
     },
     function: {
