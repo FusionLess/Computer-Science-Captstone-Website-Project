@@ -7,7 +7,7 @@
     height: calc(100vh - var(--bar-height) - 20px);
     background: var(--cards-background);
     right: 10px;
-    box-shadow: 0px 0px 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
     border-radius: 30px;
     padding: 20px;
     box-sizing: border-box;
@@ -78,5 +78,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 0px 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
 }
