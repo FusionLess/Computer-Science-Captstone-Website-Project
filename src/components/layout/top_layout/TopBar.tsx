@@ -1,11 +1,13 @@
 import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import type { Complexity } from "../../types/complexities.ts";
 
 function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const { pathname } = useLocation()
+    const isHomePage = pathname === "/"
 
     return (
         <header className="topbar">
@@ -18,14 +20,14 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
             <div className="desktop_navigation">
                 <HomeButton />
                 <AboutButton />
-                <SettingsButton
+                {isHomePage && <SettingsButton
                     setGraphActive={setGraphActive}
                     graphActive={graphActive}
                     glowActive={glowActive}
                     setGlowActive={setGlowActive}
                     complexity={complexity}
                     setComplexity={setComplexity}
-                />
+                />}
             </div>
 
             <button
@@ -47,14 +49,14 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                 <div className="mobile_navigation">
                     <HomeButton />
                     <AboutButton />
-                    <SettingsButton
+                    {isHomePage && <SettingsButton
                         setGraphActive={setGraphActive}
                         graphActive={graphActive}
                         glowActive={glowActive}
                         setGlowActive={setGlowActive}
                         complexity={complexity}
                         setComplexity={setComplexity}
-                    />
+                    />}
                 </div>
             )}
         </header>
