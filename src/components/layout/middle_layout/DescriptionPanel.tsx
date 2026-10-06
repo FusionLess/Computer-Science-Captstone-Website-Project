@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import "./RightPanel.css"
-import HeartPartInfo from "../HeartPartInfo";
+import "./DescriptionPanel.css"
+import HeartPartInfo from "./HeartPartInfo.tsx";
 import type { CompareState } from "../../types/compare.ts"
 import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
 import type { Complexity } from "../../types/complexities.ts";

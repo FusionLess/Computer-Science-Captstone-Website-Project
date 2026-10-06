@@ -1,4 +1,4 @@
-import "./MiddlePanel.css"
+import "./HeartController2.css"
 
 import { HEART_STATE_TITLES } from "../../types/states.ts";
 import type { HeartState } from "../../types/states.ts";
@@ -9,13 +9,13 @@ import { FRAMES } from "../../../data/frames.ts"
 import { useState, useRef } from "react";
 
 import HeartViewerPage from "../../hearts/HeartViewer.jsx"
-import HeartButtons from "./HeartButtons.tsx";
+import ConditionButtons from "./ConditionSelector.tsx";
 
 import HeartController from "../../hearts/HeartController.jsx"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import SliceControls from "../../hearts/SliceControls.jsx"
 import type { Complexity } from "../../types/complexities.ts";
-export default function MiddlePanel({ compareState, setSelectedPart, complexity}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity}) {
+export default function HeartController2({ compareState, setSelectedPart, complexity}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity}) {
 
     const {
         selection1,
@@ -313,7 +313,7 @@ function HeartPanel ({
 
     return (
         <div className="heart_panel">
-            <HeartButtons active={active} setActive={setActive}/>
+            <ConditionButtons active={active} setActive={setActive}/>
             <div className="heart_viewer">
                 <HeartViewerPage
                     frameFolder={FRAMES[active.option]}

@@ -1,5 +1,5 @@
 import "./TopBar.css"
-import SidePanel from "./SidePanel.tsx"
+import Settings from "./Settings.tsx"
 import { useState } from "react"
 import { NavLink, useLocation } from "react-router";
 import type { Complexity } from "../../types/complexities.ts";
@@ -85,7 +85,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
+            <Settings isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
         </div>
     )
 }

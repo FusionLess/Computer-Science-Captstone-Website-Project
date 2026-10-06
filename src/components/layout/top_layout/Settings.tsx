@@ -1,8 +1,8 @@
-import "./SidePanel.css"
+import "./Settings.css"
 import type { Complexity } from "../../types/complexities.ts";
 import { complexities } from "../../types/complexities.ts";
 
-function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity}:
+function Settings({isOpen, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity}:
     { isOpen: boolean, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
 
 
@@ -58,4 +58,4 @@ function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActiv
 }
 
 
-export default SidePanel;
+export default Settings;

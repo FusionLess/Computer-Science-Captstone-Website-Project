@@ -1,4 +1,4 @@
-import "./LeftPanel.css"
+import "./ConditionDes.css"
 import type { CompareState } from "../../types/compare.ts";
 import { PAGE_DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
 import type { Complexity } from "../../types/complexities.ts";

@@ -1,13 +1,13 @@
-    import "./Content.css"
+    import "./MiddleContent.css"
 
     import type { HeartState } from "../../types/states.ts";
     import type { CompareState } from "../../types/compare.ts"
 
     import { useEffect, useState } from "react";
 
-    import LeftBox from "./LeftPanel.tsx"
-    import MiddlePanel from "./MiddlePanel.tsx"
-    import RightBox from "./RightPanel.tsx";
+    import LeftBox from "./ConditionDes.tsx"
+    import HeartController2 from "./HeartController2.tsx"
+    import RightBox from "./DescriptionPanel.tsx";
     import type { Complexity } from "../../types/complexities.ts";
   
 function Content({compareState, complexity} :
@@ -26,7 +26,7 @@ function Content({compareState, complexity} :
     return (
         <main className="content">
             <LeftBox compareState={compareState} complexity={complexity} />
-            <MiddlePanel compareState={compareState} setSelectedPart={setSelectedPart} complexity={complexity}/>
+            <HeartController2 compareState={compareState} setSelectedPart={setSelectedPart} complexity={complexity}/>
             <RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity}/>
         </main>
     )

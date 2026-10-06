@@ -1,6 +1,6 @@
 import '../App.css'
 import TopBar from '../components/layout/top_layout/TopBar.tsx'
-import Content from '../components/layout/middle_layout/Content.tsx'
+import Content from '../components/layout/middle_layout/MiddleContent.tsx'
 import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
 import { useState } from 'react'
 import type { HeartState } from "../components/types/states.ts";

@@ -1,5 +1,5 @@
 import type {HeartCategory, HeartOption, HeartState} from "../../types/states.ts";
-import "./HeartButtons.css"
+import "./ConditionSelector.css"
 
 // Lucide icons: https://lucide.dev (license in public/licenses/lucide.txt).
 const heartOutline = "M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
@@ -41,7 +41,7 @@ const optionIconPaths: Record<HeartOption, string[]> = {
     ],
 }
 
-export default function HeartButtons({active, setActive} :
+export default function ConditionSelector({active, setActive} :
                       { active: HeartState, setActive: (v: HeartState) => void }) {
     const toggles: { id: HeartCategory; label: string }[] = [
         {id:"healthy", label:"The Heart"},
