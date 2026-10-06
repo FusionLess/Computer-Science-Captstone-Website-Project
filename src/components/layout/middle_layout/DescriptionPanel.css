@@ -80,54 +80,55 @@
 .right button.right_toggle.open{
     margin-right: 10px;
 }
+
 .explore_button {
-    align-self: left;
+    align-self: flex-start;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
 
-    width: fit-content;
-    min-height: 30px;
-    padding: 0 22px;
+    min-height: 34px;
+    padding: 0 16px;
+    margin: 4px 0 14px;
 
     border: none;
     border-radius: 20px;
 
     background: var(--cards-background);
     color: inherit;
-
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 
     cursor: pointer;
-    margin: 4px 0 14px;
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
 }
 
 .explore_button_label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
+
+    line-height: 1;
     white-space: nowrap;
 }
 
 .explore_button_label svg {
+    display: block;
     width: 18px;
     height: 18px;
-    flex-shrink: 0;
+    flex: 0 0 18px;
 }
 
-.explore_button span,
-.explore_button svg {
-    transition:
-        translate 80ms ease,
-        scale 80ms ease;
+.explore_button:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-.explore_button:hover span,
-.explore_button:hover svg {
-    translate: 0 -2px;
-    scale: 1.03;
+.explore_button:active {
+    transform: translateY(0) scale(0.98);
 }
 
 @media (width < 800px) {

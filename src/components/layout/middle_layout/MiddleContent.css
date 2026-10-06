@@ -10,12 +10,7 @@
 .content button {
     transition:
             translate 180ms ease,
-            scale 180ms ease,
-}
-
-.content button:active {
-    translate: 0 0;
-    scale: 0.97;
+            scale 180ms ease;
 }
 
 @media (max-width: 800px) {

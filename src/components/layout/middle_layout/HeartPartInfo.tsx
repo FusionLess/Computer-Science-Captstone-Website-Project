@@ -29,11 +29,9 @@ function HeartPartInfo({
                     Click a part of the heart to learn more.
                 </p>
             )}
-            {info && (
-
                 <button className="explore_button" onClick={() => setShowPopup(true)}>
                     <span className="explore_button_label">
-                        Explore
+                        {info ? "Explore this part" : "Browse heart anatomy"}
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -51,8 +49,7 @@ function HeartPartInfo({
                         </svg>
                     </span>
             </button>
-            )}
-            {showPopup && info && (
+            {showPopup && (
                 <PopUpInfoBox
                     variant="anatomy"
                     selectedPart={selectedPart}
