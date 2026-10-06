@@ -149,12 +149,6 @@ function PopUpInfoBox({
                     {variant === "anatomy" && anatomyMedia && (
                         <div className="popup_media">
 
-                            <div className="gallery_status">
-                                <span>
-                                    {partIndex + 1} of {heartPartKeys.length}
-                                </span>
-                            </div>
-
                             <div className="popup_media_viewer">
 
                                 <button
@@ -180,6 +174,12 @@ function PopUpInfoBox({
 
                             </div>
 
+                            <div className="gallery_status">
+                                <span>
+                                    {partIndex + 1} of {heartPartKeys.length}
+                                </span>
+                            </div>
+
                             <div className="gallery_dots">
                                 {heartPartKeys.map((key, index) => (
                                     <button
@@ -200,14 +200,6 @@ function PopUpInfoBox({
                     {/* DESCRIPTION MEDIA GALLERY */}
                     {variant === "description" && currentMedia && (
                         <div className="popup_media">
-
-                            {hasGallery && (
-                                <div className="gallery_status">
-                                    <span>
-                                        {mediaIndex + 1} of {media.length}
-                                    </span>
-                                </div>
-                            )}
 
                             <div className="popup_media_viewer">
 
@@ -255,6 +247,14 @@ function PopUpInfoBox({
                                 )}
 
                             </div>
+
+                            {hasGallery && (
+                                <div className="gallery_status">
+                                    <span>
+                                        {mediaIndex + 1} of {media.length}
+                                    </span>
+                                </div>
+                            )}
 
                             {hasGallery && (
                                 <div className="gallery_dots">
