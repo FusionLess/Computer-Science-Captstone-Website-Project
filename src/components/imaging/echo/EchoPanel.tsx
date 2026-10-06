@@ -33,6 +33,7 @@ export default function EchoPanel() {
       <h2 id="echo-panel-title">Echo</h2>
       <div className="echo-panel-viewers">
         <div className="echo-panel-viewer heart-viewer">
+          <span>Heart Viewer</span>
           <HeartViewer
             showControls={false}
             cameraView="frontal"
@@ -41,6 +42,10 @@ export default function EchoPanel() {
           />
         </div>
         <div className="echo-panel-viewer echo-viewer">
+          <span className="echo-panel-header">
+            <span>Echo Viewer</span>
+            <span className="echo-mode-label">CAMUS B-MODE {activeView}</span>
+          </span>
           <EchoViewer activeView={activeView} frame={frame} totalFrames={totalFrames} />
         </div>
       </div>

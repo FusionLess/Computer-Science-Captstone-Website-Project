@@ -47,13 +47,9 @@ export const EchoViewer: React.FC<EchoViewerProps> = ({ activeView, frame, total
             className="echo-viewer-image"
           />
 
-          {/* Clinical Ultrasound HUD Overlay */}
-          <span className="echo-viewer-title">
-            CAMUS B-MODE {activeView}
-          </span>
-          <span className="echo-viewer-details">
-            FPS: 20 | DEPTH: 16cm
-          </span>
+          <div className="echo-viewer-details">
+            <span>FPS: 20 | DEPTH: 16cm</span>
+          </div>
 
           {/* Depth Markers */}
           <div className="echo-viewer-depth-markers">

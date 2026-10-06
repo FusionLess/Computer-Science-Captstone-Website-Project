@@ -27,6 +27,9 @@
     flex: 1;
     min-height: 0;
     min-width: 0;
+    border-radius: 20px;
+    border: 1px solid var(--divider);
+    flex-direction: column;
 }
 
 .echo-panel-controls {
@@ -43,6 +46,28 @@
     flex-shrink: 0;
 }
 
+.echo-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+}
+
+.echo-mode-label {
+    color: var(--active-labels);
+    font-size: 12px;
+    font-weight: 700;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--divider);
+    box-sizing: border-box;
+    padding: 4px 10px;
+    line-height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 .echo-panel-controls .controller-row {
     display: flex;
     align-items: center;
@@ -91,4 +116,19 @@
 .echo-view-buttons button[aria-pressed="true"] {
     background: var(--selected-condition-background);
     color: var(--selected-suboptions);
+}
+
+.echo-panel-viewer > span {
+    padding: 0 16px;
+    border-bottom: 1px solid var(--divider);
+    background: var(--secondary-cards-background);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    color: var(--secondary-labels);
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+    height: 42px;
+    align-items: center;
+    display: flex;
 }
