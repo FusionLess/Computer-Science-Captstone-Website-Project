@@ -15,11 +15,11 @@
 
 @media (max-width: 800px) {
     .content {
-        margin-top: var(--bar-height);
+        margin-top: calc(var(--bar-height) + var(--mobile-complexity-title-height));
         position: relative;
         flex-direction: column;
-        flex: 1 0 auto;
-        min-height: 600px;
-        padding-bottom: 40px;
+        flex: 0 0 auto;
+        min-height: 0;
+        padding-bottom: 0;
     }
 }

@@ -57,7 +57,11 @@
 }
 
 .popup_close {
-    border: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
     background: transparent;
 
     font-size: 30px;
@@ -66,6 +70,7 @@
 
 .popup_close:hover {
     color: var(--red-text);
+    background: var(--secondary-cards-background);
 }
 
 /* CONTENT */

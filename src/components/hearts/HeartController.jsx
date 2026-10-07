@@ -14,7 +14,7 @@ export default function HeartController({
                                             handleResetView,
                                             handleVentricleView
                                         }) {
-    const [controlsShowing, setControlsShowing] = useState(true)
+    const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
     const controlsId = useId()
 
     return (

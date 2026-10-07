@@ -110,6 +110,7 @@
     box-shadow: 0 2px 6px color-mix(in srgb, var(--primary-headings) 20%, transparent);
     flex-shrink: 0;
 }
+
 .graph-bar-label {
     position: absolute;
     top: 8px;
@@ -411,11 +412,6 @@
 }
 
 @media (max-width: 800px) {
-    .graphs {
-        position: relative;
-        height: 120px;
-    }
-
     .container {
         padding: 6px 8px;
     }

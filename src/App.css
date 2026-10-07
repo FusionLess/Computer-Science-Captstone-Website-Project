@@ -11,5 +11,7 @@
 @media (width < 800px) {
     .app {
         overflow-y: auto;
+        padding-bottom: var(--bar-height);
+        box-sizing: border-box;
     }
 }

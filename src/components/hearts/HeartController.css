@@ -9,3 +9,34 @@
 .heart-controller .reset-button:active:hover {
     transform: scale(0.95);
 }
+
+@media (width < 800px) {
+    .heart-controller {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
+    .heart-controller .controller-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+
+        width: var(--control-button-width);
+        max-height: 360px;
+        overflow: hidden;
+
+        transition:
+                max-height 250ms ease,
+                opacity 200ms ease;
+    }
+
+    .heart-controller.is-collapsed .controller-actions {
+        width: var(--control-button-width);
+        max-height: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .heart-controller .show-controls-button::after {
+        display: none;
+    }
+}

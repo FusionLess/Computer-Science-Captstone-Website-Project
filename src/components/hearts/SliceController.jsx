@@ -22,7 +22,7 @@ export default function SliceController({
     complexity
 }) {
 
-    const [controlsShowing, setControlsShowing] = useState(true)
+    const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
     const controlsId = useId()
 
     return (

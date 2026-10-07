@@ -80,3 +80,42 @@
     justify-content: center;
     box-shadow: 0 0 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
 }
+
+.settings_close {
+    align-self: flex-end;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--body-texts);
+    cursor: pointer;
+}
+
+.settings_close:hover {
+    color: var(--red-text);
+    background: var(--secondary-cards-background);
+}
+
+.settings_close + .settings_section {
+    margin-top: 4px;
+    padding-top: 10px;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 10px);
+        bottom: calc(var(--bar-height) + 10px);
+
+        width: min(var(--settings-panel-width), calc(100vw - 20px));
+        height: auto;
+        right: 10px;
+    }
+}

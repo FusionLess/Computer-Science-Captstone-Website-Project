@@ -97,8 +97,8 @@
 }
 
 .options_buttons button.selected.blue {
-    background: #b0e8ff;
-    color: #317e9e;
+    background: var(--blue-gradient-start);
+    color: var(--blue-text);
 }
 
 .options_buttons button.selected.red {
@@ -158,8 +158,7 @@
 
 @container heart-panel (width < 500px) {
     .heart_buttons .active .heart_button_label {
-        max-width: 0;
-        opacity: 0;
+        opacity: 1;
     }
 
     .options_buttons button {
@@ -187,6 +186,11 @@
         transition: max-width 180ms ease, opacity 180ms ease;
     }
 
+    .heart_buttons .options_buttons button.selected .heart_option_label {
+        max-width: 140px;
+        opacity: 1;
+    }
+
     .options_buttons button:hover {
         gap: 6px;
     }
@@ -194,5 +198,17 @@
     .heart_buttons .options_buttons button:hover .heart_option_label{
         max-width: 140px;
         opacity: 1;
+    }
+}
+
+@media (width < 800px) {
+    .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel))
+    .heart_buttons {
+        position: fixed;
+        top: calc(
+                var(--bar-height) + var(--mobile-complexity-title-height)
+        );
+        left: 0;
+        z-index: 90;
     }
 }

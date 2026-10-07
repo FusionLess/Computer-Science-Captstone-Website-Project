@@ -35,6 +35,8 @@
   --side-margin: 24px;
   --mobile-width: 800px;
 
+  --mobile-complexity-title-height: 42px;
+
   --green-gradient-start: rgba(86, 190, 123, 0.28);
   --green-text: #176c3a;
 
@@ -43,6 +45,9 @@
 
   --red-gradient-start: rgba(220, 80, 70, 0.26);
   --red-text: #b2352b;
+
+  --blue-gradient-start: #b0e8ff;
+  --blue-text: #317e9e;
 }
 
 html, body {

@@ -94,3 +94,16 @@
     border-radius: 8px;
     background: var(--divider);
 }
+
+@media (width < 800px) {
+    .controller {
+        --control-button-width: 60px;
+        --control-button-margin: 1px;
+    }
+
+    .controller button {
+        height: 44px;
+        padding: 4px 6px;
+        font-size: 9px;
+    }
+}

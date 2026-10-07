@@ -131,42 +131,95 @@
     transform: translateY(0) scale(0.98);
 }
 
+.current_selection {
+    display: none;
+}
+
 @media (width < 800px) {
-    .right,
+    .right {
+        position: static;
+        order: 3;
+
+        width: calc(100% - (var(--side-margin) * 2));
+        padding: 0;
+        margin: 0 auto 4px;
+
+        display: block;
+        flex: 0 0 auto;
+    }
+
     .right.collapsed {
-        position: absolute;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        padding: 0 var(--side-margin);
-        flex-direction: column;
-        align-items: center;
-        z-index: 10;
+        display: none;
     }
 
     .right_content {
         width: 100%;
-        height: 50dvh;
+        height: auto;
         min-height: 0;
-        border-radius: 12px;
+        padding: 0;
+
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
     }
 
-    .right > button.right_toggle,
-    .right.collapsed > button.right_toggle {
-        position: static;
-        width: 60px;
-        height: 40px;
-        flex-shrink: 0;
-        margin: 0;
+    .heart_state_info,
+    .heart_part_info {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 20px;
+
+        background: var(--cards-background);
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgb(7 27 61 / 12%);
     }
 
-    .right > button.right_toggle.open {
-        margin-bottom: 8px;
+    .right h3 {
+        margin: 0 0 12px;
+        font-size: 26px;
     }
 
-    .right button.right_toggle svg {
-        transform: rotate(90deg);
+    .heart_part_info {
+        gap: 8px;
+    }
+
+    .current_selection {
+        display: inline-flex;
+        align-self: flex-start;
+
+        margin: 0 0 8px;
+        padding: 4px 9px;
+
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        line-height: 1;
+    }
+
+    .current_selection.green {
+        background: var(--green-gradient-start);
+        color: var(--green-text);
+    }
+
+    .current_selection.amber {
+        background: var(--amber-gradient-start);
+        color: var(--amber-text);
+    }
+
+    .current_selection.red {
+        background: var(--red-gradient-start);
+        color: var(--red-text);
+    }
+
+    .current_selection.blue {
+        background: var(--blue-gradient-start);
+        color: var(--blue-text);
     }
 }

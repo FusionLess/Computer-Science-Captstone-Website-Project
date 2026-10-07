@@ -10,23 +10,20 @@ function RightBox({compareState, selectedPart, complexity} :
                   {compareState : CompareState, selectedPart: string | null, complexity: Complexity}) {
     const isMobile = window.matchMedia("(width < 800px)").matches;
     const active = compareState.selection1
+    const selectionTone = {Healthy: "green", Minor: "amber", Severe: "red", Fibrillation: "blue", Compensated: "amber", Decompensated: "red",}
 
-    const [isOpen, setIsOpen] = useState(!isMobile);
+    const [isOpen, setIsOpen] = useState(true);
     const [showPopup, setShowPopup] = useState(false)
     const description =DESCRIPTIONS[active.option as keyof typeof DESCRIPTIONS]
 
     useEffect(() => {
-        if (compareState.isComparing) {
-            setIsOpen(false)
-        } else if (!isMobile) {
-            setIsOpen(true)
-        }
-    }, [compareState.isComparing, isMobile])
+        setIsOpen(!compareState.isComparing)
+    }, [compareState.isComparing])
 
     return (
         <aside className = {`right ${isOpen ? "" : "collapsed"}`}>
 
-            { isOpen && <button className="right_toggle open" onClick={() => setIsOpen(!isOpen)}>
+            {!isMobile && isOpen && <button className="right_toggle open" onClick={() => setIsOpen(!isOpen)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      className="lucide lucide-chevrons-right">
@@ -34,7 +31,7 @@ function RightBox({compareState, selectedPart, complexity} :
                     <path d="m13 17 5-5-5-5"/>
                 </svg>
             </button>}
-            {!isOpen && <button className="right_toggle closed" onClick={() => setIsOpen(!isOpen)}>
+            {!isMobile && !isOpen && <button className="right_toggle closed" onClick={() => setIsOpen(!isOpen)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      className="lucide lucide-chevrons-left">
@@ -45,6 +42,9 @@ function RightBox({compareState, selectedPart, complexity} :
 
             <div className={`right_content ${isOpen ? "" : "closed"}`}>
                 <div className="heart_state_info">
+                    <p className={`current_selection ${selectionTone[active.option]}`}>
+                        Current selection
+                    </p>
                     <h3>
                         {DESCRIPTIONS[active.option as keyof typeof DESCRIPTIONS].heading}
                     </h3>

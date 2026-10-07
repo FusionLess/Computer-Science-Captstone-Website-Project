@@ -5,7 +5,6 @@ import { NavLink, useLocation } from "react-router";
 import type { Complexity } from "../../types/complexities.ts";
 
 function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const { pathname } = useLocation()
     const isHomePage = pathname === "/"
 
@@ -29,36 +28,22 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setComplexity={setComplexity}
                 />}
             </div>
-
-            <button
-                className={`mobile_menu_button ${isMobileMenuOpen ? "active" : ""}`}
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={isMobileMenuOpen}
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     className="lucide lucide-menu preview-icon">
-                    <path d="M4 5h16"/>
-                    <path d="M4 12h16"/>
-                    <path d="M4 19h16"/>
-                </svg>
-            </button>
-
-            {isMobileMenuOpen && (
-                <div className="mobile_navigation">
-                    <HomeButton />
-                    <AboutButton />
-                    {isHomePage && <SettingsButton
+            <div className="mobile_settings">
+                {isHomePage && (
+                    <SettingsButton
                         setGraphActive={setGraphActive}
                         graphActive={graphActive}
                         glowActive={glowActive}
                         setGlowActive={setGlowActive}
                         complexity={complexity}
                         setComplexity={setComplexity}
-                    />}
-                </div>
-            )}
+                    />
+                )}
+            </div>
+            <div className="mobile_navigation">
+                <HomeButton />
+                <AboutButton />
+            </div>
         </header>
 
     )
@@ -85,7 +70,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <Settings isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
+            <Settings isOpen={isOpen} onClose={() => setOpen(false)} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
         </div>
     )
 }

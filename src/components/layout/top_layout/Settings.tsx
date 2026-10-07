@@ -2,12 +2,24 @@ import "./Settings.css"
 import type { Complexity } from "../../types/complexities.ts";
 import { complexities } from "../../types/complexities.ts";
 
-function Settings({isOpen, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity}:
-    { isOpen: boolean, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
+function Settings({isOpen, onClose, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity}:
+    { isOpen: boolean, onClose: () => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
 
 
     return (
         <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+            <button
+                className="settings_close"
+                onClick={onClose}
+                aria-label="Close"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     className="lucide lucide-x preview-icon">
+                    <path d="M18 6 6 18"/>
+                    <path d="m6 6 12 12"/>
+                </svg>
+            </button>
             <div className={'settings_section'} >
                 <h4>Select Complexity Level</h4>
                 <div className="selector_section">
