@@ -1,11 +1,11 @@
 import "./AboutLayout.css"
 import { useState } from "react";
-import MissionContent from "./sections/MissionContent"
-import ResearchContent from "./sections/ResearchContent"
-import TeamContent from "./sections/TeamContent"
-import DevelopmentContent from "./sections/DevelopmentContent"
+import MissionContent from "./sections/MissionContent.tsx"
+import ResearchContent from "./sections/ResearchContent.tsx"
+import TeamContent from "./sections/TeamContent.tsx"
+import DevelopmentContent from "./sections/DevelopmentContent.tsx"
 
-import type AboutSection from "../types/aboutsections.ts"
+import type AboutSection from "../../components/types/aboutsections.ts"
 
 
 

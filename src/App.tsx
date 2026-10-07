@@ -1,6 +1,6 @@
 import './App.css'
 import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
+import AboutPage from './pages/AboutPage.tsx'
 import { HeartMonitorProvider } from './components/context/HeartMonitorContext'
 import { BrowserRouter, Routes, Route } from 'react-router';
 
