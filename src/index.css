@@ -5,9 +5,9 @@
 
 :root {
   --bar-height: 65px;
-  --graph-height: 120px;
-  --left-panel-width: 300px;
-  --right-panel-width: 450px;
+  --graph-height: clamp(100px, 10vh, 120px);
+  --left-panel-width: clamp(200px, 20vw, 300px);
+  --right-panel-width: clamp(280px, 25vw, 450px);
   --settings-panel-width: 300px;
   --comparison-dialog-width: 800px;
   --compare-menu-width: 160px;
