@@ -39,6 +39,8 @@ export default function HomePage() {
         setIsComparing,
     }
 
+    const [showDescriptions, setShowDescriptions] = useState(true)
+
     return (
         <main className="app">
             <TopBar
@@ -48,13 +50,15 @@ export default function HomePage() {
                 setGlowActive={setGlowActive}
                 complexity={complexity}
                 setComplexity={setComplexity}
-
+                showDescriptions={showDescriptions}
+                setShowDescriptions={setShowDescriptions}
             />
             <Content active={active} 
                 setActive={setActive}
                 compareState={compareState}
                 complexity={complexity}
                 setComplexity={setComplexity}
+                showDescriptions={showDescriptions}
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>

@@ -109,6 +109,10 @@
     padding-top: 10px;
 }
 
+.description_toggle {
+    display: none;
+}
+
 @media (max-width: 800px) {
     .sidebar {
         top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 10px);
@@ -117,5 +121,13 @@
         width: min(var(--settings-panel-width), calc(100vw - 20px));
         height: auto;
         right: 10px;
+    }
+
+    .description_toggle {
+        display: block;
+    }
+
+    .sidebar {
+        overflow-y: auto;
     }
 }

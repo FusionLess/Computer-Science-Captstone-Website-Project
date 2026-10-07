@@ -4,7 +4,7 @@ import { useState } from "react"
 import { NavLink, useLocation } from "react-router";
 import type { Complexity } from "../../types/complexities.ts";
 
-function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
+function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void }) {
     const { pathname } = useLocation()
     const isHomePage = pathname === "/"
 
@@ -26,6 +26,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setGlowActive={setGlowActive}
                     complexity={complexity}
                     setComplexity={setComplexity}
+                    showDescriptions={showDescriptions}
+                    setShowDescriptions={setShowDescriptions}
                 />}
             </div>
             <div className="mobile_settings">
@@ -37,6 +39,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                         setGlowActive={setGlowActive}
                         complexity={complexity}
                         setComplexity={setComplexity}
+                        showDescriptions={showDescriptions}
+                        setShowDescriptions={setShowDescriptions}
                     />
                 )}
             </div>
@@ -49,7 +53,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void }) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -70,7 +74,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <Settings isOpen={isOpen} onClose={() => setOpen(false)} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
+            <Settings isOpen={isOpen} onClose={() => setOpen(false)} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} showDescriptions={showDescriptions} setShowDescriptions={setShowDescriptions}/>
         </div>
     )
 }

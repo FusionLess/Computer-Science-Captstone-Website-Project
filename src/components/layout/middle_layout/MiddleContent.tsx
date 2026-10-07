@@ -9,9 +9,9 @@
     import HeartController2 from "./HeartController2.tsx"
     import RightBox from "./DescriptionPanel.tsx";
     import type { Complexity } from "../../types/complexities.ts";
-  
-function Content({compareState, complexity} :
-                 {active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, complexity: Complexity}) {
+
+function Content({ compareState, complexity, showDescriptions } :
+                 { active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, complexity: Complexity, showDescriptions: boolean, }) {
     const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
     useEffect(() => {
@@ -24,10 +24,10 @@ function Content({compareState, complexity} :
     ])
 
     return (
-        <main className="content">
-            <LeftBox compareState={compareState} complexity={complexity} />
+        <main className={`content${showDescriptions ? "" : " descriptions-hidden"}`}>
+            {showDescriptions && (<LeftBox compareState={compareState} complexity={complexity} />)}
             <HeartController2 compareState={compareState} setSelectedPart={setSelectedPart} complexity={complexity}/>
-            <RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity}/>
+            {showDescriptions && (<RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity}/>)}
         </main>
     )
 }

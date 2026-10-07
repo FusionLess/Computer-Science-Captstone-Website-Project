@@ -2,9 +2,8 @@ import "./Settings.css"
 import type { Complexity } from "../../types/complexities.ts";
 import { complexities } from "../../types/complexities.ts";
 
-function Settings({isOpen, onClose, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity}:
-    { isOpen: boolean, onClose: () => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
-
+function Settings({isOpen, onClose, graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions,}:
+                  { isOpen: boolean, onClose: () => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, }) {
 
     return (
         <aside className={`sidebar ${isOpen ? "open" : ""}`}>
@@ -62,6 +61,29 @@ function Settings({isOpen, onClose, graphActive, setGraphActive, glowActive,setG
                     </button>
                 </div>
             </div>
+            {setShowDescriptions && typeof showDescriptions === "boolean" && (
+                <div className="settings_section description_toggle">
+                    <h4>Toggle Description</h4>
+
+                    <div className="selector_section">
+                        <button
+                            className={showDescriptions ? "active" : "inactive"}
+                            onClick={() => setShowDescriptions(true)}
+                            aria-pressed={showDescriptions}
+                        >
+                            On
+                        </button>
+
+                        <button
+                            className={!showDescriptions ? "active" : "inactive"}
+                            onClick={() => setShowDescriptions(false)}
+                            aria-pressed={!showDescriptions}
+                        >
+                            Off
+                        </button>
+                    </div>
+                </div>
+            )}
             <div className="theme_selector">
                 <button>◐</button>
             </div>
