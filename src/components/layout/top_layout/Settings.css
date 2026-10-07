@@ -121,13 +121,10 @@
         width: min(var(--settings-panel-width), calc(100vw - 20px));
         height: auto;
         right: 10px;
+        overflow-y: auto;
     }
 
     .description_toggle {
         display: block;
-    }
-
-    .sidebar {
-        overflow-y: auto;
     }
 }

@@ -238,6 +238,18 @@ button.compare-button.not-comparing {
         padding-bottom: 120px;
     }
 
+    .middle-panel:has(.slice-controller:not(.is-collapsed)) {
+        padding-bottom: 120px;
+    }
+
+    .middle-panel:has( .slice-controller:not(.is-collapsed) ):has(.slice-adjustments) {
+        padding-bottom: 170px;
+    }
+
+    .content.descriptions-hidden .middle-panel:has( .slice-controller:not(.is-collapsed) ) {
+        padding-bottom: 0;
+    }
+
     .heart_viewer,
     .heart_viewer > div {
         overflow: visible !important;

@@ -514,4 +514,12 @@
         transform-origin: right;
         pointer-events: none;
     }
+
+    .content.descriptions-hidden:has( .slice-controller:not(.is-collapsed) ) + .graph-panel {
+        transform: translateY(120px);
+    }
+
+    .content.descriptions-hidden:has( .slice-controller:not(.is-collapsed) ):has(.slice-adjustments) + .graph-panel {
+        transform: translateY(170px);
+    }
 }
