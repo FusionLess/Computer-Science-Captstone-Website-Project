@@ -132,3 +132,45 @@
     align-items: center;
     display: flex;
 }
+
+
+@media (max-width: 800px) {
+    .echo-panel {
+        flex: none;
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        box-sizing: border-box;
+    }
+    .echo-panel-viewers {
+        flex: none;
+        flex-direction: column;
+    }
+
+    .echo-panel-viewers > .echo-panel-viewer {
+        flex: none;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1.23 / 1;
+        box-sizing: border-box;
+    }
+
+    .echo-panel-viewer.heart-viewer > div {
+        flex: 1;
+        min-height: 0;
+    }
+
+    .echo-panel-controls .controller-row {
+        flex-wrap: wrap;
+    }
+
+    .echo-view-buttons {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .echo-view-buttons button {
+        min-width: 0;
+        padding: 10px 8px;
+    }
+}

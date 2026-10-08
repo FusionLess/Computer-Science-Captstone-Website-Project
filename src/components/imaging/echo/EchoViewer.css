@@ -76,6 +76,16 @@
 }
 
 .echo-panel-viewer.echo-viewer {
-    display: flex;
-    flex: 0 0 420px;
+    flex: 0 0 auto;
+    height: 100%;
+    aspect-ratio: 1.23 / 1;
+    align-self: stretch;
+    box-sizing: border-box;
+}
+
+.echo-panel-viewer.echo-viewer .echo-viewer-container {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    aspect-ratio: auto;
 }
