@@ -198,14 +198,14 @@
 .pressure-waveform,
 .ecg-waveform {
     fill: none;
-    stroke-width: 1.5;
+    strokeWidth: 1.5;
     stroke: #35e87b;
     color: #35e87b;
 }
 
 .condition-waveform {
     fill: none;
-    stroke-width: 1.5;
+    strokeWidth: 1.5;
 }
 
 .condition-waveform.minor {
@@ -221,7 +221,7 @@
     fill: none;
     stroke: #003f73;
     color: #003f73;
-    stroke-width: 2;
+    strokeWidth: 2;
     stroke-dasharray: 6 3;
 }
 
