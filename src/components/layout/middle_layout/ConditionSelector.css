@@ -205,10 +205,16 @@
     .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel))
     .heart_buttons {
         position: fixed;
-        top: calc(
-                var(--bar-height) + var(--mobile-complexity-title-height)
-        );
+        top: calc(var(--bar-height) + var(--mobile-complexity-title-height));
         left: 0;
         z-index: 90;
+    }
+
+    .middle-panel:not(.sync) {
+        padding-top: 130px;
+    }
+
+    .heart-viewer-title {
+        display: none;
     }
 }

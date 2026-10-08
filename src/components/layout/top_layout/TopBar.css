@@ -212,7 +212,7 @@
         justify-content: flex-start;
 
         transform: none;
-        padding-left: 30px;
+        padding-left: 20px;
         background: var(--home-background);
         color: var(--primary-headings);
         font-size: 20px;

@@ -131,7 +131,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 
             {isComparing &&
                 <button
-                    className="sync"
+                    className={`sync${syncEnabled ? " is-active" : ""}`}
+                    aria-pressed={syncEnabled}
                     onClick={() => (setSyncEnabled((syncEnabled) => !syncEnabled))}
                     style={{
                         background: syncEnabled ? "var(--selected-condition-background)" : "var(--cards-background)",

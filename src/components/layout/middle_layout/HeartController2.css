@@ -156,6 +156,7 @@ button.compare-button.not-comparing {
     z-index: 1;
     pointer-events: none;
 }
+
 .viewer-controls {
     position: absolute;
 
@@ -169,6 +170,7 @@ button.compare-button.not-comparing {
 
     z-index: 20;
 }
+
 .shared-heart-controller {
     position: absolute;
     
@@ -188,6 +190,7 @@ button.compare-button.not-comparing {
     position: static;
     transform: none;
 }
+
 @media (width < 800px) {
     .middle-panel {
         flex-direction: column;
@@ -206,14 +209,14 @@ button.compare-button.not-comparing {
     }
 
     .middle-panel:has(.sync) {
-        padding-top: 104px;
+        padding-top: 116px;
     }
 
     .middle-panel > button.compare-button,
     .middle-panel > button.compare-button.not-comparing {
         position: fixed;
         top: calc(var(--bar-height) + 5px);
-        right: 20px;
+        right: var(--side-margin);
 
         width: auto;
         min-width: 0;
@@ -253,5 +256,174 @@ button.compare-button.not-comparing {
     .heart_viewer,
     .heart_viewer > div {
         overflow: visible !important;
+    }
+
+    /* Compare CSS */
+    .middle-panel > .sync {
+        position: fixed;
+        top: calc(var(--bar-height) + 5px);
+        right: calc(var(--side-margin) + 130px);
+
+        transform: none;
+        z-index: 110;
+    }
+
+    .middle-panel > .sync:hover {
+        transform: scale(1.05);
+    }
+
+    .middle-panel > .sync:active {
+        transform: scale(0.97);
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers {
+        flex-direction: column;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_panel {
+        min-height: 0;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers > .heart_panel ~ .heart_panel::before {
+        top: 0;
+        right: var(--side-margin);
+        bottom: auto;
+        left: var(--side-margin);
+
+        width: auto;
+        height: 1px;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) {
+        padding-top: 0;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_panel {
+        position: relative;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_buttons {
+        position: absolute;
+        top: 8px;
+        right: var(--side-margin);
+        left: auto;
+        z-index: 30;
+
+        width: auto;
+        align-items: flex-end;
+        background: transparent;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .toggle_buttons {
+        flex: none;
+        margin: 0 0 4px;
+        width: max-content;
+        max-width: none;
+        overflow: visible;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .toggle_buttons > button {
+        width: 36px;
+        min-height: 36px;
+        padding: 0;
+        flex: 0 0 36px;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_button_label {
+        display: none;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .options_buttons {
+        align-self: flex-end;
+        margin: 0;
+        padding: 3px;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .options_buttons button {
+        width: 34px;
+        min-width: 34px;
+        min-height: 30px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_option_label {
+        display: none;
+    }
+
+    .middle-panel > button.compare-button,
+    .middle-panel > .sync {
+
+        border: 0;
+        border-radius: 20px;
+        background: var(--cards-background);
+        color: var(--body-texts);
+        box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
+
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .middle-panel > button.compare-button:not(.not-comparing),
+    .middle-panel > .sync.is-active {
+        background: var(--selected-condition-background);
+        color: var(--selected-suboptions);
+    }
+
+    .heart_viewer {
+        width: calc(100% - (var(--side-margin) * 2));
+        margin-inline: auto;
+    }
+
+    .viewer-controls {
+        left: 0;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers > .heart_panel:first-child:has( .slice-controller:not(.is-collapsed) ) {
+        margin-bottom: 120px;
+        transition: margin-bottom 250ms ease;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers > .heart_panel:first-child:has( .slice-controller:not(.is-collapsed) ):has(.slice-adjustments) {
+        margin-bottom: 170px;
+    }
+
+    /* Only the two controllers inside stacked comparison viewers. */
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .controller-actions {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, var(--control-button-width));
+        width: calc((var(--control-button-width) * 2) + 2px);
+        grid-auto-rows: 42px;
+        gap: 2px;
+
+        max-height: 90px;
+        overflow: visible;
+    }
+
+    /* Keep the collapsed controller the original trigger-button width. */
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller.is-collapsed .controller-actions {
+        width: var(--control-button-width);
+        max-height: 0;
+    }
+
+    /* Make every action fit its compact grid cell. */
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .controller-actions button {
+        width: var(--control-button-width);
+        height: 42px;
+        padding: 3px;
+        font-size: 8px;
+        line-height: 1.1;
+        white-space: normal;
+    }
+
+    .middle-panel:has(
+    .middle-panel-viewers > .heart_panel ~ .heart_panel
+) .middle-panel-viewers .heart-controller .full-view-button {
+        position: absolute;
+        top: calc(100% + 2px);
+        left: calc(var(--control-button-width) + 2px);
+        transform: none;
     }
 }

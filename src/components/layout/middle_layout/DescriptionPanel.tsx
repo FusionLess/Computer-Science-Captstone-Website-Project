@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import "./DescriptionPanel.css"
 import HeartPartInfo from "./HeartPartInfo.tsx";
 import type { CompareState } from "../../types/compare.ts"
@@ -19,6 +19,19 @@ function RightBox({compareState, selectedPart, complexity} :
     useEffect(() => {
         setIsOpen(!compareState.isComparing)
     }, [compareState.isComparing])
+
+    const heartPartInfoRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!isMobile || !selectedPart) return;
+
+        requestAnimationFrame(() => {
+            heartPartInfoRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        });
+    }, [selectedPart, isMobile]);
 
     return (
         <aside className = {`right ${isOpen ? "" : "collapsed"}`}>
@@ -72,9 +85,11 @@ function RightBox({compareState, selectedPart, complexity} :
                             </svg>
                         </span>
                     </button>
-                    
+
                 </div>
-                <HeartPartInfo selectedPart={selectedPart} complexity={complexity} />
+                <div className="heart-part-info-anchor" ref={heartPartInfoRef}>
+                    <HeartPartInfo selectedPart={selectedPart} complexity={complexity}/>
+                </div>
             </div>
             {showPopup && (
                 <PopUpInfoBox

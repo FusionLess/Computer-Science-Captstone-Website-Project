@@ -357,7 +357,7 @@ export default function HeartViewer({
       
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
              {title && (
-                <h3
+                <h3 className="heart-viewer-title"
                     style={{
                         position: 'absolute',
                         top: '15px',

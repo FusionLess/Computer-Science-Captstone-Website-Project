@@ -222,4 +222,8 @@
         background: var(--blue-gradient-start);
         color: var(--blue-text);
     }
+
+    .heart-part-info-anchor {
+        scroll-margin-top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 12px);
+    }
 }
