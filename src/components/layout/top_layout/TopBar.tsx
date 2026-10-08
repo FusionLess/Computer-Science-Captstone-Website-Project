@@ -13,9 +13,11 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
             <div className="logo">
                 <img src='images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
-            <div className="complexity-title">
-                <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
-            </div>
+            {isHomePage && (
+                <div className="complexity-title">
+                    <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
+                </div>
+            )}
             <div className="desktop_navigation">
                 <HomeButton />
                 <AboutButton />
