@@ -130,6 +130,10 @@
         z-index: 120;
     }
 
+    .topbar:has(.sidebar.open) .complexity-title {
+        background: transparent;
+    }
+
     .logo img {
         height: 50px;
     }

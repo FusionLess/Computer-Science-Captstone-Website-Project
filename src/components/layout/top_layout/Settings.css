@@ -115,7 +115,7 @@
 
 @media (max-width: 800px) {
     .sidebar {
-        top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 10px);
+        top: calc(var(--bar-height) + 10px);
         bottom: calc(var(--bar-height) + 10px);
 
         width: min(var(--settings-panel-width), calc(100vw - 20px));
