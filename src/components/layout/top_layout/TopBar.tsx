@@ -1,15 +1,40 @@
 import "./TopBar.css"
 import Settings from "./Settings.tsx"
-import { useState } from "react"
-import { NavLink, useLocation } from "react-router";
+import { useRef, useState, type MouseEvent } from "react"
+import { NavLink, useLocation, useNavigate } from "react-router"
+import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
 
 function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void }) {
     const { pathname } = useLocation()
     const isHomePage = pathname === "/"
 
+
+    const navigate = useNavigate()
+    const { setIsPaused } = useHeartMonitor()
+    const isNavigating = useRef(false)
+
+    const handleTopBarNavigation = (event: MouseEvent<HTMLElement>) => {
+        const link = (event.target as Element).closest<HTMLAnchorElement>("a[href]")
+
+        if (!link) return
+
+        const destination = link.pathname
+
+        if (destination === pathname || isNavigating.current) return
+
+        event.preventDefault()
+        isNavigating.current = true
+
+        setIsPaused(true)
+
+        window.setTimeout(() => {
+            navigate(destination)
+        }, 50)
+    }
+
     return (
-        <header className="topbar">
+        <header className="topbar" onClickCapture={handleTopBarNavigation}>
             <div className="logo">
                 <img src='images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
