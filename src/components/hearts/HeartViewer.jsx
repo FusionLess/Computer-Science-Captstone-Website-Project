@@ -56,7 +56,11 @@ export default function HeartViewer({
     sharedSliceDistance,
     setSharedSliceDistance,
     showControls,
-    complexity
+    complexity,
+    cameraView,
+    cameraViewResetTrigger = 0,
+    externalClipPlane,
+    animationPhase
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
