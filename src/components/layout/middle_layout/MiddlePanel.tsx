@@ -51,7 +51,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
 
     const [sharedShowEpi, setSharedShowEpi] = useState(true)
     const [sharedVentricleOnly, setSharedVentricleOnly] = useState(false)
-    const [sharedFullView, setSharedFullView] = useState(false)
+    const [sharedFullView, setSharedFullView] = useState(true)
 
     const useSharedControls = isComparing && syncEnabled
     const [sharedSliceEnabled, setSharedSliceEnabled] = useState(true)

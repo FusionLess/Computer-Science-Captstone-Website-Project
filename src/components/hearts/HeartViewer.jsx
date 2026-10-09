@@ -141,7 +141,7 @@ export default function HeartViewer({
 
     const [localShowEpi, setLocalShowEpi] = useState(true)
     const [localVentricleOnly, setLocalVentricleOnly] = useState(false)
-    const [localFullView, setLocalFullView] = useState(false)
+    const [localFullView, setLocalFullView] = useState(true)
 
     const showEpi = useSharedControls
         ? sharedShowEpi
@@ -172,7 +172,7 @@ export default function HeartViewer({
     useEffect(() => {
         const shortAxis = defaultPreset === "shortAxis"
 
-        setLocalFullView(false)
+        setLocalFullView(true)
 
         
         setSliceEnabled(false)
