@@ -191,7 +191,6 @@ button.compare-button.not-comparing {
     transform: none;
 }
 
-.middle-panel:has(.shared-heart-controller),
 .middle-panel-viewers > .heart_panel ~ .heart_panel .viewer-controls {
     display: none;
 }
