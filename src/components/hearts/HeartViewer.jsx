@@ -65,7 +65,7 @@ export default function HeartViewer({
     const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
 
-    const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
+    const { bpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
 
     // sets the preset states you can slice the heart
