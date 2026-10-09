@@ -23,7 +23,7 @@ function RightBox({compareState, selectedPart, complexity} :
     const heartPartInfoRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!isMobile || !selectedPart) return;
+        if (!selectedPart) return;
 
         requestAnimationFrame(() => {
             heartPartInfoRef.current?.scrollIntoView({
@@ -31,7 +31,7 @@ function RightBox({compareState, selectedPart, complexity} :
                 block: "start",
             });
         });
-    }, [selectedPart, isMobile]);
+    }, [selectedPart]);
 
     return (
         <aside className = {`right ${isOpen ? "" : "collapsed"}`}>

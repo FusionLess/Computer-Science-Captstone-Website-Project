@@ -135,6 +135,10 @@
     display: none;
 }
 
+.heart-part-info-anchor {
+    scroll-margin-top: 12px;
+}
+
 @media (width < 800px) {
     .right {
         position: static;
