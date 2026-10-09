@@ -4,7 +4,7 @@ import AboutLayout from "../components/about/AboutLayout.tsx";
 import type { Complexity } from '../components/types/complexities.ts';
 import { useState } from 'react'
 
-export default function HomePage() {
+export default function AboutPage() {
 
     const [graphActive, setGraphActive] = useState<boolean>(true)
     const [complexity, setComplexity] = useState<Complexity>("standard")

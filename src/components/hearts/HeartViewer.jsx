@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { Center, ContactShadows } from '@react-three/drei'
 
 import { HeartModel } from './HeartModel.jsx'
+import { SliceCap } from './SliceCap.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
 import SliceControls from './SliceControls.jsx'
@@ -16,7 +17,10 @@ import HeartController from './HeartController'
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
     frontal: [-225, -20, -200],
-    shortAxis: [-180, 150, -220]
+    shortAxis: [-180, 150, -220],
+
+    topDown: [0.1, 300, 0.02],
+    titledShortAxis: [280, 150, 56],
 }
 
 export default function HeartViewer({
@@ -60,10 +64,12 @@ export default function HeartViewer({
             ? "frontal"
             : "shortAxis"
 
-    const initialCameraPos = CAMERA_POSITIONS[defaultPreset]
+    const viewPreset = cameraView ?? defaultPreset
+    const initialCameraPos = CAMERA_POSITIONS[viewPreset] ?? CAMERA_POSITIONS[defaultPreset]
     const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
-
+    const capStyleRef = useRef(null)
+    const [viewMode, setViewMode] = useState('3d')
     const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
 
@@ -336,7 +342,7 @@ export default function HeartViewer({
     const [hoverInfo, setHoverInfo] = useState(null)
 
     // compute arbitrary 3d normal vector from pitch and yaw
-    const clipPlane = useMemo(() => {
+    const modelClipPlane = useMemo(() => {
         if (!sliceEnabled) return null
 
         const radPitch = THREE.MathUtils.degToRad(pitch)
@@ -353,31 +359,38 @@ export default function HeartViewer({
         return new THREE.Plane(normal, sliceDistance)
     }, [sliceEnabled, pitch, yaw, sliceDistance])
 
+    const clipPlane = externalClipPlane ?? modelClipPlane
+
     return (
       
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
-             {title && (
-                <h3
-                    style={{
-                        position: 'absolute',
-                        top: '15px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        margin: 0,
-                        zIndex: 10,
-                        textAlign: 'center',
-                        whiteSpace: 'nowrap'
-                    }}
-                >
-                    {title}
-                </h3>
-            )}
+            {/* {title && (*/}
+            {/*    <h3*/}
+            {/*        style={{*/}
+            {/*            position: 'absolute',*/}
+            {/*            top: '15px',*/}
+            {/*            left: '50%',*/}
+            {/*            transform: 'translateX(-50%)',*/}
+            {/*            margin: 0,*/}
+            {/*            zIndex: 10,*/}
+            {/*            textAlign: 'center',*/}
+            {/*            whiteSpace: 'nowrap'*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        {title}*/}
+            {/*    </h3>*/}
+            {/*)}*/}
+
             <Canvas
+                onCreated={({ camera }) => {
+                    camera.layers.enable(1)
+                }}
                 camera={{ position: initialCameraPos, fov: 45 }}
                 gl={{
                     logarithmicDepthBuffer: true,
                     antialias: true,
                     localClippingEnabled: true,
+                    stencil: true,
                 }}
             >
                 <ambientLight intensity={0.8} />
@@ -392,7 +405,9 @@ export default function HeartViewer({
                             showEpi={showEpi}
                             ventricleOnly={ventricleOnly}
                             clipPlane={clipPlane}
+                            capStyleRef={capStyleRef}
                             isPaused={isPaused}
+                            animationPhase={animationPhase}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             onSelect={setSelectedPart}
                             onHover={setHoverInfo}
@@ -400,6 +415,7 @@ export default function HeartViewer({
                             beatInterval={beatInterval}
                         />
                     </Center>
+                    <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
 
                     {/* Soft contact floor shadow */}
                     <ContactShadows
@@ -421,9 +437,9 @@ export default function HeartViewer({
                 />
 
                 <CameraController
-                    resetTrigger={resetTrigger}
+                    resetTrigger={resetTrigger + cameraViewResetTrigger}
                     initialPos={initialCameraPos}
-                    preset={defaultPreset}
+                    preset={viewPreset}
                     syncEnabled={syncEnabled}
                     syncedCameraRef={syncedCameraRef}
                     index={index}

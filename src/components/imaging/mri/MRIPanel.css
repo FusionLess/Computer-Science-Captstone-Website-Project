@@ -1,0 +1,211 @@
+.mri-panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.mri-panel h2 {
+    margin: 0;
+    flex-shrink: 0;
+    color: var(--primary-headings);
+    font-size: 22px;
+}
+
+.mri-panel-viewers {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+}
+
+.mri-panel-viewer {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--divider);
+    border-radius: 16px;
+    background: var(--cards-background);
+}
+
+.mri-panel-viewer > span {
+    padding: 0px 16px;
+    border-bottom: 1px solid var(--divider);
+    background: var(--secondary-cards-background);
+    color: var(--secondary-labels);
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+    height: 42px;
+    display: flex;
+    align-items: center;
+}
+
+.mri-panel-viewer-content {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.mri-panel-viewer-content.heart-viewer {
+    display: flex;
+    align-items: stretch;
+}
+
+.mri-panel .slice-bar {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--divider);
+    background: var(--secondary-cards-background);
+    padding: 8px;
+    border-radius: 20px;
+    inset: 12px;
+    right: auto;
+    z-index: 20;
+}
+
+.mri-panel .slice-label {
+    writing-mode: vertical-rl;
+    flex-shrink: 0;
+    color: var(--secondary-labels);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.mri-panel .slice-button {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 20px;
+    flex: 1;
+    min-height: 0;
+    height: 0;
+    margin: 0;
+    accent-color: var(--active-labels);
+    cursor: pointer;
+}
+
+.mri-panel .heart-view-buttons {
+    position: absolute;
+    left: calc(100% + 8px);
+    bottom: 0;
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    border: 1px solid var(--divider);
+    border-radius: 16px;
+    background: var(--secondary-cards-background);
+}
+
+.mri-panel .heart-view-buttons button {
+    flex-shrink: 0;
+    min-height: 32px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: var(--selected-suboptions);
+    color: var(--primary-headings);
+    font-size: 11px;
+}
+
+.mri-panel .heart-view-buttons button:hover {
+    background: var(--active-labels);
+    color: white;
+}
+
+.mri-panel-viewers > .mri-panel-viewer:first-child {
+    flex: 1;
+}
+
+.mri-panel-viewers > .mri-panel-viewer:last-child {
+    flex: 0 0 auto;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.mri-panel-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--divider);
+    border-radius: 16px;
+    background: var(--secondary-cards-background);
+    color: var(--primary-headings);
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.mri-panel-controls .controller-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.mri-panel-controls .frame-label {
+    flex-shrink: 0;
+    color: var(--body-texts);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.mri-panel-controls .frame-slider {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    accent-color: var(--active-labels);
+    cursor: pointer;
+}
+
+.mri-panel-controls button {
+    flex-shrink: 0;
+    min-width: 76px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+}
+
+@media (max-width: 800px) {
+    .mri-panel-viewers {
+        flex-direction: column;
+    }
+
+    .mri-panel {
+        height: auto;
+    }
+
+    .mri-panel-viewers {
+        flex: none;
+        flex-direction: column;
+    }
+
+    .mri-panel-viewers > .mri-panel-viewer:first-child,
+    .mri-panel-viewers > .mri-panel-viewer:last-child {
+        flex: none;
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        box-sizing: border-box;
+    }
+
+    .mri-panel-viewer-content {
+        flex: none;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+    }
+}

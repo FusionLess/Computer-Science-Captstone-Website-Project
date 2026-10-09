@@ -17,6 +17,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
             </div>
             <div className="desktop_navigation">
                 <HomeButton />
+                <ImagingButton />
                 <AboutButton />
                 <SettingsButton
                     setGraphActive={setGraphActive}
@@ -46,6 +47,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
             {isMobileMenuOpen && (
                 <div className="mobile_navigation">
                     <HomeButton />
+                    <ImagingButton />
                     <AboutButton />
                     <SettingsButton
                         setGraphActive={setGraphActive}
@@ -117,7 +119,6 @@ function AboutButton() {
                 to="/about"
                 end
                 className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
-                aria-label="Home"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -136,3 +137,41 @@ function AboutButton() {
 }
 
 export default TopBar;
+
+function ImagingButton() {
+    return (
+        <div className="imaging_button">
+            <NavLink
+                to="/imaging"
+                end
+                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    {/* Scan corners */}
+                    <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                    <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                    <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                    <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+
+                    {/* Smaller heart */}
+                    <g transform="translate(6 6) scale(0.5)" strokeWidth="4">
+                        <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+                    </g>
+                </svg>
+                <span>Imaging</span>
+            </NavLink>
+        </div>
+    )
+}
