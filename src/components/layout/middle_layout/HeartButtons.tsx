@@ -1,5 +1,8 @@
 import type {HeartCategory, HeartOption, HeartState} from "../../types/states.ts";
 import "./HeartButtons.css"
+import type { Complexity } from "../../types/complexities.ts"
+import { getHeartPath, getComparePath } from "../../../utils/heartRoutes"
+import { useNavigate } from "react-router"
 
 // Lucide icons: https://lucide.dev (license in public/licenses/lucide.txt).
 const heartOutline = "M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
@@ -41,8 +44,9 @@ const optionIconPaths: Record<HeartOption, string[]> = {
     ],
 }
 
-export default function HeartButtons({active, setActive} :
-                      { active: HeartState, setActive: (v: HeartState) => void }) {
+export default function HeartButtons({active, setActive, complexity, updateRoute, otherHeart, compareSide} :
+                      { active: HeartState, setActive: (v: HeartState) => void; complexity: Complexity, updateRoute: boolean, otherHeart?: HeartState, compareSide?: "first" | "second"}) {
+    const navigate = useNavigate()
     const toggles: { id: HeartCategory; label: string }[] = [
         {id:"healthy", label:"The Heart"},
         {id:"attack", label:"Attack"},
@@ -73,7 +77,22 @@ export default function HeartButtons({active, setActive} :
         Compensated: "amber",
         Decompensated: "red",
     };
+    const handleHeartSelection = (next: HeartState) => {
+        setActive(next)
 
+        if (compareSide && otherHeart) {
+            const first = compareSide === "first" ? next : otherHeart
+            const second = compareSide === "second" ? next : otherHeart
+
+            navigate(getComparePath(complexity, first, second))
+        } else if (updateRoute) {
+            navigate(getHeartPath(
+                complexity,
+                next.category,
+                next.option
+            ))
+        }
+    }
 
     return (
         <div className="heart_buttons">
@@ -83,10 +102,19 @@ export default function HeartButtons({active, setActive} :
                             type="button"
                             className={`${opt.id} ${active.category === opt.id ? "active" : "inactive"}`}
                             onClick={() => {
-                                setActive({
+                                handleHeartSelection({
                                     category: opt.id,
                                     option: defaultOptions[opt.id]
                                 })
+                                if (updateRoute) {
+                                    navigate(
+                                        getHeartPath(
+                                            complexity,
+                                            opt.id,
+                                            defaultOptions[opt.id]
+                                        )
+                                    )
+                                }
                             }}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -115,10 +143,20 @@ export default function HeartButtons({active, setActive} :
                                 active.option === option ? "selected" : ""
                             }`}
                             onClick={() => {
-                                setActive({
+                                handleHeartSelection({
                                     category: active.category,
                                     option
                                 })
+
+                                if (updateRoute) {
+                                    navigate(
+                                        getHeartPath(
+                                            complexity,
+                                            active.category,
+                                            option
+                                        )
+                                    )
+                                }
                             }}
                         >
                             <svg

@@ -15,7 +15,9 @@ import HeartController from "../../hearts/HeartController.jsx"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import SliceControls from "../../hearts/SliceControls.jsx"
 import type { Complexity } from "../../types/complexities.ts";
-export default function MiddlePanel({ compareState, setSelectedPart, complexity}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity}) {
+import { useNavigate } from "react-router"
+import { getComparePath, getHeartPath } from "../../../utils/heartRoutes"
+export default function MiddlePanel({ compareState, setSelectedPart, complexity,showAdvancedSliceControls}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean}) {
 
     const {
         selection1,
@@ -27,6 +29,26 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
     } = compareState
     const showControls = complexity !== "basic"
 
+    const navigate = useNavigate()
+
+    const handleCompareToggle = () => {
+        if (isComparing) {
+            navigate(getHeartPath(
+                complexity,
+                selection1.category,
+                selection1.option
+            ))
+        } else {
+            navigate(getComparePath(
+                complexity,
+                selection1,
+                selection2
+            ))
+        }
+    }
+    
+    
+    const showControls = complexity !== "basic" || showAdvancedSliceControls
     const [syncEnabled, setSyncEnabled] = useState(false)
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
     const [sharedResetTrigger, setSharedResetTrigger] = useState(0)
@@ -103,7 +125,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
                 type="button"
                 className={`compare-button ${isComparing ? "" : "not-comparing"}`}
                 aria-pressed={isComparing}
-                onClick={() => setIsComparing(!isComparing)}
+                onClick={handleCompareToggle}
             >
                 {isComparing ? "Stop Comparing" : "Compare"}
             </button>
@@ -158,6 +180,10 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
                     setSharedSliceDistance={setSharedSliceDistance}
                     showControls={showControls}
                     complexity={complexity}
+                    updateRoute={!isComparing}
+                    otherHeart={selection2}
+                    compareSide={isComparing ? "first" : undefined}
+
                 />
 
                 {isComparing && (
@@ -193,6 +219,9 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
 
                         showControls={showControls}
                         complexity={complexity}
+                        updateRoute={false}
+                        otherHeart={selection1}
+                        compareSide="second"
                     />
                     
                 )}
@@ -275,7 +304,10 @@ function HeartPanel ({
     setSharedSliceDistance,
 
     showControls,
-    complexity
+    complexity,
+    updateRoute,
+    otherHeart,
+    compareSide
 }: {
     active: HeartState
     setActive: (v: HeartState) => void
@@ -302,6 +334,9 @@ function HeartPanel ({
     setSharedSliceDistance: (value: number) => void
     showControls: boolean
     complexity: Complexity
+    updateRoute: boolean
+    otherHeart?: HeartState
+    compareSide?: "first" | "second"
 }) {
     const {
         syncEnabled,
@@ -313,7 +348,8 @@ function HeartPanel ({
 
     return (
         <div className="heart_panel">
-            <HeartButtons active={active} setActive={setActive}/>
+            <HeartButtons active={active} setActive={setActive} complexity={complexity} updateRoute={updateRoute} otherHeart={otherHeart}
+                    compareSide={compareSide}/>
             <div className="heart_viewer">
                 <HeartViewerPage
                     frameFolder={FRAMES[active.option]}
