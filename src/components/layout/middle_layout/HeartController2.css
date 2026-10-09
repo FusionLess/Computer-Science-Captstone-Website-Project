@@ -454,4 +454,9 @@ button.compare-button.not-comparing {
         display: flex;
     }
 
+    .content .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)),
+    .content.descriptions-hidden .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)) {
+        flex: 0 0 clamp(430px, 58dvh, 520px);
+        min-height: clamp(430px, 58dvh, 520px);
+    }
 }
