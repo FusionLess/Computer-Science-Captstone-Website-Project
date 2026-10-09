@@ -2,7 +2,7 @@ import '../App.css'
 import TopBar from '../components/layout/top_layout/TopBar.tsx'
 import Content from '../components/layout/middle_layout/MiddleContent.tsx'
 import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { HeartState } from "../components/types/states.ts";
 import type { CompareState } from "../components/types/compare.ts"
 import type { Complexity } from '../components/types/complexities.ts'
@@ -40,6 +40,17 @@ export default function HomePage() {
     }
 
     const [showDescriptions, setShowDescriptions] = useState(true)
+    const descriptionsBeforeCompare = useRef(showDescriptions)
+
+    useEffect(() => {
+        if (isComparing) {
+            descriptionsBeforeCompare.current = showDescriptions
+            setShowDescriptions(false)
+            return
+        }
+
+        setShowDescriptions(descriptionsBeforeCompare.current)
+    }, [isComparing])
 
     return (
         <main className="app">

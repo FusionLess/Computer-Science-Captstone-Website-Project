@@ -6,6 +6,7 @@
     flex-shrink: 0;
     height: var(--graph-height);
     margin: var(--side-margin);
+    transition: transform 250ms ease;
 }
 
 .graph-panel.comparing {
@@ -91,7 +92,6 @@
     background: rgba(252, 252, 252, 0.7);
     backdrop-filter: blur(1px);
     opacity: 0;
-    border-radius: 20px;
     pointer-events: none;
     transition: opacity 200ms ease;
 }
@@ -575,14 +575,6 @@
         left: calc(var(--graph-switch-width) + var(--mobile-switch-gap) + (var(--heartrate-panel-mobile-width) / 2));
     }
 
-    .content.descriptions-hidden:has( .slice-controller:not(.is-collapsed) ) + .graph-panel {
-        transform: translateY(120px);
-    }
-
-    .content.descriptions-hidden:has( .slice-controller:not(.is-collapsed) ):has(.slice-adjustments) + .graph-panel {
-        transform: translateY(170px);
-    }
-
     .graph-card.front .mobile_graph_switch {
         background: var(--cards-background);
     }
@@ -590,4 +582,14 @@
     .graph-card.back .mobile_graph_switch {
         background: var(--secondary-cards-background);
     }
+
+    /* One viewer or Selection 2 moves the graph when descriptions are hidden. */
+    .content.descriptions-hidden:has(.slice-controller:not(.is-collapsed)) + .graph-panel {
+        transform: translateY(120px);
+    }
+
+    .content.descriptions-hidden:has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) + .graph-panel {
+        transform: translateY(170px);
+    }
+
 }

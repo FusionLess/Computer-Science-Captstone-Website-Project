@@ -85,7 +85,7 @@
         align-self: flex-start;
 
         width: var(--control-button-width);
-        height: 50px;
+        height: 54px;
         margin: var(--control-button-margin);
 
         transition: width 250ms ease;
@@ -156,7 +156,7 @@
     .slice-controller .slice-options button,
     .slice-controller .slice-axis-presets button {
         width: 100%;
-        height: 38px;
+        height: 42px;
         margin: 0;
     }
 

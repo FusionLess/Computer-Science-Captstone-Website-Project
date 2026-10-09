@@ -191,6 +191,11 @@ button.compare-button.not-comparing {
     transform: none;
 }
 
+.middle-panel:has(.shared-heart-controller),
+.middle-panel-viewers > .heart_panel ~ .heart_panel .viewer-controls {
+    display: none;
+}
+
 @media (width < 800px) {
     .middle-panel {
         flex-direction: column;
@@ -237,20 +242,29 @@ button.compare-button.not-comparing {
         transform: scale(0.97);
     }
 
+    /* One viewer, or Selection 2: reserve space below the viewer stack. */
     .middle-panel:has(.slice-controller:not(.is-collapsed)) {
         padding-bottom: 120px;
     }
 
-    .middle-panel:has(.slice-controller:not(.is-collapsed)) {
-        padding-bottom: 120px;
-    }
-
-    .middle-panel:has( .slice-controller:not(.is-collapsed) ):has(.slice-adjustments) {
+    .middle-panel:has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) {
         padding-bottom: 170px;
     }
 
-    .content.descriptions-hidden .middle-panel:has( .slice-controller:not(.is-collapsed) ) {
+    /* With descriptions hidden, GraphPanel provides the extra space. */
+    .content.descriptions-hidden .middle-panel:has(.slice-controller:not(.is-collapsed)) {
         padding-bottom: 0;
+    }
+
+    /* A single viewer moves the following Description panel without resizing. */
+    .content:not(.descriptions-hidden) .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)):has(.slice-controller:not(.is-collapsed)) {
+        padding-bottom: 0;
+        margin-bottom: 130px;
+        transition: margin-bottom 250ms ease, padding-bottom 250ms ease;
+    }
+
+    .content:not(.descriptions-hidden) .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)):has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) {
+        margin-bottom: 170px;
     }
 
     .heart_viewer,
@@ -380,50 +394,64 @@ button.compare-button.not-comparing {
         left: 0;
     }
 
-    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers > .heart_panel:first-child:has( .slice-controller:not(.is-collapsed) ) {
-        margin-bottom: 120px;
-        transition: margin-bottom 250ms ease;
+    /* Keep comparison viewer sizes unchanged while Selection 1 opens. */
+    .middle-panel:has(.middle-panel-viewers > .heart_panel ~ .heart_panel) .middle-panel-viewers > .heart_panel ~ .heart_panel {
+        transition: transform 250ms ease;
     }
 
-    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers > .heart_panel:first-child:has( .slice-controller:not(.is-collapsed) ):has(.slice-adjustments) {
-        margin-bottom: 170px;
+    /* Selection 1 moves only Selection 2, not content below the viewer stack. */
+    .middle-panel:has(.middle-panel-viewers > .heart_panel:first-child .slice-controller:not(.is-collapsed)):not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel .slice-controller:not(.is-collapsed))) {
+        padding-bottom: 0;
     }
 
-    /* Only the two controllers inside stacked comparison viewers. */
+    .middle-panel:has(.middle-panel-viewers > .heart_panel:first-child .slice-controller:not(.is-collapsed)):not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel .slice-controller:not(.is-collapsed))) .middle-panel-viewers > .heart_panel ~ .heart_panel {
+        transform: translateY(120px);
+    }
+
+    .middle-panel:has(.middle-panel-viewers > .heart_panel:first-child .slice-controller:not(.is-collapsed)):has(.slice-adjustments):not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel .slice-controller:not(.is-collapsed))) .middle-panel-viewers > .heart_panel ~ .heart_panel {
+        transform: translateY(170px);
+    }
+
     .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .controller-actions {
         position: relative;
         display: grid;
         grid-template-columns: repeat(2, var(--control-button-width));
         width: calc((var(--control-button-width) * 2) + 2px);
-        grid-auto-rows: 42px;
+        grid-auto-rows: 48px;
         gap: 2px;
 
-        max-height: 90px;
+        max-height: 102px;
         overflow: visible;
     }
 
-    /* Keep the collapsed controller the original trigger-button width. */
     .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller.is-collapsed .controller-actions {
         width: var(--control-button-width);
         max-height: 0;
     }
 
-    /* Make every action fit its compact grid cell. */
     .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .controller-actions button {
         width: var(--control-button-width);
-        height: 42px;
+        height: 48px;
         padding: 3px;
         font-size: 8px;
         line-height: 1.1;
         white-space: normal;
     }
 
-    .middle-panel:has(
-    .middle-panel-viewers > .heart_panel ~ .heart_panel
-) .middle-panel-viewers .heart-controller .full-view-button {
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .full-view-button {
         position: absolute;
         top: calc(100% + 2px);
         left: calc(var(--control-button-width) + 2px);
         transform: none;
     }
+
+    .middle-panel:has(.shared-heart-controller) .shared-heart-controller {
+        display: none;
+    }
+
+    .middle-panel:has(.shared-heart-controller),
+    .middle-panel-viewers > .heart_panel ~ .heart_panel .viewer-controls {
+        display: flex;
+    }
+
 }

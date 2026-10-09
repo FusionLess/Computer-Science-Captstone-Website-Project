@@ -194,6 +194,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         syncState={{ ...syncState, index: 1 }}
                         setSelectedPart={setSelectedPart}
                         useSharedControls={useSharedControls}
+                        showSyncedControls={useSharedControls}
                         sharedShowEpi={sharedShowEpi}
                         setSharedShowEpi={setSharedShowEpi}
                         sharedVentricleOnly={sharedVentricleOnly}
@@ -281,6 +282,7 @@ function HeartPanel ({
     syncState,
     setSelectedPart,
     useSharedControls,
+    showSyncedControls = false,
     sharedShowEpi,
     setSharedShowEpi,
     sharedVentricleOnly,
@@ -309,6 +311,7 @@ function HeartPanel ({
     syncState: SyncState
     setSelectedPart: (part: string | null) => void
     useSharedControls: boolean
+    showSyncedControls?: boolean
     sharedShowEpi: boolean
     setSharedShowEpi: (value: boolean) => void
     sharedVentricleOnly: boolean
@@ -352,6 +355,7 @@ function HeartPanel ({
                     sharedResetTrigger={sharedResetTrigger}
                     setSharedResetTrigger={setSharedResetTrigger}
                     useSharedControls={useSharedControls}
+                    showSyncedControls={showSyncedControls}
                     sharedShowEpi={sharedShowEpi}
                     setSharedShowEpi={setSharedShowEpi}
                     sharedVentricleOnly={sharedVentricleOnly}

@@ -59,8 +59,7 @@
 }
 
 .sidebar h4 {
-    margin: 0;
-    margin-bottom: 5px;
+    margin: 0 0 5px;
     font-size: 14px;
 }
 
@@ -126,5 +125,9 @@
 
     .description_toggle {
         display: block;
+    }
+
+    .app:has(.compare-button:not(.not-comparing)) .description_toggle {
+        display: none;
     }
 }

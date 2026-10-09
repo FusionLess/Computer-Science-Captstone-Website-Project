@@ -29,6 +29,7 @@ export default function HeartViewer({
     sharedResetTrigger,
     setSharedResetTrigger,
     useSharedControls,
+    showSyncedControls,
 
     sharedShowEpi,
     setSharedShowEpi,
@@ -450,7 +451,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!useSharedControls && showControls && (
+            {(!useSharedControls || showSyncedControls) && showControls && (
                 <>
                     <div className="viewer-controls">
 
