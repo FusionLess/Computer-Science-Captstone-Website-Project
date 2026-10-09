@@ -1,15 +1,10 @@
 import "./SidePanel.css"
-import { useState } from "react"
+import type { Complexity } from "../../types/complexities.ts";
+import { complexities } from "../../types/complexities.ts";
 
-function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActive}:
-    { isOpen: boolean, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void}) {
-    const [complexity, setComplexity] = useState<string>("standard") 
+function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity}:
+    { isOpen: boolean, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
 
-    const complexities = [
-        {id:"basic", label: "Basic"},
-        {id:"standard", label: "Standard"},
-        {id:"advanced", label: "Advanced"},
-    ]
 
     return (
         <aside className={`sidebar ${isOpen ? "open" : ""}`}>

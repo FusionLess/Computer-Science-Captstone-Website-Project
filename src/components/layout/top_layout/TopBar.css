@@ -20,6 +20,17 @@
     height: calc(var(--bar-height) - 8px);
     width: auto;
 }
+.complexity-title {
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: 40px;
+    font-weight: 400;
+    color: var(--primary-headings);
+
+}
 
 .desktop_navigation{
     display: flex;

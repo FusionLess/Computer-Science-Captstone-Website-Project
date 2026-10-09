@@ -13,6 +13,7 @@ import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
 import HeartController from './HeartController'
 
+
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
     frontal: [-225, -20, -200],
@@ -23,43 +24,39 @@ const CAMERA_POSITIONS = {
 }
 
 export default function HeartViewer({
-    frameFolder = "frames",
-    showControls = true,
-    setSelectedPart = undefined,
-    title = undefined,
-    syncEnabled = false,
-    syncedCameraRef = undefined,
-    index = 0,
-    sharedResetTrigger = undefined,
-    setSharedResetTrigger = undefined,
-    useSharedControls = false,
+    frameFolder,
+    setSelectedPart,
+    title,
+    syncEnabled,
+    syncedCameraRef,
+    index,
+    sharedResetTrigger,
+    setSharedResetTrigger,
+    useSharedControls,
 
-    sharedShowEpi = undefined,
-    setSharedShowEpi = undefined,
+    sharedShowEpi,
+    setSharedShowEpi,
 
-    sharedVentricleOnly = undefined,
-    setSharedVentricleOnly = undefined,
+    sharedVentricleOnly,
+    setSharedVentricleOnly,
 
-    sharedFullView = undefined,
-    setSharedFullView = undefined,
+    sharedFullView,
+    setSharedFullView,
 
-    sharedSliceEnabled = undefined,
-    setSharedSliceEnabled = undefined,
-    sharedShowPlaneGuide = undefined,
-    setSharedShowPlaneGuide = undefined,
-    sharedActivePreset = undefined,
-    setSharedActivePreset = undefined,
-    sharedPitch = undefined,
-    setSharedPitch = undefined,
-    sharedYaw = undefined,
-    setSharedYaw = undefined,
-    sharedSliceDistance = undefined,
-    setSharedSliceDistance = undefined,
-
-    externalClipPlane = null,
-    animationPhase = undefined,
-    cameraView = undefined,
-    cameraViewResetTrigger = 0,
+    sharedSliceEnabled,
+    setSharedSliceEnabled,
+    sharedShowPlaneGuide,
+    setSharedShowPlaneGuide,
+    sharedActivePreset,
+    setSharedActivePreset,
+    sharedPitch,
+    setSharedPitch,
+    sharedYaw,
+    setSharedYaw,
+    sharedSliceDistance,
+    setSharedSliceDistance,
+    showControls,
+    complexity
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -183,8 +180,13 @@ export default function HeartViewer({
 
         setLocalFullView(false)
 
-        setLocalSliceEnabled(false)
-        setLocalShowPlaneGuide(false)
+        if (complexity === "basic") {
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+        } else {
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+        }
         setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -198,7 +200,7 @@ export default function HeartViewer({
         }
 
         setResetTrigger(prev => prev + 1)
-    }, [frameFolder])
+    }, [frameFolder, complexity])
 
     // sets the preset independent depth slices per selection
     const [presetDepths, setPresetDepths] = useState({
@@ -285,8 +287,13 @@ export default function HeartViewer({
         setVentricleOnly(false)
         setShowEpi(true)
         // Restore predetermined slicing
-        setSliceEnabled(false)
-        setShowPlaneGuide(false)
+        if (complexity === "basic") {
+            setSliceEnabled(false)
+            setShowPlaneGuide(false)
+        } else {
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+        }
         setActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -459,39 +466,45 @@ export default function HeartViewer({
             </div>
             )}
 
-            {showControls && !useSharedControls && (
+            {!useSharedControls && showControls && (
                 <>
-                    <HeartController
-                        isPaused={isPaused}
-                        setIsPaused={setIsPaused}
-                        syncEnabled={syncEnabled}
-                        showEpi={showEpi}
-                        setShowEpi={setShowEpi}
-                        ventricleOnly={ventricleOnly}
-                        setVentricleOnly={setVentricleOnly}
-                        fullView={fullView}
-                        handleFullView={handleFullView}
-                        handleResetView={handleResetView}
-                        handleVentricleView={handleVentricleView}
-                    />
-                    <SliceControls
-                        index={index}
-                        sliceControlEnabled={sliceControlEnabled}
-                        setSliceControlEnabled={setSliceControlEnabled}
-                        sliceEnabled={sliceEnabled}
-                        setSliceEnabled={setSliceEnabled}
-                        showPlaneGuide={showPlaneGuide}
-                        setShowPlaneGuide={setShowPlaneGuide}
-                        activePreset={activePreset}
-                        setActivePreset={setActivePreset}
-                        pitch={pitch}
-                        setPitch={setPitch}
-                        yaw={yaw}
-                        setYaw={setYaw}
-                        sliceDistance={sliceDistance}
-                        handlePresetSelect={handlePresetSelect}
-                        handleDepthSliderChange={handleDepthSliderChange}
-                    />
+                    <div className="viewer-controls">
+
+                        <HeartController
+                            isPaused={isPaused}
+                            setIsPaused={setIsPaused}
+                            syncEnabled={syncEnabled}
+                            showEpi={showEpi}
+                            setShowEpi={setShowEpi}
+                            ventricleOnly={ventricleOnly}
+                            setVentricleOnly={setVentricleOnly}
+                            fullView={fullView}
+                            handleFullView={handleFullView}
+                            handleResetView={handleResetView}
+                            handleVentricleView={handleVentricleView}
+                        />
+                        <SliceControls
+                            index={index}
+                            sliceControlEnabled={sliceControlEnabled}
+                            setSliceControlEnabled={setSliceControlEnabled}
+                            sliceEnabled={sliceEnabled}
+                            setSliceEnabled={setSliceEnabled}
+                            showPlaneGuide={showPlaneGuide}
+                            setShowPlaneGuide={setShowPlaneGuide}
+                            activePreset={activePreset}
+                            setActivePreset={setActivePreset}
+                            pitch={pitch}
+                            setPitch={setPitch}
+                            yaw={yaw}
+                            setYaw={setYaw}
+                            sliceDistance={sliceDistance}
+                            handlePresetSelect={handlePresetSelect}
+                            handleDepthSliderChange={handleDepthSliderChange}
+
+                            complexity={complexity}
+
+                        />
+                    </div>
                 </>
             )}
         </div>

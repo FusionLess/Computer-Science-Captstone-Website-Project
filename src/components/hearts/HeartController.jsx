@@ -1,4 +1,5 @@
 import './HeartController.css'
+import "./Controller.css"
 import { useId, useState } from 'react'
 
 export default function HeartController({
@@ -17,7 +18,7 @@ export default function HeartController({
     const controlsId = useId()
 
     return (
-        <div className={`heart-controller${controlsShowing ? '' : ' is-collapsed'}`}>
+        <div className={`controller heart-controller${controlsShowing ? '' : ' is-collapsed'}`}>
             <button
                 type="button"
                 onClick={() => setControlsShowing(controlsShowing => !controlsShowing)}
@@ -25,11 +26,11 @@ export default function HeartController({
                 aria-expanded={controlsShowing}
                 aria-controls={controlsId}
                 >
-                { controlsShowing ? 'HIDE' : 'SHOW CONTROLS' }
+                { controlsShowing ? 'HIDE' : 'HEART CONTROLS' }
             </button>
             <div
                 id={controlsId}
-                className="heart-controller-actions"
+                className="controller-actions heart-controller-actions"
                 inert={!controlsShowing}
                 aria-hidden={!controlsShowing}
             >
@@ -126,6 +127,7 @@ export default function HeartController({
                 <button
                     type="button"
                     onClick={handleFullView}
+                    className={`full-view-button${fullView ? ' is-active' : ''}`}
                 >
                     FULL VIEW
                 </button>

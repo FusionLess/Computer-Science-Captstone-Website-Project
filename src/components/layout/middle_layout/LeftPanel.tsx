@@ -1,9 +1,10 @@
 import "./LeftPanel.css"
 import type { CompareState } from "../../types/compare.ts";
 import { PAGE_DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
+import type { Complexity } from "../../types/complexities.ts";
 
-function LeftBox({compareState} :
-                 {compareState: CompareState}) {
+function LeftBox({compareState, complexity} :
+                 {compareState: CompareState, complexity: Complexity}) {
     const {
         selection1,
         isComparing,
@@ -17,7 +18,7 @@ function LeftBox({compareState} :
             <aside className="left">
                 <h5 className="left_subheading">{section.subheading}</h5>
                 <h5 className="left_heading">{section.heading}</h5>
-                <p className="left_body">{section.description}</p>
+                <p className="left_body">{section.description[complexity]}</p>
             </aside>
         </>
     )

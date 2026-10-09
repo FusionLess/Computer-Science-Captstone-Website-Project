@@ -1,0 +1,96 @@
+.controller {
+    --control-button-width: 70px;
+    --control-button-margin: 2px;
+
+    font-family: system-ui, -apple-system, sans-serif;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    z-index: 10;
+
+    background: color-mix(in srgb,
+            var(--cards-background) 70%,
+            transparent);
+
+    border-radius: 20px;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.controller button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 8px;
+    margin: var(--control-button-margin);
+    width: var(--control-button-width);
+    height: 50px;
+    font-size: 10px;
+    font-weight: 200;
+    border: none;
+    border-radius: 20px;
+    gap: 2px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: transparent;
+    color: grey;
+    cursor: pointer;
+    pointer-events: auto;
+}
+.controller-actions {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    overflow: hidden;
+    opacity: 1;
+    transition:
+        width 250ms ease,
+        opacity 200ms ease;
+}
+
+.controller.is-collapsed .controller-actions {
+    width: 0;
+    opacity: 0;
+}
+.controller button.is-active {
+    color: var(--active-labels);
+    background: color-mix(in srgb,
+            var(--active-labels) 20%,
+            transparent);
+}
+.controller .show-controls-button {
+    position: relative;
+    font-weight: bolder;
+    text-wrap: auto;
+}
+
+.controller .show-controls-button::after {
+    content: "";
+    position: absolute;
+    left: var(--control-button-width);
+    width: 2px;
+    height: 80%;
+    border-radius: 8px;
+    background: var(--divider);
+    transition: opacity 200ms ease;
+}
+
+.controller.is-collapsed .show-controls-button::after {
+    opacity: 0;
+}
+
+
+.controller-divider {
+    width: 2px;
+    height: 32px;
+    margin: 0 6px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--divider);
+}

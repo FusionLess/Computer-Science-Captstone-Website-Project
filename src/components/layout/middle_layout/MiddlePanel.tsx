@@ -14,7 +14,8 @@ import HeartButtons from "./HeartButtons.tsx";
 import HeartController from "../../hearts/HeartController.jsx"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import SliceControls from "../../hearts/SliceControls.jsx"
-export default function MiddlePanel({ compareState, setSelectedPart }: { compareState: CompareState, setSelectedPart: (part: string | null) => void }) {
+import type { Complexity } from "../../types/complexities.ts";
+export default function MiddlePanel({ compareState, setSelectedPart, complexity}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity}) {
 
     const {
         selection1,
@@ -24,6 +25,7 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
         isComparing,
         setIsComparing,
     } = compareState
+    const showControls = complexity !== "basic"
 
     const [syncEnabled, setSyncEnabled] = useState(false)
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
@@ -34,7 +36,6 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
     const [sharedFullView, setSharedFullView] = useState(false)
 
     const useSharedControls = isComparing && syncEnabled
-    const [sharedSliceControlEnabled, setSharedSliceControlEnabled] = useState(false)
     const [sharedSliceEnabled, setSharedSliceEnabled] = useState(true)
     const [sharedShowPlaneGuide, setSharedShowPlaneGuide] = useState(true)
 
@@ -124,6 +125,7 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
             }
 
             <div className="middle-panel-viewers">
+
                 <HeartPanel
                     active={selection1}
                     setActive={chooseSelection1}
@@ -154,6 +156,8 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
 
                     sharedSliceDistance={sharedSliceDistance}
                     setSharedSliceDistance={setSharedSliceDistance}
+                    showControls={showControls}
+                    complexity={complexity}
                 />
 
                 {isComparing && (
@@ -187,11 +191,13 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
                         sharedSliceDistance={sharedSliceDistance}
                         setSharedSliceDistance={setSharedSliceDistance}
 
+                        showControls={showControls}
+                        complexity={complexity}
                     />
                     
                 )}
             </div>
-            {isComparing && syncEnabled && (
+            {isComparing && syncEnabled && showControls && (
                 <div className="shared-heart-controller">
                     <HeartController
                         isPaused={isPaused}
@@ -213,9 +219,6 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
                         shared
                         index={0}
 
-                        sliceControlEnabled={sharedSliceControlEnabled}
-                        setSliceControlEnabled={setSharedSliceControlEnabled}
-
                         sliceEnabled={sharedSliceEnabled}
                         setSliceEnabled={setSharedSliceEnabled}
 
@@ -235,6 +238,8 @@ export default function MiddlePanel({ compareState, setSelectedPart }: { compare
 
                         handlePresetSelect={handleSharedPresetSelect}
                         handleDepthSliderChange={handleSharedDepthSliderChange}
+                        complexity={complexity}
+
                     />
                 </div>
             )}
@@ -268,6 +273,9 @@ function HeartPanel ({
     setSharedYaw,
     sharedSliceDistance,
     setSharedSliceDistance,
+
+    showControls,
+    complexity
 }: {
     active: HeartState
     setActive: (v: HeartState) => void
@@ -292,6 +300,8 @@ function HeartPanel ({
     setSharedYaw: (value: number) => void
     sharedSliceDistance: number
     setSharedSliceDistance: (value: number) => void
+    showControls: boolean
+    complexity: Complexity
 }) {
     const {
         syncEnabled,
@@ -339,6 +349,9 @@ function HeartPanel ({
 
                     sharedSliceDistance={sharedSliceDistance}
                     setSharedSliceDistance={setSharedSliceDistance}
+
+                    showControls={showControls}
+                    complexity={complexity}
                 />
             </div>
         </div>
