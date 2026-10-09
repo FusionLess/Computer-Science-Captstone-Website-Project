@@ -68,7 +68,6 @@ export default function HomePage() {
                 setActive={setActive}
                 compareState={compareState}
                 complexity={complexity}
-                setComplexity={setComplexity}
                 showDescriptions={showDescriptions}
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
