@@ -51,8 +51,8 @@ export default function HeartViewer({
     setSharedYaw,
     sharedSliceDistance,
     setSharedSliceDistance,
-    showControls,
-    complexity
+    complexity,
+    showAdvancedSliceControls
 }) {
     const defaultPreset =
         frameFolder === "compensated_heart" ||
@@ -450,7 +450,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!useSharedControls && showControls && (
+            {!useSharedControls && (
                 <>
                     <div className="viewer-controls">
 
@@ -484,8 +484,8 @@ export default function HeartViewer({
                             sliceDistance={sliceDistance}
                             handlePresetSelect={handlePresetSelect}
                             handleDepthSliderChange={handleDepthSliderChange}
-
                             complexity={complexity}
+                            showAdvancedSliceControls={showAdvancedSliceControls}
 
                         />
                     </div>

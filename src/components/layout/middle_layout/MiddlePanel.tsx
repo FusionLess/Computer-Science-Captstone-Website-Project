@@ -27,8 +27,6 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
         isComparing,
         setIsComparing,
     } = compareState
-    const showControls = complexity !== "basic"
-
     const navigate = useNavigate()
 
     const handleCompareToggle = () => {
@@ -178,9 +176,9 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
 
                     sharedSliceDistance={sharedSliceDistance}
                     setSharedSliceDistance={setSharedSliceDistance}
-                    showControls={showControls}
                     complexity={complexity}
                     updateRoute={!isComparing}
+                    showAdvancedSliceControls={showAdvancedSliceControls}
                     otherHeart={selection2}
                     compareSide={isComparing ? "first" : undefined}
 
@@ -217,9 +215,9 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
                         sharedSliceDistance={sharedSliceDistance}
                         setSharedSliceDistance={setSharedSliceDistance}
 
-                        showControls={showControls}
                         complexity={complexity}
                         updateRoute={false}
+                        showAdvancedSliceControls={showAdvancedSliceControls}
                         otherHeart={selection1}
                         compareSide="second"
                     />
@@ -268,6 +266,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
                         handlePresetSelect={handleSharedPresetSelect}
                         handleDepthSliderChange={handleSharedDepthSliderChange}
                         complexity={complexity}
+                        showAdvancedSliceControls={showAdvancedSliceControls}
 
                     />
                 </div>
@@ -303,9 +302,9 @@ function HeartPanel ({
     sharedSliceDistance,
     setSharedSliceDistance,
 
-    showControls,
     complexity,
     updateRoute,
+    showAdvancedSliceControls,
     otherHeart,
     compareSide
 }: {
@@ -332,9 +331,9 @@ function HeartPanel ({
     setSharedYaw: (value: number) => void
     sharedSliceDistance: number
     setSharedSliceDistance: (value: number) => void
-    showControls: boolean
     complexity: Complexity
     updateRoute: boolean
+    showAdvancedSliceControls: boolean,
     otherHeart?: HeartState
     compareSide?: "first" | "second"
 }) {
@@ -386,8 +385,8 @@ function HeartPanel ({
                     sharedSliceDistance={sharedSliceDistance}
                     setSharedSliceDistance={setSharedSliceDistance}
 
-                    showControls={showControls}
                     complexity={complexity}
+                    showAdvancedSliceControls={showAdvancedSliceControls}   
                 />
             </div>
         </div>

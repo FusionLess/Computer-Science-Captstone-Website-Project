@@ -15,6 +15,15 @@ export default function App() {
                 }/>
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/:complexity/:category/:option" element={
+                    <HeartMonitorProvider>
+                        <HomePage />
+                    </HeartMonitorProvider>
+                }/>
+                <Route path="/:complexity/compare/:first/:second" element={
+                    <HeartMonitorProvider>
+                        <HomePage />
+                    </HeartMonitorProvider>
+                }/>
             </Routes>
         </BrowserRouter>
     );

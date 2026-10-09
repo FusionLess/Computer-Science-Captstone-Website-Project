@@ -110,13 +110,15 @@ export default function HomePage() {
                 setGlowActive={setGlowActive}
                 complexity={complexity}
                 setComplexity={handleComplexityChange}
+                showAdvancedSliceControls={showAdvancedSliceControls}
+                setShowAdvancedSliceControls={setShowAdvancedSliceControls}
 
             />
             <Content active={active} 
                 setActive={setActive}
                 compareState={compareState}
                 complexity={complexity}
-                setComplexity={setComplexity}
+                showAdvancedSliceControls={showAdvancedSliceControls}      
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>

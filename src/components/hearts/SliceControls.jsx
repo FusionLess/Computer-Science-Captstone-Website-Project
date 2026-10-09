@@ -19,12 +19,14 @@ export default function SliceController({
     sliceDistance,
     handlePresetSelect,
     handleDepthSliderChange,
-    complexity
+    complexity,
+    showAdvancedSliceControls
 }) {
 
     const [controlsShowing, setControlsShowing] = useState(true)
     const controlsId = useId()
 
+    const showSliders =  showAdvancedSliceControls
     return (
         <div
         className={`controller slice-controller
@@ -95,7 +97,7 @@ export default function SliceController({
                     </button>
                 </div>
 
-                {complexity === 'advanced' && (
+                {showSliders && (
                     <>
                     
                         <div className="controller-divider" />
