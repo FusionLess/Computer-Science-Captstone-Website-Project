@@ -25,7 +25,6 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
         chooseSelection1,
         chooseSelection2,
         isComparing,
-        setIsComparing,
     } = compareState
     const navigate = useNavigate()
 
@@ -46,7 +45,6 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
     }
     
     
-    const showControls = complexity !== "basic" || showAdvancedSliceControls
     const [syncEnabled, setSyncEnabled] = useState(false)
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
     const [sharedResetTrigger, setSharedResetTrigger] = useState(0)
@@ -81,7 +79,13 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
     }
 
     const handleSharedVentricleView = () => {
-        setSharedVentricleOnly(prev => !prev)
+        // setSharedVentricleOnly(prev => !prev)
+        const nextVentricleOnly = !sharedVentricleOnly
+        setSharedVentricleOnly(nextVentricleOnly)
+
+        if (nextVentricleOnly) {
+            setSharedFullView(false)
+        }
     }
 
     const handleSharedFullView = () => {
@@ -92,6 +96,11 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
         pitch: number,
         yaw: number
     ) => {
+        setSharedFullView(false)
+
+        setSharedSliceEnabled(true)
+        setSharedShowPlaneGuide(true)
+
         setSharedActivePreset(presetKey)
         setSharedPitch(pitch)
         setSharedYaw(yaw)
@@ -103,6 +112,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
         } else if (presetKey === "shortAxis") {
             setSharedSliceDistance(-18)
         }
+        setSharedResetTrigger(prev => prev + 1)
     }
 
     const handleSharedDepthSliderChange = (depth: number) => {
@@ -224,7 +234,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
                     
                 )}
             </div>
-            {isComparing && syncEnabled && showControls && (
+            {isComparing && syncEnabled && (
                 <div className="shared-heart-controller">
                     <HeartController
                         isPaused={isPaused}
@@ -236,11 +246,12 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity,
                         ventricleOnly={sharedVentricleOnly}
                         setVentricleOnly={setSharedVentricleOnly}
 
-                        fullView={sharedFullView}
+                       fullView={sharedFullView && !sharedSliceEnabled && !sharedVentricleOnly}
 
                         handleResetView={handleSharedReset}
                         handleFullView={handleSharedFullView}
                         handleVentricleView={handleSharedVentricleView}
+                        sliceEnabled={sharedSliceEnabled}
                     />
                     <SliceControls
                         shared
