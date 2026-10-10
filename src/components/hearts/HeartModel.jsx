@@ -3,23 +3,11 @@ import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { HEART_FRAME_COUNT, phaseToFrame, cloneHeartScene, addStencilHelpers, materialsOf, isMuscle } from './heartRendering'
+import { HeartParts } from "../../data/HeartParts"
 
 const NUM_FRAMES = HEART_FRAME_COUNT
 const ES_FRAME = 25
 // All frames are loaded; only the active frame is displayed.
-const UNHEALTHY_MESH_MAP = {
-  mesh0: 'mesh0',
-  mesh1: 'mesh4',
-  mesh2: 'mesh1',
-  mesh3: 'mesh5',
-  mesh4: 'mesh2',
-  mesh5: 'mesh6',
-  mesh6: 'mesh3',
-}
-function meshNameFor(name, isUnhealthy) {
-  return isUnhealthy ? (UNHEALTHY_MESH_MAP[name] ?? name) : name
-}
-
 function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHover, onSelect, isUnhealthy, capStyleRef, capColor }) {
   const { scene } = useGLTF(url)
   const model = useMemo(() => cloneHeartScene(scene), [scene])
@@ -52,12 +40,12 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
   useEffect(() => {
     model.traverse((child) => {
       if (!child.isMesh || child.name === 'stencilHelper') return
-      const name = meshNameFor(child.name, isUnhealthy)
+      const name = child.name
       child.visible = isMuscle(child)
         ? showEpi
         : !ventricleOnly || name === 'mesh1' || name === 'mesh4'
     })
-  }, [model, showEpi, ventricleOnly, isUnhealthy])
+  }, [model, showEpi, ventricleOnly])
 
   useEffect(() => {
     if (!clipPlane) return
@@ -95,8 +83,10 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
     <primitive object={model} visible={isVisible}
       onPointerMove={(event) => {
         event.stopPropagation()
+        const meshId = event.object.name
+        const heartPart = HeartParts[meshId]  
         onHover?.({
-          name: meshNameFor(event.object.name, isUnhealthy),
+          name: heartPart?.name ?? meshId,
           x: event.clientX,
           y: event.clientY,
         })
@@ -107,7 +97,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       }}
       onPointerDown={(event) => {
         event.stopPropagation()
-        onSelect?.(meshNameFor(event.object.name, isUnhealthy))
+        onSelect?.(event.object.name)
       }}
     />
   )

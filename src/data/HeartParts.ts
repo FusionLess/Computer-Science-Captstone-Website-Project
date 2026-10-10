@@ -33,43 +33,44 @@ export const HeartParts: Record<string, HeartPart> =  {
   },
 
   mesh1: {
-    name: "Left Ventricle",
+    name: "Right Ventricle",
     description: {
-      basic: "The left ventricle is the chamber on the bottom left of the heart",
-      standard: "The left ventricle is the lower left chamber of the heart.",
-      advanced: "The left ventricle has the thickest muscular wall of the four chambers, in the lower left quartile of the heart"
+      basic: "The right ventricle is on the lower right part of the heart",
+      standard: "The right ventricle is the lower right chamber of the heart.",
+      advanced:  "The right ventricle receives deoxygenated blood from the right atrium through the tricuspid valve, in the lower right quartile of the heart"
     },
     function: {
-      basic: "This is the strong part that pushes oxygen-rich blood out to the rest of your body",
-      standard: "It pumps oxygen-rich blood through the aorta and out to the rest of the body.",
-      advanced: "With the thickest muscular wall of the four chambers, the left ventricle generates the high pressure needed to pump oxygenated blood through the aortic valve and into the systemic circulation. Aorta: The aorta is the body's largest artery. It receives blood ejected from the left ventricle and distributes it through its branches to the organs and tissues. "
+      basic: "his part sends the blood to your lungs. The blood travels through a tube called the pulmonary artery. In the lungs, the blood picks up fresh oxygen from the air you breathe",
+      standard: "It pumps oxygen-poor blood through the pulmonary artery to the lungs.",
+      advanced: "The right ventricle ejects this deoxygenated blood through the pulmonary valve and into the pulmonary artery, which conveys it to the lungs. There, gas exchange takes place: oxygen diffuses into the blood across the alveolar membrane, and carbon dioxide diffuses out. "
     },
     media: [
       {
         type: "image",
-        src: "/images/heartParts/lv.png",
-        alt: "Schematic of the left ventricle"
+        src: "/images/heartParts/rv.png",
+        alt: "Schematic of the right ventricle"
       }
     ]
+    
   },
 
   mesh2: {
-    name: "Left Atrium",
+    name: "Right Atrium",
     description: {
-      basic: "The left atrium is a chamber of a heart that is onn the upper left part of the heart",
-      standard: "The left atrium is one of the four chambers of the heart and is located in the upper part of the heart.",
-      advanced: "The pulmonary veins return newly oxygenated blood to the left atrium, in the upper left quartile of the heart."
+      basic: "The right atrium is the upper right part of the heart",
+      standard: "The right atrium is one of the four chambers of the heart and is located in the upper part of the heart.",
+      advanced:  "Deoxygenated blood returns from the systemic circulation via two major veins. The superior vena cava drains the upper body, while the inferior vena cava drains the lower body."
     },
     function: {
-      basic: "Blood comes back from the lungs full of oxygen. The left atrium gets it and pushes it down to the left ventricle.",
-      standard: "It receives oxygen-rich blood from the lungs and passes it into the left ventricle.",
-      advanced: "The pulmonary veins return the newly oxygenated blood to the left atrium. The left atrium then contracts, moving blood through the mitral valve into the left ventricle. "
+      basic: "This is the first stop for blood that has used up its oxygen. Two big tubes called veins bring the blood here. One comes from the top of your body and one comes from the bottom. The right atrium then pushes the blood down to the right ventricle",
+      standard: "It receives oxygen-poor blood returning from the body and passes it into the right ventricle.",
+      advanced:  "Both empty into the right atrium, which contracts to propel blood through the tricuspid valve into the right ventricle."
     },
     media: [
       {
         type: "image",
-        src: "/images/heartParts/la.png",
-        alt: "Schematic of the left atrium"
+        src: "/images/heartParts/ra.png",
+        alt: "Schematic of the right atrium"
       }
     ]
   },
@@ -96,45 +97,46 @@ export const HeartParts: Record<string, HeartPart> =  {
   },
 
   mesh4: {
-    name: "Right Ventricle",
+    name: "Left Ventricle",
     description: {
-      basic: "The right ventricle is on the lower right part of the heart",
-      standard: "The right ventricle is the lower right chamber of the heart.",
-      advanced:  "The right ventricle receives deoxygenated blood from the right atrium through the tricuspid valve, in the lower right quartile of the heart"
+      basic: "The left ventricle is the chamber on the bottom left of the heart",
+      standard: "The left ventricle is the lower left chamber of the heart.",
+      advanced: "The left ventricle has the thickest muscular wall of the four chambers, in the lower left quartile of the heart"
     },
     function: {
-      basic: "his part sends the blood to your lungs. The blood travels through a tube called the pulmonary artery. In the lungs, the blood picks up fresh oxygen from the air you breathe",
-      standard: "It pumps oxygen-poor blood through the pulmonary artery to the lungs.",
-      advanced: "The right ventricle ejects this deoxygenated blood through the pulmonary valve and into the pulmonary artery, which conveys it to the lungs. There, gas exchange takes place: oxygen diffuses into the blood across the alveolar membrane, and carbon dioxide diffuses out. "
+      basic: "This is the strong part that pushes oxygen-rich blood out to the rest of your body",
+      standard: "It pumps oxygen-rich blood through the aorta and out to the rest of the body.",
+      advanced: "With the thickest muscular wall of the four chambers, the left ventricle generates the high pressure needed to pump oxygenated blood through the aortic valve and into the systemic circulation. Aorta: The aorta is the body's largest artery. It receives blood ejected from the left ventricle and distributes it through its branches to the organs and tissues. "
     },
     media: [
       {
         type: "image",
-        src: "/images/heartParts/rv.png",
-        alt: "Schematic of the right ventricle"
+        src: "/images/heartParts/lv.png",
+        alt: "Schematic of the left ventricle"
       }
     ]
   },
 
   mesh5: {
-    name: "Right Atrium",
+    name: "Left Atrium",
     description: {
-      basic: "The right atrium is the upper right part of the heart",
-      standard: "The right atrium is one of the four chambers of the heart and is located in the upper part of the heart.",
-      advanced:  "Deoxygenated blood returns from the systemic circulation via two major veins. The superior vena cava drains the upper body, while the inferior vena cava drains the lower body."
+      basic: "The left atrium is a chamber of a heart that is onn the upper left part of the heart",
+      standard: "The left atrium is one of the four chambers of the heart and is located in the upper part of the heart.",
+      advanced: "The pulmonary veins return newly oxygenated blood to the left atrium, in the upper left quartile of the heart."
     },
     function: {
-      basic: "This is the first stop for blood that has used up its oxygen. Two big tubes called veins bring the blood here. One comes from the top of your body and one comes from the bottom. The right atrium then pushes the blood down to the right ventricle",
-      standard: "It receives oxygen-poor blood returning from the body and passes it into the right ventricle.",
-      advanced:  "Both empty into the right atrium, which contracts to propel blood through the tricuspid valve into the right ventricle."
+      basic: "Blood comes back from the lungs full of oxygen. The left atrium gets it and pushes it down to the left ventricle.",
+      standard: "It receives oxygen-rich blood from the lungs and passes it into the left ventricle.",
+      advanced: "The pulmonary veins return the newly oxygenated blood to the left atrium. The left atrium then contracts, moving blood through the mitral valve into the left ventricle. "
     },
     media: [
       {
         type: "image",
-        src: "/images/heartParts/ra.png",
-        alt: "Schematic of the right atrium"
+        src: "/images/heartParts/la.png",
+        alt: "Schematic of the left atrium"
       }
     ]
+    
   },
 
   mesh6: {

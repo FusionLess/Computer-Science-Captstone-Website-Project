@@ -15,7 +15,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                 <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
             </div>
             <div className="desktop_navigation">
-                <HomeButton />
+                <HomeButton complexity={complexity} />
                 <ImagingButton />
                 <AboutButton />
                 <SettingsButton
@@ -47,7 +47,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
 
             {isMobileMenuOpen && (
                 <div className="mobile_navigation">
-                    <HomeButton />
+                    <HomeButton complexity={complexity}/>
                     <ImagingButton />
                     <AboutButton />
                     <SettingsButton
@@ -93,13 +93,15 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
     )
 }
 
-function HomeButton() {
+function HomeButton({complexity}: {complexity: Complexity}) {
+    const { pathname } = useLocation()
+    const isHomeActive = pathname === "/" || pathname.startsWith(`/${complexity}`)    
     return (
         <div className="home_button">
             <NavLink
                 to="/"
                 end
-                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+                className={`nav_button${isHomeActive ? " active" : ""}`}
                 aria-label="Home"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
