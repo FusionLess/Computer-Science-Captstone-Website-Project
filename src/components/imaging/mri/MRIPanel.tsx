@@ -71,12 +71,13 @@ export default function MRIPanel() {
                                 {[
                                     { view: "topDown", label: "Top" },
                                     { view: "frontal", label: "Front" },
-                                    { view: "titledShortAxis", label: "Default" },
+                                    { view: "tiltedShortAxis", label: "Default" },
                                 ].map(({ view, label }) => (
                                     <button
                                         key={view}
                                         type="button"
                                         title={`Restore ${label.toLowerCase()} view`}
+                                        aria-pressed={heartView === view}
                                         onClick={() => selectHeartView(view)}
                                     >
                                         {label}
@@ -145,6 +146,7 @@ export default function MRIPanel() {
                     <button
                         onClick={() => setIsPlaying(!isPlaying)}
                         className={isPlaying ? 'pause-button' : 'play-button'}
+                        aria-pressed={isPlaying}
                     >
                         {isPlaying ? 'Pause' : 'Play'}
                     </button>

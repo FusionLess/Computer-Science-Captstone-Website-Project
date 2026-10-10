@@ -65,12 +65,26 @@
 .imaging-mode-switch button {
     flex: 1;
     border-radius: 10px;
-    background: var(--secondary-cards-background);
+    background: var(--cards-background);
+    color: var(--body-texts);
+    box-shadow: 0 2px 8px var(--popup-button-shadow);
+    transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
 .imaging-mode-switch button[aria-pressed="true"] {
-    background: var(--selected-suboptions);
-    color: var(--active-labels);
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+}
+
+.imaging-mode-switch button:hover {
+    transform: scale(1.03);
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+    box-shadow: 0 4px 12px var(--popup-button-hover-shadow);
+}
+
+.imaging-mode-switch button:active {
+    transform: scale(0.97);
 }
 
 .imaging-description { min-height: 200px; }

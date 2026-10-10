@@ -1,6 +1,6 @@
 import "./TopBar.css"
 import Settings from "./Settings.tsx"
-import { useRef, useState, type MouseEvent } from "react"
+import { useEffect, useRef, useState, type MouseEvent } from "react"
 import { NavLink, useLocation, useNavigate } from "react-router"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
@@ -16,6 +16,29 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     const navigate = useNavigate()
     const { setIsPaused } = useHeartMonitor()
     const isNavigating = useRef(false)
+    const hasAppliedTheme = useRef(false)
+    const [isDark, setIsDark] = useState(
+        () => localStorage.getItem("theme") === "dark"
+    )
+
+    useEffect(() => {
+        const theme = isDark ? "dark" : "light"
+        const root = document.documentElement
+
+        if (hasAppliedTheme.current) {
+            root.classList.add("theme-transition")
+        }
+
+        root.dataset.theme = theme
+        localStorage.setItem("theme", theme)
+        hasAppliedTheme.current = true
+
+        const timeout = window.setTimeout(() => {
+            root.classList.remove("theme-transition")
+        }, 260)
+
+        return () => window.clearTimeout(timeout)
+    }, [isDark])
 
     const handleTopBarNavigation = (event: MouseEvent<HTMLElement>) => {
         const link = (event.target as Element).closest<HTMLAnchorElement>("a[href]")
@@ -44,7 +67,18 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     return (
         <header className="topbar" onClickCapture={handleTopBarNavigation}>
             <div className="logo">
-                <img src='/images/ABI_logo_blue.png' alt="ABI logo"/>
+                <img
+                    className="logo-light"
+                    src="/images/ABI_logo_blue.png"
+                    alt="ABI logo"
+                />
+
+                <img
+                    className="logo-dark"
+                    src="/images/ABI_logo_white.png"
+                    alt=""
+                    aria-hidden="true"
+                />
             </div>
             {isHeartPage && (
                 <div className="complexity-title">
@@ -66,8 +100,15 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setShowDescriptions={setShowDescriptions}
                     showAdvancedSliceControls={showAdvancedSliceControls}
                     setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                    isDark={isDark}
+                    setIsDark={setIsDark}
                 />}
             </div>
+            {!isHeartPage && (
+                <div className="desktop_theme">
+                    <ThemeButton isDark={isDark} setIsDark={setIsDark} />
+                </div>
+            )}
             <div className="mobile_settings">
                 {isHeartPage && (
                     <SettingsButton
@@ -81,8 +122,11 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                         setShowDescriptions={setShowDescriptions}
                         showAdvancedSliceControls={showAdvancedSliceControls}
                         setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                        isDark={isDark}
+                        setIsDark={setIsDark}
                     />
                 )}
+                {!isHeartPage && <ThemeButton isDark={isDark} setIsDark={setIsDark} />}
             </div>
             <div className="mobile_navigation">
                 <HomeButton complexity={complexity} isHeartPage={isHeartPage} />
@@ -94,8 +138,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}:
-                        { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, isDark, setIsDark}:
+                        { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void, isDark: boolean, setIsDark: (value: boolean) => void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -129,8 +173,34 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 setShowDescriptions={setShowDescriptions}
                 showAdvancedSliceControls={showAdvancedSliceControls}
                 setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                isDark={isDark}
+                setIsDark={setIsDark}
             />
         </div>
+    )
+}
+
+function ThemeButton({ isDark, setIsDark }: { isDark: boolean, setIsDark: (value: boolean) => void }) {
+    return (
+        <button
+            type="button"
+            className="nav_button theme_button"
+            onClick={() => setIsDark(!isDark)}
+            aria-label={isDark ? "Use light mode" : "Use dark mode"}
+            aria-pressed={isDark}
+        >
+            {isDark ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+            ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
+                </svg>
+            )}
+            <span>{isDark ? "Light" : "Dark"}</span>
+        </button>
     )
 }
 
@@ -150,7 +220,7 @@ function HomeButton({ complexity, isHeartPage }: { complexity: Complexity, isHea
                     <path
                         d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                 </svg>
-                <text>Home</text>
+                <span>Home</span>
             </NavLink>
         </div>
     )
@@ -174,7 +244,7 @@ function AboutButton() {
                     <circle cx="18.5" cy="4.5" r="2.5"/>
                     <circle cx="5.5" cy="4.5" r="2.5"/>
                 </svg>
-                <text>About Us</text>
+                <span>About Us</span>
             </NavLink>
         </div>
     )

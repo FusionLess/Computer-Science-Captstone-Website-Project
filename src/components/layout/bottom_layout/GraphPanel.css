@@ -88,8 +88,8 @@
     position: absolute;
     z-index: 1;
     inset: 0;
-    border-radius: inherit;
-    background: rgba(252, 252, 252, 0.7);
+    border-radius: 16px;
+    background: var(--graph-card-hover-overlay);
     backdrop-filter: blur(1px);
     opacity: 0;
     pointer-events: none;
@@ -199,8 +199,8 @@
 .ecg-waveform {
     fill: none;
     strokeWidth: 1.5;
-    stroke: #35e87b;
-    color: #35e87b;
+    stroke: var(--graph-pressure);
+    color: var(--graph-pressure);
 }
 
 .condition-waveform {
@@ -209,18 +209,18 @@
 }
 
 .condition-waveform.minor {
-    stroke: rgb(255, 157, 0);
-    color: rgb(255, 157, 0);
+    stroke: var(--graph-minor);
+    color: var(--graph-minor);
 }
 
 .condition-waveform.major {
-    stroke: red;
-    color: red;
+    stroke: var(--graph-major);
+    color: var(--graph-major);
 }
 .volume-waveform {
     fill: none;
-    stroke: #003f73;
-    color: #003f73;
+    stroke: var(--graph-volume);
+    color: var(--graph-volume);
     strokeWidth: 2;
     stroke-dasharray: 6 3;
 }
@@ -262,22 +262,22 @@
 }
 
 .pressure-line {
-    background: #35e87b;
+    background: var(--graph-pressure);
 }
 
 .volume-line {
-    border-top: 2px dashed #003f73;
+    border-top: 2px dashed var(--graph-volume);
 }
 
 .pressure-line.minor {
-    background: rgb(255, 157, 0);
+    background: var(--graph-minor);
 }
 
 .pressure-line.major {
-    background: red;
+    background: var(--graph-major);
 }
 .healthy-line {
-    background: #35e87b;
+    background: var(--graph-pressure);
 }
 .graph-toggle {
     border: 1px solid var(--divider);

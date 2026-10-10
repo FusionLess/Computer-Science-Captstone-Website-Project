@@ -22,6 +22,18 @@
     width: auto;
 }
 
+.logo-dark {
+    display: none;
+}
+
+:root[data-theme="dark"] .logo-light {
+    display: none;
+}
+
+:root[data-theme="dark"] .logo-dark {
+    display: block;
+}
+
 .complexity-title {
     pointer-events: none;
     position: absolute;
@@ -40,6 +52,16 @@
     margin-left: auto;
     align-items: center;
     gap: 10px;
+}
+
+.desktop_theme {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.theme_button svg {
+    margin: 0;
 }
 
 .desktop_navigation button,
@@ -139,6 +161,10 @@
     }
 
     .desktop_navigation {
+        display: none;
+    }
+
+    .desktop_theme {
         display: none;
     }
 

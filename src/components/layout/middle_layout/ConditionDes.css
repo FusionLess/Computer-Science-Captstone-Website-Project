@@ -38,7 +38,7 @@
 
         width: calc(100% - (var(--side-margin) * 2));
         height: auto;
-        margin: 0 0 20px;
+        margin: 0 0 12px;
         padding: 20px;
 
         background: var(--cards-background);

@@ -17,19 +17,6 @@
     --viewer-control-width: 50px;
     --slice-control-width: 40px;
 
-    --home-background: #F7FAFD;
-    --cards-background: #ffffff;
-    --divider: #e1e8f0;
-    --primary-headings: #071B3D;
-    --body-texts: #687F9F;
-    --secondary-labels: #8491A5;
-    --selected-condition-background: #062451;
-    --active-labels: #0066FF;
-    --control-background: #252F3D;
-    --selected-suboptions: #E0EFFF;
-    --heartrate-text-slider: #0066FF;
-    --secondary-cards-background: #f7f8fa;
-
     font-family: 'Inter', sans-serif;
 
     --side-margin: 24px;
@@ -37,7 +24,36 @@
 
     --mobile-complexity-title-height: 42px;
 
-  --green-gradient-start: rgba(86, 190, 123, 0.28);
+    --home-background: #F7FAFD;
+    --cards-background: #ffffff;
+    --divider: #e1e8f0;
+
+    --primary-headings: #071B3D;
+    --body-texts: #687F9F;
+
+    --secondary-labels: #8491A5;
+    --selected-condition-background: #062451;
+    --active-labels: #0066FF;
+
+    --control-background: #252F3D;
+    --selected-suboptions: #E0EFFF;
+
+    --heartrate-text-slider: #0066FF;
+    --secondary-cards-background: #f7f8fa;
+
+    --graph-pressure: #35e87b;
+    --graph-volume: #003f73;
+    --graph-minor: rgb(255 157 0);
+    --graph-major: #ff0000;
+    --graph-card-hover-overlay: rgb(252 252 252 / 70%);
+    --graph-label-shadow: rgb(7 27 61 / 6%);
+
+    --popup-overlay: rgb(0 20 50 / 65%);
+    --popup-button-shadow: rgb(0 0 0 / 20%);
+    --popup-button-hover-shadow: rgb(0 0 0 / 25%);
+    --mri-viewer-label: rgb(255 255 255 / 40%);
+
+    --green-gradient-start: rgba(86, 190, 123, 0.28);
     --green-text: #176c3a;
 
     --amber-gradient-start: rgba(241, 181, 56, 0.30);
@@ -46,8 +62,63 @@
     --red-gradient-start: rgba(220, 80, 70, 0.26);
     --red-text: #b2352b;
 
-  --blue-gradient-start: #b0e8ff;
-  --blue-text: #317e9e;
+    --blue-gradient-start: #b0e8ff;
+    --blue-text: #317e9e;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --home-background: #0b1320;
+    --cards-background: #131e30;
+    --divider: #23324a;
+
+    --primary-headings: #f0f4f8;
+    --body-texts: #9ab0cd;
+
+    --secondary-labels: #7c93b4;
+    --selected-condition-background: #1d3560;
+    --active-labels: #3b82f6;
+
+    --control-background: #1e293b;
+    --selected-suboptions: #d6dbe0;
+
+    --heartrate-text-slider: #3b82f6;
+    --secondary-cards-background: #101927;
+
+    --graph-pressure: #35e87b;
+    --graph-volume: #60a5fa;
+    --graph-minor: #facc15;
+    --graph-major: #f87171;
+    --graph-card-hover-overlay: rgb(16 25 39 / 70%);
+    --graph-label-shadow: rgb(0 0 0 / 25%);
+
+    --popup-overlay: rgb(0 0 0 / 65%);
+    --popup-button-shadow: rgb(0 0 0 / 35%);
+    --popup-button-hover-shadow: rgb(0 0 0 / 45%);
+    --mri-viewer-label: rgb(255 255 255 / 55%);
+
+    --green-gradient-start: rgba(34, 197, 94, 0.20);
+    --green-text: #4ade80;
+
+    --amber-gradient-start: rgba(234, 179, 8, 0.20);
+    --amber-text: #facc15;
+
+    --red-gradient-start: rgba(239, 68, 68, 0.20);
+    --red-text: #f87171;
+
+    --blue-gradient-start: rgba(59, 130, 246, 0.25);
+    --blue-text: #60a5fa;
+}
+
+/* Applied briefly while switching themes so every themed surface fades together. */
+:root.theme-transition,
+:root.theme-transition *,
+:root.theme-transition *::before,
+:root.theme-transition *::after {
+    transition-property: background-color, color, border-color, box-shadow, fill, stroke !important;
+    transition-duration: 220ms !important;
+    transition-timing-function: ease !important;
 }
 
 html, body {
