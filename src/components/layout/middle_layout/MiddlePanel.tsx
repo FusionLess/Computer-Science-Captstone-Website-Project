@@ -8,7 +8,7 @@ import type { SyncedCamera, SyncState } from "../../types/sync.ts";
 import { FRAMES } from "../../../data/frames.ts"
 import { useState, useRef } from "react";
 
-import HeartViewerPage from "../../hearts/HeartViewer.jsx"
+import HeartViewer from "../../hearts/HeartViewer.jsx"
 import HeartButtons from "./HeartButtons.tsx";
 
 import HeartController from "../../hearts/HeartController.jsx"
@@ -361,7 +361,7 @@ function HeartPanel ({
             <HeartButtons active={active} setActive={setActive} complexity={complexity} updateRoute={updateRoute} otherHeart={otherHeart}
                     compareSide={compareSide}/>
             <div className="heart_viewer">
-                <HeartViewerPage
+                <HeartViewer
                     frameFolder={FRAMES[active.option]}
                     setSelectedPart={setSelectedPart}
                     title={HEART_STATE_TITLES[active.option]}

@@ -120,8 +120,8 @@ export default function CameraController({
             makeDefault
             target={[0, 0, 0]}
             enablePan={false}
-            minDistance={240}
-            maxDistance={380}
+            minDistance={160}
+            maxDistance={480}
             minPolarAngle={0}
             maxPolarAngle={Math.PI}
             onChange={handleControlsChange}
