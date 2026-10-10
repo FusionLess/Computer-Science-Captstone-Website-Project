@@ -1,7 +1,7 @@
 import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import type { Complexity } from "../../types/complexities.ts";
 function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showAdvancedSliceControls, setShowAdvancedSliceControls}: {graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -142,12 +142,16 @@ function AboutButton() {
 export default TopBar;
 
 function ImagingButton() {
+    const { pathname } = useLocation()
+
+    const isImagingActive =
+        pathname === "/imaging" || pathname.startsWith("/imaging/")       
     return (
         <div className="imaging_button">
             <NavLink
-                to="/imaging"
+                to="/imaging/mri"
                 end
-                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+                className={`nav_button${isImagingActive ? " active" : ""}`}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

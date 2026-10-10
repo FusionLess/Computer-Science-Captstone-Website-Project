@@ -58,7 +58,6 @@ export default function HeartViewer({
     complexity,
     showAdvancedSliceControls,
     showControls,
-    complexity,
     cameraView,
     cameraViewResetTrigger = 0,
     externalClipPlane,
@@ -446,7 +445,6 @@ export default function HeartViewer({
                 <CameraController
                     resetTrigger={resetTrigger + cameraViewResetTrigger}
                     initialPos={initialCameraPos}
-                    initialPos={CAMERA_POSITIONS[defaultPreset]}
                     preset={viewPreset}
                     syncEnabled={syncEnabled}
                     syncedCameraRef={syncedCameraRef}
@@ -474,7 +472,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!useSharedControls && (
+            {showControls !== false && !useSharedControls && (
                 <>
                     <div className="viewer-controls">
 

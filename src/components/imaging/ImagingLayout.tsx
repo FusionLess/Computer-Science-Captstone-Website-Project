@@ -1,4 +1,5 @@
 import { useState } from "react"
+import {useNavigate, useParams} from "react-router"
 import ImagingSidePanel from "./ImagingSidePanel.tsx"
 import type { ImagingMode } from "./imagingTypes.ts"
 import "./ImagingLayout.css"
@@ -6,7 +7,15 @@ import MRIPanel from "./mri/MRIPanel.tsx";
 import EchoPanel from "./echo/EchoPanel.tsx";
 
 export default function ImagingLayout() {
-    const [viewerMode, setViewerMode] = useState<ImagingMode>("mri")
+    const navigate = useNavigate()
+    const { mode } = useParams<{ mode: string }>()
+
+    
+    const viewerMode: ImagingMode = mode === "echo" ? "echo" : "mri"
+
+    const setViewerMode = (newMode: ImagingMode) => {
+        navigate(`/imaging/${newMode}`)
+    }
 
     return (
         <main className="imaging-layout">

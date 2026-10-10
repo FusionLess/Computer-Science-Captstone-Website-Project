@@ -26,7 +26,7 @@ export default function App() {
                     </HeartMonitorProvider>
                 }/>
                 <Route
-                    path="/imaging"
+                    path="/imaging/:mode"
                     element={
                         <HeartMonitorProvider>
                             <ImagingPage />
