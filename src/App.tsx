@@ -8,10 +8,20 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 export default function App() {
     return (
         <BrowserRouter>
-            <HeartMonitorProvider>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<AboutPage />} />
+            <Routes>
+                <Route path="/" element={
+                    <HeartMonitorProvider>
+                        <HomePage />
+                    </HeartMonitorProvider>
+                }/>
+                <Route
+                    path="/about"
+                    element={
+                        <HeartMonitorProvider>
+                            <AboutPage />
+                        </HeartMonitorProvider>
+                    }
+                />
                 <Route path="/:complexity/:category/:option" element={
                     <HeartMonitorProvider>
                         <HomePage />
@@ -31,7 +41,6 @@ export default function App() {
                     }
                 />
             </Routes>
-            </HeartMonitorProvider>
         </BrowserRouter>
     );
 }

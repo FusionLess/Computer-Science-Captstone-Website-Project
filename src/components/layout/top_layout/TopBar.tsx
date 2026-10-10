@@ -4,10 +4,13 @@ import { useRef, useState, type MouseEvent } from "react"
 import { NavLink, useLocation, useNavigate } from "react-router"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
+import { getHeartPath } from "../../../utils/heartRoutes"
 
 function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
     const { pathname } = useLocation()
-    const isHomePage = pathname === "/"
+    const isHeartPage =
+        /^\/(basic|standard|advanced)\/(heart|heart-attack|heart-electricity|heart-failure)\/[^/]+$/.test(pathname) ||
+        /^\/(basic|standard|advanced)\/compare\/[^/]+\/[^/]+$/.test(pathname)
 
 
     const navigate = useNavigate()
@@ -30,26 +33,29 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
 
         window.setTimeout(() => {
             navigate(destination)
+
+            window.requestAnimationFrame(() => {
+                setIsPaused(false)
+                isNavigating.current = false
+            })
         }, 50)
     }
-
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     return (
         <header className="topbar" onClickCapture={handleTopBarNavigation}>
             <div className="logo">
                 <img src='/images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
-            {isHomePage && (
+            {isHeartPage && (
                 <div className="complexity-title">
                     <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
                 </div>
             )}
             <div className="desktop_navigation">
-                <HomeButton />
+                <HomeButton complexity={complexity} isHeartPage={isHeartPage} />
                 <ImagingButton />
                 <AboutButton />
-                {isHomePage && <SettingsButton
+                {isHeartPage && <SettingsButton
                     setGraphActive={setGraphActive}
                     graphActive={graphActive}
                     glowActive={glowActive}
@@ -58,13 +64,12 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setComplexity={setComplexity}
                     showDescriptions={showDescriptions}
                     setShowDescriptions={setShowDescriptions}
-                />}
                     showAdvancedSliceControls={showAdvancedSliceControls}
                     setShowAdvancedSliceControls={setShowAdvancedSliceControls}
-                />
+                />}
             </div>
             <div className="mobile_settings">
-                {isHomePage && (
+                {isHeartPage && (
                     <SettingsButton
                         setGraphActive={setGraphActive}
                         graphActive={graphActive}
@@ -80,7 +85,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                 )}
             </div>
             <div className="mobile_navigation">
-                <HomeButton />
+                <HomeButton complexity={complexity} isHeartPage={isHeartPage} />
                 <ImagingButton />
                 <AboutButton />
             </div>
@@ -89,7 +94,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}:
+                        { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -110,18 +116,31 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <Settings isOpen={isOpen} onClose={() => setOpen(false)} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} showDescriptions={showDescriptions} setShowDescriptions={setShowDescriptions} showAdvancedSliceControls={showAdvancedSliceControls}  setShowAdvancedSliceControls={setShowAdvancedSliceControls}/>
+            <Settings
+                isOpen={isOpen}
+                onClose={() => setOpen(false)}
+                setGraphActive={setGraphActive}
+                graphActive={graphActive}
+                glowActive={glowActive}
+                setGlowActive={setGlowActive}
+                complexity={complexity}
+                setComplexity={setComplexity}
+                showDescriptions={showDescriptions}
+                setShowDescriptions={setShowDescriptions}
+                showAdvancedSliceControls={showAdvancedSliceControls}
+                setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+            />
         </div>
     )
 }
 
-function HomeButton() {
+function HomeButton({ complexity, isHeartPage }: { complexity: Complexity, isHeartPage: boolean }) {
     return (
         <div className="home_button">
             <NavLink
-                to="/"
+                to={getHeartPath(complexity, "healthy", "Healthy")}
                 end
-                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+                className={`nav_button${isHeartPage ? " active" : ""}`}
                 aria-label="Home"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -131,7 +150,7 @@ function HomeButton() {
                     <path
                         d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                 </svg>
-                <span>Home</span>
+                <text>Home</text>
             </NavLink>
         </div>
     )
@@ -155,13 +174,11 @@ function AboutButton() {
                     <circle cx="18.5" cy="4.5" r="2.5"/>
                     <circle cx="5.5" cy="4.5" r="2.5"/>
                 </svg>
-                <span>About Us</span>
+                <text>About Us</text>
             </NavLink>
         </div>
     )
 }
-
-export default TopBar;
 
 function ImagingButton() {
     const { pathname } = useLocation()
@@ -204,3 +221,5 @@ function ImagingButton() {
         </div>
     )
 }
+
+export default TopBar;

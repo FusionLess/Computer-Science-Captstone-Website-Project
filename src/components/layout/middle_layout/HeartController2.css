@@ -191,10 +191,6 @@ button.compare-button.not-comparing {
     transform: none;
 }
 
-.middle-panel-viewers > .heart_panel ~ .heart_panel .viewer-controls {
-    display: none;
-}
-
 @media (width < 800px) {
     .middle-panel {
         flex-direction: column;

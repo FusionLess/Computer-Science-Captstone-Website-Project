@@ -2,9 +2,6 @@ import "./Settings.css"
 import type { Complexity } from "../../types/complexities.ts";
 import { complexities } from "../../types/complexities.ts";
 
-function SidePanel({isOpen, graphActive, setGraphActive, glowActive,setGlowActive, complexity, setComplexity, showAdvancedSliceControls, setShowAdvancedSliceControls}:
-    { isOpen: boolean, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
-
 function Settings({isOpen, onClose, graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}:
                   { isOpen: boolean, onClose: () => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
 

@@ -1,4 +1,3 @@
-import { useState } from "react"
 import {useNavigate, useParams} from "react-router"
 import ImagingSidePanel from "./ImagingSidePanel.tsx"
 import type { ImagingMode } from "./imagingTypes.ts"

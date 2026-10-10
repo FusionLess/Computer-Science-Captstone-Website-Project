@@ -26,45 +26,30 @@ export default function HeartController2({ compareState, setSelectedPart, comple
         chooseSelection2,
         isComparing,
     } = compareState
-
-    const handleCompare = () => {
-        if (isComparing) {
-            setIsComparing(false)
-            return
-        }
-
-        if (selection1.category === "healthy") {
-            chooseSelection2({
-                category: "attack",
-                option: "Minor",
-            })
-        } else {
-            chooseSelection2({
-                category: "healthy",
-                option: "Healthy",
-            })
-        }
-        setIsComparing(true)
-    }
-
     const navigate = useNavigate()
 
     const handleCompareToggle = () => {
         if (isComparing) {
-            navigate(getHeartPath(
+            navigateWithPause(getHeartPath(
                 complexity,
                 selection1.category,
                 selection1.option
             ))
         } else {
-            navigate(getComparePath(
+            const compareHeart: HeartState = selection1.category === "healthy"
+                ? { category: "attack", option: "Minor" }
+                : { category: "healthy", option: "Healthy" }
+
+            chooseSelection2(compareHeart)
+            navigateWithPause(getComparePath(
                 complexity,
                 selection1,
-                selection2
+                compareHeart
             ))
         }
     }
 
+    const showControls = complexity !== "basic"
 
     const [syncEnabled, setSyncEnabled] = useState(false)
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
@@ -90,6 +75,15 @@ export default function HeartController2({ compareState, setSelectedPart, comple
         isPaused,
         setIsPaused
     } = useHeartMonitor()
+
+    const navigateWithPause = (destination: string) => {
+        setIsPaused(true)
+
+        window.setTimeout(() => {
+            navigate(destination)
+            window.requestAnimationFrame(() => setIsPaused(false))
+        }, 50)
+    }
 
     const handleSharedReset = () => {
         setSharedShowEpi(true)
@@ -218,6 +212,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                     showAdvancedSliceControls={showAdvancedSliceControls}
                     otherHeart={selection2}
                     compareSide={isComparing ? "first" : undefined}
+                    onNavigate={navigateWithPause}
 
                 />
 
@@ -228,7 +223,6 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         syncState={{ ...syncState, index: 1 }}
                         setSelectedPart={setSelectedPart}
                         useSharedControls={useSharedControls}
-                        showSyncedControls={useSharedControls}
                         sharedShowEpi={sharedShowEpi}
                         setSharedShowEpi={setSharedShowEpi}
                         sharedVentricleOnly={sharedVentricleOnly}
@@ -253,11 +247,13 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         sharedSliceDistance={sharedSliceDistance}
                         setSharedSliceDistance={setSharedSliceDistance}
 
+                        showControls={showControls}
                         complexity={complexity}
                         updateRoute={false}
                         showAdvancedSliceControls={showAdvancedSliceControls}
-                        otherHeart={selection1}
-                        compareSide="second"
+                    otherHeart={selection1}
+                    compareSide="second"
+                    onNavigate={navigateWithPause}
                     />
                     
                 )}
@@ -315,68 +311,69 @@ export default function HeartController2({ compareState, setSelectedPart, comple
     )
 }
 
-function HeartPanel ({
-    active,
-    setActive,
-    syncState,
-    setSelectedPart,
-    useSharedControls,
-    showSyncedControls = false,
-    sharedShowEpi,
-    setSharedShowEpi,
-    sharedVentricleOnly,
-    setSharedVentricleOnly,
-    sharedFullView,
-    setSharedFullView,
-
-    sharedSliceEnabled,
-    setSharedSliceEnabled,
-    sharedShowPlaneGuide,
-    setSharedShowPlaneGuide,
-    sharedActivePreset,
-    setSharedActivePreset,
-    sharedPitch,
-    setSharedPitch,
-    sharedYaw,
-    setSharedYaw,
-    sharedSliceDistance,
-    setSharedSliceDistance,
-
-    complexity,
-    updateRoute,
-    showAdvancedSliceControls,
-    otherHeart,
-    compareSide
-}: {
-    active: HeartState
-    setActive: (v: HeartState) => void
-    syncState: SyncState
-    setSelectedPart: (part: string | null) => void
-    useSharedControls: boolean
-    showSyncedControls?: boolean
-    sharedShowEpi: boolean
-    setSharedShowEpi: (value: boolean) => void
-    sharedVentricleOnly: boolean
-    setSharedVentricleOnly: (value: boolean) => void
-    sharedFullView: boolean
-    setSharedFullView: (value: boolean) => void
-    sharedSliceEnabled: boolean
-    setSharedSliceEnabled: (value: boolean) => void
-    sharedShowPlaneGuide: boolean
-    setSharedShowPlaneGuide: (value: boolean) => void
-    sharedActivePreset: string | null
-    setSharedActivePreset: (value: string | null) => void
-    sharedPitch: number
-    setSharedPitch: (value: number) => void
-    sharedYaw: number
-    setSharedYaw: (value: number) => void
-    sharedSliceDistance: number
-    setSharedSliceDistance: (value: number) => void
-    complexity: Complexity
-    updateRoute: boolean
+function HeartPanel({
+                        active,
+                        setActive,
+                        syncState,
+                        setSelectedPart,
+                        useSharedControls,
+                        showSyncedControls = false,
+                        sharedShowEpi,
+                        setSharedShowEpi,
+                        sharedVentricleOnly,
+                        setSharedVentricleOnly,
+                        sharedFullView,
+                        setSharedFullView,
+                        sharedSliceEnabled,
+                        setSharedSliceEnabled,
+                        sharedShowPlaneGuide,
+                        setSharedShowPlaneGuide,
+                        sharedActivePreset,
+                        setSharedActivePreset,
+                        sharedPitch,
+                        setSharedPitch,
+                        sharedYaw,
+                        setSharedYaw,
+                        sharedSliceDistance,
+                        setSharedSliceDistance,
+                        complexity,
+                        updateRoute,
+                        showAdvancedSliceControls,
+                        otherHeart,
+                        compareSide,
+                        onNavigate
+                    }: {
+    active: HeartState,
+    setActive: (v: HeartState) => void,
+    syncState: SyncState,
+    setSelectedPart: (part: string | null) => void,
+    useSharedControls: boolean,
+    showSyncedControls?: boolean,
+    sharedShowEpi: boolean,
+    setSharedShowEpi: (value: boolean) => void,
+    sharedVentricleOnly: boolean,
+    setSharedVentricleOnly: (value: boolean) => void,
+    sharedFullView: boolean,
+    setSharedFullView: (value: boolean) => void,
+    sharedSliceEnabled: boolean,
+    setSharedSliceEnabled: (value: boolean) => void,
+    sharedShowPlaneGuide: boolean,
+    setSharedShowPlaneGuide: (value: boolean) => void,
+    sharedActivePreset: string | null,
+    setSharedActivePreset: (value: string | null) => void,
+    sharedPitch: number,
+    setSharedPitch: (value: number) => void,
+    sharedYaw: number,
+    setSharedYaw: (value: number) => void,
+    sharedSliceDistance: number,
+    setSharedSliceDistance: (value: number) => void,
+    complexity: Complexity,
+    updateRoute: boolean,
     showAdvancedSliceControls: boolean,
-    otherHeart?: HeartState
-    compareSide?: "first" | "second"
+    otherHeart?: HeartState,
+    compareSide?: "first" | "second",
+    onNavigate?: (to: string) => void,
+    showControls?: boolean
 }) {
     const {
         syncEnabled,
@@ -389,7 +386,7 @@ function HeartPanel ({
     return (
         <div className="heart_panel">
             <ConditionButtons active={active} setActive={setActive} complexity={complexity} updateRoute={updateRoute} otherHeart={otherHeart}
-                    compareSide={compareSide}/>
+                    compareSide={compareSide} onNavigate={onNavigate}/>
             <div className="heart_viewer">
                 <HeartViewer
                     frameFolder={FRAMES[active.option]}
@@ -428,8 +425,8 @@ function HeartPanel ({
                     setSharedSliceDistance={setSharedSliceDistance}
 
                     complexity={complexity}
-                    showAdvancedSliceControls={showAdvancedSliceControls}
-                />
+                    showAdvancedSliceControls={showAdvancedSliceControls} showControls={undefined}
+                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined}                />
             </div>
         </div>
     )
