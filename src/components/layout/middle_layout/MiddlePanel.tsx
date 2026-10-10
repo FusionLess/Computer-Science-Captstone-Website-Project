@@ -15,7 +15,9 @@ import HeartController from "../../hearts/HeartController.jsx"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import SliceControls from "../../hearts/SliceControls.jsx"
 import type { Complexity } from "../../types/complexities.ts";
-export default function MiddlePanel({ compareState, setSelectedPart, complexity}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity}) {
+import { useNavigate } from "react-router"
+import { getComparePath, getHeartPath } from "../../../utils/heartRoutes"
+export default function MiddlePanel({ compareState, setSelectedPart, complexity,showAdvancedSliceControls}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean}) {
 
     const {
         selection1,
@@ -23,17 +25,33 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
         chooseSelection1,
         chooseSelection2,
         isComparing,
-        setIsComparing,
     } = compareState
-    const showControls = complexity !== "basic"
+    const navigate = useNavigate()
 
+    const handleCompareToggle = () => {
+        if (isComparing) {
+            navigate(getHeartPath(
+                complexity,
+                selection1.category,
+                selection1.option
+            ))
+        } else {
+            navigate(getComparePath(
+                complexity,
+                selection1,
+                selection2
+            ))
+        }
+    }
+    
+    
     const [syncEnabled, setSyncEnabled] = useState(false)
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
     const [sharedResetTrigger, setSharedResetTrigger] = useState(0)
 
     const [sharedShowEpi, setSharedShowEpi] = useState(true)
     const [sharedVentricleOnly, setSharedVentricleOnly] = useState(false)
-    const [sharedFullView, setSharedFullView] = useState(false)
+    const [sharedFullView, setSharedFullView] = useState(true)
 
     const useSharedControls = isComparing && syncEnabled
     const [sharedSliceEnabled, setSharedSliceEnabled] = useState(true)
@@ -61,7 +79,13 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
     }
 
     const handleSharedVentricleView = () => {
-        setSharedVentricleOnly(prev => !prev)
+        // setSharedVentricleOnly(prev => !prev)
+        const nextVentricleOnly = !sharedVentricleOnly
+        setSharedVentricleOnly(nextVentricleOnly)
+
+        if (nextVentricleOnly) {
+            setSharedFullView(false)
+        }
     }
 
     const handleSharedFullView = () => {
@@ -72,6 +96,11 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
         pitch: number,
         yaw: number
     ) => {
+        setSharedFullView(false)
+
+        setSharedSliceEnabled(true)
+        setSharedShowPlaneGuide(true)
+
         setSharedActivePreset(presetKey)
         setSharedPitch(pitch)
         setSharedYaw(yaw)
@@ -83,6 +112,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
         } else if (presetKey === "shortAxis") {
             setSharedSliceDistance(-18)
         }
+        setSharedResetTrigger(prev => prev + 1)
     }
 
     const handleSharedDepthSliderChange = (depth: number) => {
@@ -103,7 +133,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
                 type="button"
                 className={`compare-button ${isComparing ? "" : "not-comparing"}`}
                 aria-pressed={isComparing}
-                onClick={() => setIsComparing(!isComparing)}
+                onClick={handleCompareToggle}
             >
                 {isComparing ? "Stop Comparing" : "Compare"}
             </button>
@@ -156,8 +186,12 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
 
                     sharedSliceDistance={sharedSliceDistance}
                     setSharedSliceDistance={setSharedSliceDistance}
-                    showControls={showControls}
                     complexity={complexity}
+                    updateRoute={!isComparing}
+                    showAdvancedSliceControls={showAdvancedSliceControls}
+                    otherHeart={selection2}
+                    compareSide={isComparing ? "first" : undefined}
+
                 />
 
                 {isComparing && (
@@ -191,13 +225,16 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
                         sharedSliceDistance={sharedSliceDistance}
                         setSharedSliceDistance={setSharedSliceDistance}
 
-                        showControls={showControls}
                         complexity={complexity}
+                        updateRoute={false}
+                        showAdvancedSliceControls={showAdvancedSliceControls}
+                        otherHeart={selection1}
+                        compareSide="second"
                     />
                     
                 )}
             </div>
-            {isComparing && syncEnabled && showControls && (
+            {isComparing && syncEnabled && (
                 <div className="shared-heart-controller">
                     <HeartController
                         isPaused={isPaused}
@@ -209,11 +246,12 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
                         ventricleOnly={sharedVentricleOnly}
                         setVentricleOnly={setSharedVentricleOnly}
 
-                        fullView={sharedFullView}
+                       fullView={sharedFullView && !sharedSliceEnabled && !sharedVentricleOnly}
 
                         handleResetView={handleSharedReset}
                         handleFullView={handleSharedFullView}
                         handleVentricleView={handleSharedVentricleView}
+                        sliceEnabled={sharedSliceEnabled}
                     />
                     <SliceControls
                         shared
@@ -239,6 +277,7 @@ export default function MiddlePanel({ compareState, setSelectedPart, complexity}
                         handlePresetSelect={handleSharedPresetSelect}
                         handleDepthSliderChange={handleSharedDepthSliderChange}
                         complexity={complexity}
+                        showAdvancedSliceControls={showAdvancedSliceControls}
 
                     />
                 </div>
@@ -274,8 +313,11 @@ function HeartPanel ({
     sharedSliceDistance,
     setSharedSliceDistance,
 
-    showControls,
-    complexity
+    complexity,
+    updateRoute,
+    showAdvancedSliceControls,
+    otherHeart,
+    compareSide
 }: {
     active: HeartState
     setActive: (v: HeartState) => void
@@ -300,8 +342,11 @@ function HeartPanel ({
     setSharedYaw: (value: number) => void
     sharedSliceDistance: number
     setSharedSliceDistance: (value: number) => void
-    showControls: boolean
     complexity: Complexity
+    updateRoute: boolean
+    showAdvancedSliceControls: boolean,
+    otherHeart?: HeartState
+    compareSide?: "first" | "second"
 }) {
     const {
         syncEnabled,
@@ -313,7 +358,8 @@ function HeartPanel ({
 
     return (
         <div className="heart_panel">
-            <HeartButtons active={active} setActive={setActive}/>
+            <HeartButtons active={active} setActive={setActive} complexity={complexity} updateRoute={updateRoute} otherHeart={otherHeart}
+                    compareSide={compareSide}/>
             <div className="heart_viewer">
                 <HeartViewer
                     frameFolder={FRAMES[active.option]}
@@ -350,8 +396,8 @@ function HeartPanel ({
                     sharedSliceDistance={sharedSliceDistance}
                     setSharedSliceDistance={setSharedSliceDistance}
 
-                    showControls={showControls}
                     complexity={complexity}
+                    showAdvancedSliceControls={showAdvancedSliceControls}   
                 />
             </div>
         </div>

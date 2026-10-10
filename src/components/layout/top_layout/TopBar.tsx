@@ -1,16 +1,15 @@
 import "./TopBar.css"
 import SidePanel from "./SidePanel.tsx"
 import { useState } from "react"
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import type { Complexity } from "../../types/complexities.ts";
-
-function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity}:{graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void}) {
+function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showAdvancedSliceControls, setShowAdvancedSliceControls}: {graphActive:boolean, setGraphActive:(v : boolean)=>void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     return (
         <header className="topbar">
             <div className="logo">
-                <img src='images/ABI_logo_blue.png' alt="ABI logo"/>
+                <img src='/images/ABI_logo_blue.png' alt="ABI logo"/>
             </div>
             <div className="complexity-title">
                 <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
@@ -26,6 +25,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setGlowActive={setGlowActive}
                     complexity={complexity}
                     setComplexity={setComplexity}
+                    showAdvancedSliceControls={showAdvancedSliceControls}
+                    setShowAdvancedSliceControls={setShowAdvancedSliceControls}
                 />
             </div>
 
@@ -56,6 +57,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                         setGlowActive={setGlowActive}
                         complexity={complexity}
                         setComplexity={setComplexity}
+                        showAdvancedSliceControls={showAdvancedSliceControls}
+                        setShowAdvancedSliceControls={setShowAdvancedSliceControls}
                     />
                 </div>
             )}
@@ -64,7 +67,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void }) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity,showAdvancedSliceControls, setShowAdvancedSliceControls}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -85,7 +88,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 <span>Settings</span>
             </button>
             {isOpen && <div className="backdrop" onClick={() => setOpen(false)} />}
-            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} />
+            <SidePanel isOpen={isOpen} setGraphActive={setGraphActive} graphActive={graphActive} glowActive={glowActive} setGlowActive={setGlowActive} complexity={complexity} setComplexity={setComplexity} showAdvancedSliceControls={showAdvancedSliceControls}  setShowAdvancedSliceControls={setShowAdvancedSliceControls}/>
         </div>
     )
 }
@@ -139,12 +142,16 @@ function AboutButton() {
 export default TopBar;
 
 function ImagingButton() {
+    const { pathname } = useLocation()
+
+    const isImagingActive =
+        pathname === "/imaging" || pathname.startsWith("/imaging/")       
     return (
         <div className="imaging_button">
             <NavLink
-                to="/imaging"
+                to="/imaging/mri"
                 end
-                className={({ isActive }) => `nav_button${isActive ? " active" : ""}`}
+                className={`nav_button${isImagingActive ? " active" : ""}`}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

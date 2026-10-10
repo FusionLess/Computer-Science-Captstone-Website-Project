@@ -7,6 +7,7 @@ export default function ImagingPage() {
     const [graphActive, setGraphActive] = useState<boolean>(true)
     const [glowActive, setGlowActive] = useState(true)
     const [complexity, setComplexity] = useState<Complexity>("standard")
+    const [showAdvancedSliceControls, setShowAdvancedSliceControls] = useState<boolean>(true)
 
     return (
         <main className = "app">
@@ -17,6 +18,8 @@ export default function ImagingPage() {
                 setGlowActive={setGlowActive}
                 complexity={complexity}
                 setComplexity={setComplexity}
+                showAdvancedSliceControls={showAdvancedSliceControls}
+                setShowAdvancedSliceControls={setShowAdvancedSliceControls}
             />
             <ImagingLayout />
         </main>

@@ -3,11 +3,18 @@ import TopBar from '../components/layout/top_layout/TopBar.tsx'
 import Content from '../components/layout/middle_layout/Content.tsx'
 import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
 import { useState } from 'react'
+import { useEffect } from "react"
+import { useNavigate, useParams } from "react-router"
+import { getComplexityFromRoute, getHeartPath, getHeartStateFromRoute, getCompareHeartFromRoute, getComparePath} from "../utils/heartRoutes"
+
 import type { HeartState } from "../components/types/states.ts";
 import type { CompareState } from "../components/types/compare.ts"
 import type { Complexity } from '../components/types/complexities.ts'
 
 export default function HomePage() {
+    const navigate = useNavigate()
+    const { complexity: routeComplexity, category, option, first, second} = useParams()
+
     const [active, setActive] = useState<HeartState>({
         category: "healthy",
         option: "Healthy"
@@ -38,7 +45,62 @@ export default function HomePage() {
         isComparing,
         setIsComparing,
     }
+    const [showAdvancedSliceControls, setShowAdvancedSliceControls] = useState(false)
 
+    useEffect(() => {
+        if (!routeComplexity || !category || !option) {
+            return
+        }
+
+        const heartState = getHeartStateFromRoute(category, option)
+        const complexityState = getComplexityFromRoute(routeComplexity)
+
+        if (heartState && complexityState) {
+            chooseSelection1(heartState)
+            setActive(heartState)
+            setComplexity(complexityState)
+            setIsComparing(false)
+        }
+
+    }, [routeComplexity, category, option])
+    useEffect(() => {
+
+        if ( !routeComplexity && !category && !option && !first && !second) {
+            navigate(getHeartPath("standard","healthy","Healthy"),{ replace: true })
+        }
+
+    }, [routeComplexity,category,option,navigate])
+
+    const handleComplexityChange = (newComplexity: Complexity) => {
+        setComplexity(newComplexity)
+
+        if (isComparing) {
+            navigate(getComparePath(newComplexity, selection1, selection2))
+        } else {
+            navigate(getHeartPath(
+                newComplexity,
+                selection1.category,
+                selection1.option
+            ))
+        }
+    }
+    useEffect(() => {
+    setShowAdvancedSliceControls(complexity === "advanced")
+}, [complexity])
+    useEffect(() => {
+        if (!first || !second) return
+
+        const firstHeart = getCompareHeartFromRoute(first)
+        const secondHeart = getCompareHeartFromRoute(second)
+        const level = getComplexityFromRoute(routeComplexity)
+
+        if (!firstHeart || !secondHeart || !level) return
+
+        chooseSelection1(firstHeart)
+        chooseSelection2(secondHeart)
+        setComplexity(level)
+        setIsComparing(true)
+    }, [first, second, routeComplexity])
     return (
         <main className="app">
             <TopBar
@@ -47,14 +109,16 @@ export default function HomePage() {
                 glowActive={glowActive}
                 setGlowActive={setGlowActive}
                 complexity={complexity}
-                setComplexity={setComplexity}
+                setComplexity={handleComplexityChange}
+                showAdvancedSliceControls={showAdvancedSliceControls}
+                setShowAdvancedSliceControls={setShowAdvancedSliceControls}
 
             />
             <Content active={active} 
                 setActive={setActive}
                 compareState={compareState}
                 complexity={complexity}
-                setComplexity={setComplexity}
+                showAdvancedSliceControls={showAdvancedSliceControls}      
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>

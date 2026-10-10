@@ -55,8 +55,9 @@ export default function HeartViewer({
     setSharedYaw,
     sharedSliceDistance,
     setSharedSliceDistance,
-    showControls,
     complexity,
+    showAdvancedSliceControls,
+    showControls,
     cameraView,
     cameraViewResetTrigger = 0,
     externalClipPlane,
@@ -151,7 +152,7 @@ export default function HeartViewer({
 
     const [localShowEpi, setLocalShowEpi] = useState(true)
     const [localVentricleOnly, setLocalVentricleOnly] = useState(false)
-    const [localFullView, setLocalFullView] = useState(false)
+    const [localFullView, setLocalFullView] = useState(true)
 
     const showEpi = useSharedControls
         ? sharedShowEpi
@@ -182,15 +183,12 @@ export default function HeartViewer({
     useEffect(() => {
         const shortAxis = defaultPreset === "shortAxis"
 
-        setLocalFullView(false)
+        setLocalFullView(true)
 
-        if (complexity === "basic") {
-            setSliceEnabled(false)
-            setShowPlaneGuide(false)
-        } else {
-            setSliceEnabled(true)
-            setShowPlaneGuide(true)
-        }
+        
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
+       
         setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -259,6 +257,7 @@ export default function HeartViewer({
 
         if (fullView) {
             // Enter Full View
+            setFullView(true)
             setVentricleOnly(false)
             setShowEpi(true)
 
@@ -288,16 +287,16 @@ export default function HeartViewer({
     const handleResetView = () => {
         const shortAxis = defaultPreset === "shortAxis"
         setFullView(false)
-        setVentricleOnly(false)
+        setVentricleOnly(true)
         setShowEpi(true)
         // Restore predetermined slicing
-        if (complexity === "basic") {
-            setSliceEnabled(false)
-            setShowPlaneGuide(false)
-        } else {
-            setSliceEnabled(true)
-            setShowPlaneGuide(true)
-        }
+        // if (complexity === "basic") {
+        //     setSliceEnabled(false)
+        //     setShowPlaneGuide(false)
+        // } else {
+        setSliceEnabled(true)
+        setShowPlaneGuide(true)
+        
         setActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -318,7 +317,7 @@ export default function HeartViewer({
     const handleVentricleView = () => {
         const next = !ventricleOnly
         setVentricleOnly(next)
-
+        setFullView(false)
         if (next && activePreset === "shortAxis") {
             // but move to a useful ventricular depth
             setPitch(-90)
@@ -328,6 +327,9 @@ export default function HeartViewer({
     }
     // tidies up the onClick part of the button to set the preset values of each slicing view
     const handlePresetSelect = (presetKey, p, y) => {
+        setFullView(false)
+        setSliceEnabled(true)
+        setShowPlaneGuide(true)
         setActivePreset(presetKey)
         setPitch(p)
         setYaw(y)
@@ -470,7 +472,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {!useSharedControls && showControls && (
+            {showControls !== false && !useSharedControls && (
                 <>
                     <div className="viewer-controls">
 
@@ -504,8 +506,8 @@ export default function HeartViewer({
                             sliceDistance={sliceDistance}
                             handlePresetSelect={handlePresetSelect}
                             handleDepthSliderChange={handleDepthSliderChange}
-
                             complexity={complexity}
+                            showAdvancedSliceControls={showAdvancedSliceControls}
 
                         />
                     </div>
