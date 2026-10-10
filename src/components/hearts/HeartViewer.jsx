@@ -424,8 +424,8 @@ export default function HeartViewer({
                 <CameraController
                     resetTrigger={resetTrigger}
                     initialPos={initialCameraPos}
-                    initialPos={CAMERA_POSITIONS[effectiveCameraPreset]}
-                    preset={effectiveCameraPreset}
+                    initialPos={CAMERA_POSITIONS[defaultPreset]}
+                    preset={defaultPreset}
                     syncEnabled={syncEnabled}
                     syncedCameraRef={syncedCameraRef}
                     index={index}
