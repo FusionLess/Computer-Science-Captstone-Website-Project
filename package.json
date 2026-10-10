@@ -1,10 +1,10 @@
 {
-  "name": "ABI Heart",
+  "name": "heart-viewer-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"

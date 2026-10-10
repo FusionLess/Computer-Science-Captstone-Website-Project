@@ -19,12 +19,14 @@ export default function SliceController({
     sliceDistance,
     handlePresetSelect,
     handleDepthSliderChange,
-    complexity
+    complexity,
+    showAdvancedSliceControls
 }) {
 
     const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
     const controlsId = useId()
 
+    const showSliders =  showAdvancedSliceControls
     return (
         <div
         className={`controller slice-controller
@@ -52,19 +54,26 @@ export default function SliceController({
                 <div className="slice-options">
                     <button
                         type="button"
-                        onClick={() => setSliceEnabled(prev => !prev)}
+                        onClick={() => {
+                            const next = !sliceEnabled
+                            setSliceEnabled(next)
+                            setShowPlaneGuide(next)
+                        }}
                         className={sliceEnabled ? 'is-active' : ''}
                     >
-                        SLICE
+                        <span>SLICE</span>
+                        <span>{sliceEnabled ? 'OFF' : 'ON'}</span>
                     </button>
-
-                    <button
-                        type="button"
-                        onClick={() => setShowPlaneGuide(prev => !prev)}
-                        className={showPlaneGuide ? 'is-active' : ''}
-                    >
-                        INDICATOR
-                    </button>
+                    {sliceEnabled && (
+                        <button
+                            type="button"
+                            onClick={() => setShowPlaneGuide(prev => !prev)}
+                            className={showPlaneGuide ? 'is-active' : ''}
+                        >
+                            <span>INDICATOR</span>
+                            <span>{showPlaneGuide ? 'OFF' : 'ON'}</span>    
+                        </button>
+                    )}
                 </div>
 
                 <div className="controller-divider" />
@@ -73,7 +82,7 @@ export default function SliceController({
                     <button
                         type="button"
                         onClick={() => handlePresetSelect('frontal', 0, 40)}
-                        className={activePreset === 'frontal' ? 'is-active': ''}
+                        className={sliceEnabled && activePreset === 'frontal' ? 'is-active': ''}
                     >
                         FRONTAL
                     </button>
@@ -81,7 +90,7 @@ export default function SliceController({
                     <button
                         type="button"
                         onClick={() => handlePresetSelect('sagittal', 0, 130)}
-                        className={activePreset === 'sagittal' ? 'is-active' : ''}
+                        className={sliceEnabled && activePreset === 'sagittal' ? 'is-active' : ''}
                     >
                         SAGITTAL
                     </button>
@@ -89,13 +98,13 @@ export default function SliceController({
                     <button
                         type="button"
                         onClick={() =>handlePresetSelect('shortAxis', -90, 0)}
-                        className={activePreset === 'shortAxis' ? 'is-active' : ''}
+                        className={sliceEnabled && activePreset === 'shortAxis' ? 'is-active' : ''}
                     >
                         SHORTAXIS
                     </button>
                 </div>
 
-                {complexity === 'advanced' && (
+                {showSliders && sliceEnabled && (
                     <>
                     
                         <div className="controller-divider" />
