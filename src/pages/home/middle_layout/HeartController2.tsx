@@ -1,20 +1,20 @@
 import "./HeartController2.css"
 
-import { HEART_STATE_TITLES } from "../../types/states.ts";
-import type { HeartState } from "../../types/states.ts";
-import type { CompareState } from "../../types/compare.ts"
-import type { SyncedCamera, SyncState } from "../../types/sync.ts";
+import { HEART_STATE_TITLES } from "../../../components/types/states.ts";
+import type { HeartState } from "../../../components/types/states.ts";
+import type { CompareState } from "../../../components/types/compare.ts"
+import type { SyncedCamera, SyncState } from "../../../components/types/sync.ts";
 
 import { FRAMES } from "../../../data/frames.ts"
 import { useState, useRef } from "react";
 
-import HeartViewer from "../../hearts/HeartViewer.jsx"
+import HeartViewer from "../../../components/hearts/HeartViewer.jsx"
 import ConditionButtons from "./ConditionSelector.tsx";
 
-import HeartController from "../../hearts/HeartController.jsx"
-import { useHeartMonitor } from "../../context/HeartMonitorContext"
-import SliceControls from "../../hearts/SliceController.jsx"
-import type { Complexity } from "../../types/complexities.ts";
+import HeartController from "../../../components/hearts/HeartController.jsx"
+import { useHeartMonitor } from "../../../components/context/HeartMonitorContext"
+import SliceControls from "../../../components/hearts/SliceController.jsx"
+import type { Complexity } from "../../../components/types/complexities.ts";
 import { useNavigate } from "react-router"
 import { getComparePath, getHeartPath } from "../../../utils/heartRoutes"
 export default function HeartController2({ compareState, setSelectedPart, complexity,showAdvancedSliceControls}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean}) {

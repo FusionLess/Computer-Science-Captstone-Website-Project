@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as THREE from 'three';
-import HeartViewer from '../../hearts/HeartViewer';
+import HeartViewer from '../../../components/hearts/HeartViewer';
 import EchoViewer, { type EchoView } from './EchoViewer';
 import './EchoPanel.css';
 

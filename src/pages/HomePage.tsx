@@ -1,7 +1,7 @@
 import '../App.css'
 import TopBar from '../components/layout/top_layout/TopBar.tsx'
-import Content from '../components/layout/middle_layout/MiddleContent.tsx'
-import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
+import Content from './home/middle_layout/MiddleContent.tsx'
+import GraphPanel from './home/bottom_layout/GraphPanel.tsx'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from "react-router"
 import { getComplexityFromRoute, getHeartPath, getHeartStateFromRoute, getCompareHeartFromRoute, getComparePath} from "../utils/heartRoutes"

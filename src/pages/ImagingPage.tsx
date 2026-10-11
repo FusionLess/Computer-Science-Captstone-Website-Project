@@ -1,4 +1,4 @@
-import ImagingLayout from "../components/imaging/ImagingLayout.tsx"
+import ImagingLayout from "./imaging/ImagingLayout.tsx"
 import TopBar from "../components/layout/top_layout/TopBar.tsx";
 import {useState} from "react";
 import type { Complexity } from "../components/types/complexities.ts";

@@ -1,8 +1,8 @@
 import "./GraphPanel.css"
-import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
+import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../../components/context/HeartMonitorContext.tsx"
 import { ecgProfiles, type ECGProfile } from "../../../data/ECGParameters.ts"
-import type { HeartState } from "../../types/states.ts"
-import type { CompareState } from "../../types/compare.ts"
+import type { HeartState } from "../../../components/types/states.ts"
+import type { CompareState } from "../../../components/types/compare.ts"
 import { pressureProfiles, type PressureProfile } from "../../../data/PressureParameters.ts"
 import { useId, useState } from "react"
 const BEAT_COUNT = GRAPH_BEAT_COUNT
