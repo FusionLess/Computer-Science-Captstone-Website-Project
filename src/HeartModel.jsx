@@ -12,12 +12,54 @@ const ES_FRAME = 25
 const buildFramePaths = (dir) =>
   Array.from({ length: NUM_FRAMES }, (_, i) => `${dir}/frame_${i}.glb`)
 
+const buildVesselPaths = (dir) =>
+  Array.from({ length: NUM_FRAMES }, (_, i) => `${dir}/vessels_${i}.glb`)
+
 // Render order: stencil pass (10) -> cap plane (11, see SliceCap) -> myocardium (12) -> chambers/vessels (13)
 // Chambers draw AFTER the myocardium because the myo's inner cavity walls coincide with
 // lv_endo / rv_endo; the later draw wins, so the chamber colours show through.
 const RO_STENCIL = 10
 const RO_MYO = 12
 const RO_OTHER = 13
+const RO_VESSELS = 14
+
+// Renders the companion 3D coronary vessel mesh exported by the Python script
+function SingleVesselFrame({ url, isVisible, clipPlane }) {
+  const { scene } = useGLTF(url)
+
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (!child.isMesh) return
+
+      // In GLB, meshes without names default to order or attributes.
+      // We check name or vertex scalar tag to separate arteries and veins.
+      const name = child.name.toLowerCase()
+      const isVein = name.includes('vein') || name.includes('mesh1')
+
+      child.material = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(isVein ? '#2b4cb3' : '#d83a3a'),
+        roughness: 0.35,
+        metalness: 0.05,
+        side: THREE.DoubleSide,
+        depthWrite: true,
+      })
+
+      child.renderOrder = RO_VESSELS
+    })
+  }, [scene, url])
+
+  useEffect(() => {
+    const planes = clipPlane ? [clipPlane] : []
+    scene.traverse((child) => {
+      if (child.isMesh && child.material) {
+        child.material.clippingPlanes = planes
+        child.material.needsUpdate = true
+      }
+    })
+  }, [scene, clipPlane])
+
+  return <primitive object={scene} visible={isVisible} />
+}
 
 // function essentially displays only one frame at a time and only loads one frame at a time.
 // all 75 frames are loaded into gpu memory but only active frame is visible
@@ -33,7 +75,12 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane, capColor }) {
       const isMyo = child.name === 'mesh0'
       if (isMyo) myoMeshRef.current = child
 
+      // Clean anatomical shading for myocardium now that vessels are real 3D geometry
       if (isMyo && child.material) {
+        child.material.color = new THREE.Color('#9b2226')
+        child.material.roughness = 0.55
+        child.material.metalness = 0.05
+
         // The cap copies the muscle's real material, unless the myocardium is painted with
         // per-vertex colours (infarct hearts): then the material colour is white, so use capColor.
         const hasVertexColors = !!child.geometry?.attributes?.color
@@ -141,6 +188,7 @@ export function HeartModel({
   ...props
 }) {
   const framePaths = useMemo(() => buildFramePaths(framesDir), [framesDir])
+  const vesselPaths = useMemo(() => buildVesselPaths(framesDir), [framesDir])
   const [activeFrame, setActiveFrame] = useState(0)
   const animElapsed = useRef(0)
   const currentFrameRef = useRef(0)
@@ -216,6 +264,17 @@ export function HeartModel({
           capColor={capColor}
         />
       ))}
+
+      {/* Render matching 3D vessel tubes synchronized with active cardiac cycle frame */}
+      {showEpi &&
+        vesselPaths.map((path, idx) => (
+          <SingleVesselFrame
+            key={path}
+            url={path}
+            isVisible={idx === activeFrame}
+            clipPlane={clipPlane}
+          />
+        ))}
     </group>
   )
 }
