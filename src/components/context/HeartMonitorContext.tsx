@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode, type Dispatch, type SetStateAction } from "react"
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type Dispatch, type SetStateAction } from "react"
 
 type HeartMonitorContextType = {
     bpm: number
@@ -7,7 +7,6 @@ type HeartMonitorContextType = {
     setIsPaused: Dispatch<SetStateAction<boolean>>
     singlePhase: number
     graphPhase: number
-    beatInterval: (elapsedSeconds: number) => void
 }
 
 const HeartMonitorContext = createContext<HeartMonitorContextType | undefined>(undefined)
@@ -19,18 +18,32 @@ export function HeartMonitorProvider({ children }: { children: ReactNode }) {
     const [isPaused, setIsPaused] = useState<boolean>(false)
     const [singlePhase, setSinglePhase] = useState<number>(0)
     const [graphPhase, setGraphPhase] = useState<number>(0)
-    const beatInterval = (elapsedSeconds: number) => {
-        const cycleDuration = 60 / bpm
-        const completedBeats = elapsedSeconds / cycleDuration
+    const completedBeats = useRef(0)
 
-        setSinglePhase(completedBeats % 1)
+    useEffect(() => {
+        let frameId: number
+        let previous = performance.now()
 
-        setGraphPhase((completedBeats % GRAPH_BEAT_COUNT) / GRAPH_BEAT_COUNT)
-    }
+        const tick = (now: number) => {
+            const delta = Math.min((now - previous) / 1000, 0.05)
+            previous = now
 
+            if (!isPaused && bpm > 0) {
+                completedBeats.current += delta * bpm / 60
+                const beats = completedBeats.current
+                setSinglePhase(beats % 1)
+                setGraphPhase((beats % GRAPH_BEAT_COUNT) / GRAPH_BEAT_COUNT)
+            }
+
+            frameId = requestAnimationFrame(tick)
+        }
+
+        frameId = requestAnimationFrame(tick)
+        return () => cancelAnimationFrame(frameId)
+    }, [bpm, isPaused])
 
     return (
-        <HeartMonitorContext.Provider value={{ bpm, setBpm, isPaused, setIsPaused, singlePhase, graphPhase, beatInterval }}>
+        <HeartMonitorContext.Provider value={{ bpm, setBpm, isPaused, setIsPaused, singlePhase, graphPhase }}>
             {children}
         </HeartMonitorContext.Provider>
     )

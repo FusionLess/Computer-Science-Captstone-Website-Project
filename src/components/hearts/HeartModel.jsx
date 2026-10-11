@@ -1,7 +1,6 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 import { HEART_FRAME_COUNT, phaseToFrame, cloneHeartScene, addStencilHelpers, materialsOf, isMuscle } from './heartRendering'
 import { HeartParts } from "../../data/HeartParts"
 
@@ -108,79 +107,29 @@ export function HeartModel({
   showEpi = true,
   ventricleOnly = false,
   clipPlane = null,
-  isPaused = false,
+  beatPhase = 0,
   animationPhase = undefined,
   capStyleRef,
   capColor = null,
-  beatInterval,
   onHover,
   onSelect,
   ...props
 }) {
-  const framePath = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+56) % NUM_FRAMES}.glb`), [frameFolder])
-  const [activeFrame, setActiveFrame] = useState(0)
-  const animElapsed = useRef(0)
-  const totalElapsed = useRef(0)
-  const currentFrameRef = useRef(0)
-
+  const framePath = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+46) % NUM_FRAMES}.glb`), [frameFolder])
   const safeBpm = Number(bpm) || 60
   const isUnhealthy = frameFolder !== "frames"
-  // MRI playback supplies the cycle position so both views use the same frame clock.
+  const tCycle = 60 / safeBpm
+  // Preserve the existing systole/diastole timing while both hearts share one beat phase.
+  const tSys = Math.min(Math.max(0.413 - 0.0017 * safeBpm, 0.18), tCycle * 0.48)
+  const tLocal = beatPhase * tCycle
+  const heartFrame = tLocal < tSys
+    ? Math.floor((tLocal / tSys) * ES_FRAME)
+    : ES_FRAME + Math.floor(((tLocal - tSys) / (tCycle - tSys)) * (NUM_FRAMES - ES_FRAME))
+
+  // MRI and Echo playback still supply their own cycle position.
   const displayedFrame = animationPhase === undefined
-    ? activeFrame
+    ? Math.min(Math.max(heartFrame, 0), NUM_FRAMES - 1)
     : phaseToFrame(animationPhase)
-
-  useFrame((_, delta) => {
-    if (animationPhase !== undefined) return
-
-    // stop advancing the animation timeline if paused
-    if (isPaused || bpm <= 0) return
-
-    // Cap delta to prevent frame spikes when dragging the slider
-    const dt = Math.min(delta, 0.05)
-
-    // The graph spans multiple beats, so its elapsed time must not wrap each cycle.
-    totalElapsed.current += dt
-    beatInterval?.(totalElapsed.current)
-
-    // 1. Total R-R interval in seconds
-    const tCycle = 60.0 / safeBpm
-
-    // 2. Weissler's formula for true physiological systolic duration
-    // Scale smoothly so systole never takes more than 50% of the cycle at extreme BPMs
-    const maxSysFraction = tCycle * 0.48
-    const tSysCalculated = 0.413 - 0.0017 * safeBpm
-    const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
-
-    // 3. Diastolic duration absorbs the rest of the cardiac interval
-    const tDia = tCycle - tSys
-
-    animElapsed.current = (animElapsed.current + dt) % tCycle
-    const tLocal = animElapsed.current
-
-    let targetFrame = 0
-
-    if (tLocal < tSys) {
-      // --- SYSTOLIC PHASE (Frames 0 -> ES_FRAME) ---
-      // Rapid contraction & ejection
-      const progressSys = tLocal / tSys
-      targetFrame = Math.floor(progressSys * ES_FRAME)
-    } else {
-      // --- DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES) ---
-      // Variable relaxation & passive/active filling
-      const tDiaElapsed = tLocal - tSys
-      const progressDia = tDiaElapsed / tDia
-      targetFrame = ES_FRAME + Math.floor(progressDia * (NUM_FRAMES - ES_FRAME))
-    }
-
-    targetFrame = Math.min(Math.max(targetFrame, 0), NUM_FRAMES - 1)
-
-    // Direct ref check prevents frame thrashing and guarantees state stability
-    if (targetFrame !== currentFrameRef.current) {
-      currentFrameRef.current = targetFrame
-      setActiveFrame(targetFrame)
-    }
-  })
 
   return (
     <group {...props}>

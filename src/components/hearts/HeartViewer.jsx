@@ -76,7 +76,7 @@ export default function HeartViewer({
     const [resetTrigger, setResetTrigger] = useState(0)
     const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
-    const { bpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
+    const { bpm, isPaused, setIsPaused, singlePhase } = useHeartMonitor()
 
 
     // sets the preset states you can slice the heart
@@ -412,13 +412,12 @@ export default function HeartViewer({
                             ventricleOnly={ventricleOnly}
                             clipPlane={clipPlane}
                             capStyleRef={capStyleRef}
-                            isPaused={isPaused}
+                            beatPhase={singlePhase}
                             animationPhase={animationPhase}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             onSelect={setSelectedPart}
                             onHover={setHoverInfo}
                             
-                            beatInterval={beatInterval}
                         />
                     </Center>
                     <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
