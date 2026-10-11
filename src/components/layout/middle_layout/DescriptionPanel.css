@@ -1,0 +1,233 @@
+.right {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    box-sizing: border-box;
+    padding: 80px var(--side-margin) 10px 0;
+}
+
+.right.collapsed {
+    flex: 0 0 0;
+    width: 0;
+    min-width: 0;
+    padding: 0;
+}
+
+.right h3{
+    color: var(--primary-headings);
+    font-size: 36px;
+    margin: 12px 0;
+}
+
+.right_content {
+    width: var(--right-panel-width);
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    padding: 10px 0 10px 10px;
+    border-radius: 12px;
+    background: var(--cards-background);
+    box-shadow:  0 6px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.right_content::-webkit-scrollbar {
+    display: none;
+}
+
+.right_content.closed {
+    display: none;
+}
+
+.heart_state_info {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 20px;
+    white-space: pre-line;
+}
+
+.heart_state_info::-webkit-scrollbar {
+    display: none;
+}
+
+.right button.right_toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    width: 40px;
+
+    border-radius: 20px;
+    box-shadow:  0 1px 6px rgba(0, 0, 0, 0.2);
+    background: var(--cards-background);
+}
+
+.right.collapsed > button.right_toggle {
+    position: absolute;
+    top: 80px;
+    right: var(--side-margin);
+}
+
+.right button.right_toggle svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.right button.right_toggle.open{
+    margin-right: 10px;
+}
+
+.explore_button {
+    align-self: flex-start;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+    padding: 0 16px;
+    margin: 4px 0 14px;
+
+    border: none;
+    border-radius: 20px;
+
+    background: var(--cards-background);
+    color: inherit;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    cursor: pointer;
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
+}
+
+.explore_button_label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.explore_button_label svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+
+.explore_button:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.explore_button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.current_selection {
+    display: none;
+}
+
+.heart-part-info-anchor {
+    scroll-margin-top: 12px;
+}
+
+@media (width < 800px) {
+    .right {
+        position: static;
+        order: 3;
+
+        width: calc(100% - (var(--side-margin) * 2));
+        padding: 0;
+        margin: 0 auto 4px;
+
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    .right.collapsed {
+        display: none;
+    }
+
+    .right_content {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 0;
+
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .heart_state_info,
+    .heart_part_info {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 20px;
+
+        background: var(--cards-background);
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgb(7 27 61 / 12%);
+    }
+
+    .right h3 {
+        margin: 0 0 12px;
+        font-size: 26px;
+    }
+
+    .heart_part_info {
+        gap: 8px;
+    }
+
+    .current_selection {
+        display: inline-flex;
+        align-self: flex-start;
+
+        margin: 0 0 8px;
+        padding: 4px 9px;
+
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        line-height: 1;
+    }
+
+    .current_selection.green {
+        background: var(--green-gradient-start);
+        color: var(--green-text);
+    }
+
+    .current_selection.amber {
+        background: var(--amber-gradient-start);
+        color: var(--amber-text);
+    }
+
+    .current_selection.red {
+        background: var(--red-gradient-start);
+        color: var(--red-text);
+    }
+
+    .current_selection.blue {
+        background: var(--blue-gradient-start);
+        color: var(--blue-text);
+    }
+
+    .heart-part-info-anchor {
+        scroll-margin-top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 12px);
+    }
+}

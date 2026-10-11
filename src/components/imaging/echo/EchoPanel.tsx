@@ -88,6 +88,7 @@ export default function EchoPanel() {
           />
           <button
             type="button"
+            aria-pressed={isPlaying}
             onClick={() => setIsPlaying(previous => !previous)}
           >
             {isPlaying ? 'Pause' : 'Play'}

@@ -1,12 +1,10 @@
 import '../App.css'
 import TopBar from '../components/layout/top_layout/TopBar.tsx'
-import Content from '../components/layout/middle_layout/Content.tsx'
+import Content from '../components/layout/middle_layout/MiddleContent.tsx'
 import GraphPanel from '../components/layout/bottom_layout/GraphPanel.tsx'
-import { useState } from 'react'
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from "react-router"
 import { getComplexityFromRoute, getHeartPath, getHeartStateFromRoute, getCompareHeartFromRoute, getComparePath} from "../utils/heartRoutes"
-
 import type { HeartState } from "../components/types/states.ts";
 import type { CompareState } from "../components/types/compare.ts"
 import type { Complexity } from '../components/types/complexities.ts'
@@ -71,6 +69,19 @@ export default function HomePage() {
 
     }, [routeComplexity,category,option,navigate])
 
+    const [showDescriptions, setShowDescriptions] = useState(true)
+    const descriptionsBeforeCompare = useRef(showDescriptions)
+
+    useEffect(() => {
+        if (isComparing) {
+            descriptionsBeforeCompare.current = showDescriptions
+            setShowDescriptions(false)
+            return
+        }
+
+        setShowDescriptions(descriptionsBeforeCompare.current)
+    }, [isComparing])
+
     const handleComplexityChange = (newComplexity: Complexity) => {
         setComplexity(newComplexity)
 
@@ -109,6 +120,8 @@ export default function HomePage() {
                 glowActive={glowActive}
                 setGlowActive={setGlowActive}
                 complexity={complexity}
+                showDescriptions={showDescriptions}
+                setShowDescriptions={setShowDescriptions}
                 setComplexity={handleComplexityChange}
                 showAdvancedSliceControls={showAdvancedSliceControls}
                 setShowAdvancedSliceControls={setShowAdvancedSliceControls}
@@ -118,7 +131,8 @@ export default function HomePage() {
                 setActive={setActive}
                 compareState={compareState}
                 complexity={complexity}
-                showAdvancedSliceControls={showAdvancedSliceControls}      
+                showAdvancedSliceControls={showAdvancedSliceControls}
+                showDescriptions={showDescriptions}
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>

@@ -1,6 +1,6 @@
 import './App.css'
 import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
+import AboutPage from './pages/AboutPage.tsx'
 import ImagingPage from './pages/ImagingPage.tsx'
 import { HeartMonitorProvider } from './components/context/HeartMonitorContext'
 import { BrowserRouter, Routes, Route } from 'react-router';
@@ -14,7 +14,14 @@ export default function App() {
                         <HomePage />
                     </HeartMonitorProvider>
                 }/>
-                <Route path="/about" element={<AboutPage />} />
+                <Route
+                    path="/about"
+                    element={
+                        <HeartMonitorProvider>
+                            <AboutPage />
+                        </HeartMonitorProvider>
+                    }
+                />
                 <Route path="/:complexity/:category/:option" element={
                     <HeartMonitorProvider>
                         <HomePage />

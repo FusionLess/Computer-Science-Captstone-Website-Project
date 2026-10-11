@@ -97,8 +97,10 @@
     min-width: 76px;
     padding: 10px 18px;
     border-radius: 10px;
-    background: var(--selected-condition-background);
-    color: var(--selected-suboptions);
+    background: var(--cards-background);
+    color: var(--body-texts);
+    box-shadow: 0 2px 8px var(--popup-button-shadow);
+    transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
 .echo-view-buttons {
@@ -109,13 +111,29 @@
 
 .echo-view-buttons button {
     flex: 1;
-    background: var(--selected-suboptions);
-    color: var(--primary-headings);
+    background: var(--cards-background);
+    color: var(--body-texts);
+    box-shadow: 0 2px 8px var(--popup-button-shadow);
+    transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
+.echo-panel-controls button[aria-pressed="true"],
 .echo-view-buttons button[aria-pressed="true"] {
     background: var(--selected-condition-background);
     color: var(--selected-suboptions);
+}
+
+.echo-panel-controls button:hover,
+.echo-view-buttons button:hover {
+    transform: scale(1.01);
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+    box-shadow: 0 4px 12px var(--popup-button-hover-shadow);
+}
+
+.echo-panel-controls button:active,
+.echo-view-buttons button:active {
+    transform: scale(0.97);
 }
 
 .echo-panel-viewer > span {

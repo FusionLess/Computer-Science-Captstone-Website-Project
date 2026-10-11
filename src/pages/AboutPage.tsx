@@ -1,6 +1,6 @@
 import '../App.css'
 import TopBar from '../components/layout/top_layout/TopBar.tsx'
-import AboutLayout from "../components/about/AboutLayout.tsx";
+import AboutLayout from "./about/AboutLayout.tsx";
 import type { Complexity } from '../components/types/complexities.ts';
 import { useState } from 'react'
 

@@ -1,5 +1,5 @@
 import type {HeartCategory, HeartOption, HeartState} from "../../types/states.ts";
-import "./HeartButtons.css"
+import "./ConditionSelector.css"
 import type { Complexity } from "../../types/complexities.ts"
 import { getHeartPath, getComparePath } from "../../../utils/heartRoutes"
 import { useNavigate } from "react-router"
@@ -44,9 +44,10 @@ const optionIconPaths: Record<HeartOption, string[]> = {
     ],
 }
 
-export default function HeartButtons({active, setActive, complexity, updateRoute, otherHeart, compareSide} :
-                      { active: HeartState, setActive: (v: HeartState) => void; complexity: Complexity, updateRoute: boolean, otherHeart?: HeartState, compareSide?: "first" | "second"}) {
-    const navigate = useNavigate()
+export default function ConditionSelector({active, setActive, complexity, updateRoute, otherHeart, compareSide, onNavigate} :
+                      { active: HeartState, setActive: (v: HeartState) => void; complexity: Complexity, updateRoute: boolean, otherHeart?: HeartState, compareSide?: "first" | "second", onNavigate?: (to: string) => void}) {
+    const routerNavigate = useNavigate()
+    const navigate = onNavigate ?? routerNavigate
     const toggles: { id: HeartCategory; label: string }[] = [
         {id:"healthy", label:"The Heart"},
         {id:"attack", label:"Attack"},
@@ -106,15 +107,6 @@ export default function HeartButtons({active, setActive, complexity, updateRoute
                                     category: opt.id,
                                     option: defaultOptions[opt.id]
                                 })
-                                if (updateRoute) {
-                                    navigate(
-                                        getHeartPath(
-                                            complexity,
-                                            opt.id,
-                                            defaultOptions[opt.id]
-                                        )
-                                    )
-                                }
                             }}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -147,16 +139,6 @@ export default function HeartButtons({active, setActive, complexity, updateRoute
                                     category: active.category,
                                     option
                                 })
-
-                                if (updateRoute) {
-                                    navigate(
-                                        getHeartPath(
-                                            complexity,
-                                            active.category,
-                                            option
-                                        )
-                                    )
-                                }
                             }}
                         >
                             <svg

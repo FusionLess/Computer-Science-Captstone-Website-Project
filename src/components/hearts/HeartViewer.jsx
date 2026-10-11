@@ -7,7 +7,7 @@ import { HeartModel } from './HeartModel.jsx'
 import { SliceCap } from './SliceCap.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
-import SliceControls from './SliceControls.jsx'
+import SliceControls from './SliceController.jsx'
 
 import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
@@ -33,6 +33,7 @@ export default function HeartViewer({
     sharedResetTrigger,
     setSharedResetTrigger,
     useSharedControls,
+    showSyncedControls,
 
     sharedShowEpi,
     setSharedShowEpi,
@@ -75,7 +76,7 @@ export default function HeartViewer({
     const [resetTrigger, setResetTrigger] = useState(0)
     const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
-    const { bpm, setBpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
+    const { bpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
 
     // sets the preset states you can slice the heart
@@ -185,10 +186,10 @@ export default function HeartViewer({
 
         setLocalFullView(true)
 
-        
+
         setSliceEnabled(false)
         setShowPlaneGuide(false)
-       
+
         setLocalActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -296,7 +297,7 @@ export default function HeartViewer({
         // } else {
         setSliceEnabled(true)
         setShowPlaneGuide(true)
-        
+
         setActivePreset(defaultPreset)
 
         if (shortAxis) {
@@ -370,23 +371,22 @@ export default function HeartViewer({
     return (
       
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
-            {/* {title && (*/}
-            {/*    <h3*/}
-            {/*        style={{*/}
-            {/*            position: 'absolute',*/}
-            {/*            top: '15px',*/}
-            {/*            left: '50%',*/}
-            {/*            transform: 'translateX(-50%)',*/}
-            {/*            margin: 0,*/}
-            {/*            zIndex: 10,*/}
-            {/*            textAlign: 'center',*/}
-            {/*            whiteSpace: 'nowrap'*/}
-            {/*        }}*/}
-            {/*    >*/}
-            {/*        {title}*/}
-            {/*    </h3>*/}
-            {/*)}*/}
-
+             {title && (
+                <h3 className="heart-viewer-title"
+                    style={{
+                        position: 'absolute',
+                        top: '15px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        margin: 0,
+                        zIndex: 10,
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    {title}
+                </h3>
+            )}
             <Canvas
                 onCreated={({ camera }) => {
                     camera.layers.enable(1)
@@ -472,7 +472,7 @@ export default function HeartViewer({
             </div>
             )}
 
-            {showControls !== false && !useSharedControls && (
+            {showControls !== false && (!useSharedControls || showSyncedControls) && (
                 <>
                     <div className="viewer-controls">
 

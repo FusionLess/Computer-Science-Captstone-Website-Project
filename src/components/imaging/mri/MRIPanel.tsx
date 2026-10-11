@@ -71,12 +71,13 @@ export default function MRIPanel() {
                                 {[
                                     { view: "topDown", label: "Top" },
                                     { view: "frontal", label: "Front" },
-                                    { view: "titledShortAxis", label: "Default" },
+                                    { view: "tiltedShortAxis", label: "Default" },
                                 ].map(({ view, label }) => (
                                     <button
                                         key={view}
                                         type="button"
                                         title={`Restore ${label.toLowerCase()} view`}
+                                        aria-pressed={heartView === view}
                                         onClick={() => selectHeartView(view)}
                                     >
                                         {label}
@@ -102,11 +103,19 @@ export default function MRIPanel() {
                             frameFolder="frames"
                             showControls={false}
                             externalClipPlane={externalClipPlane}
-                            animationPhase={
-                                ((frame + heartFrameOffset) / totalFrames
-                                    + modelFrameOffset / HEART_FRAME_COUNT) % 1
-                            }
-                        />
+                            animationPhase={((frame + heartFrameOffset) / totalFrames
+                                + modelFrameOffset / HEART_FRAME_COUNT) % 1} setSelectedPart={undefined}
+                            title={undefined} syncEnabled={undefined} syncedCameraRef={undefined} index={undefined}
+                            sharedResetTrigger={undefined} setSharedResetTrigger={undefined}
+                            useSharedControls={undefined} showSyncedControls={undefined} sharedShowEpi={undefined}
+                            setSharedShowEpi={undefined} sharedVentricleOnly={undefined}
+                            setSharedVentricleOnly={undefined} sharedFullView={undefined} setSharedFullView={undefined}
+                            sharedSliceEnabled={undefined} setSharedSliceEnabled={undefined}
+                            sharedShowPlaneGuide={undefined} setSharedShowPlaneGuide={undefined}
+                            sharedActivePreset={undefined} setSharedActivePreset={undefined} sharedPitch={undefined}
+                            setSharedPitch={undefined} sharedYaw={undefined} setSharedYaw={undefined}
+                            sharedSliceDistance={undefined} setSharedSliceDistance={undefined} complexity={undefined}
+                            showAdvancedSliceControls={undefined}                        />
                     </div>
                 </div>
                 <div className="mri-panel-viewer">
@@ -137,6 +146,7 @@ export default function MRIPanel() {
                     <button
                         onClick={() => setIsPlaying(!isPlaying)}
                         className={isPlaying ? 'pause-button' : 'play-button'}
+                        aria-pressed={isPlaying}
                     >
                         {isPlaying ? 'Pause' : 'Play'}
                     </button>

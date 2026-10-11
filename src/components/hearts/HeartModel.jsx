@@ -117,9 +117,7 @@ export function HeartModel({
   onSelect,
   ...props
 }) {
-  const framePath = useMemo(() => Array.from(
-    { length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${i}.glb`
-  ), [frameFolder])
+  const framePath = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+56) % NUM_FRAMES}.glb`), [frameFolder])
   const [activeFrame, setActiveFrame] = useState(0)
   const animElapsed = useRef(0)
   const totalElapsed = useRef(0)

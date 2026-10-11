@@ -9,7 +9,7 @@
     display: block;
     max-width: 20ch;
     margin: 0 0 24px;
-    color: #252525;
+    color: var(--primary-headings);
     font-size: clamp(32px, 4vw, 52px);
     font-weight: 700;
     line-height: 1.1;
@@ -30,13 +30,13 @@
 .about-layout .main p {
     max-width: 65ch;
     margin: 0 0 24px;
-    color: #555;
+    color: var(--body-texts);
     font-size: 16px;
     line-height: 1.8;
 }
 
 .about-layout .content-heading + p {
-    color: #333;
+    color: var(--primary-headings);
     font-size: 20px;
     line-height: 1.65;
     text-align: center;
@@ -95,14 +95,14 @@
     height: 38px;
     border-radius: 50%;
     background: var(--selected-suboptions);
-    color: var(--primary-headings);
+    color: var(--secondary-labels);
     font-size: 13px;
     font-weight: 700;
 }
 
 .about-layout .mission-feature h2 {
     margin: 20px 0 12px;
-    color: #252525;
+    color: var(--primary-headings);
     font-size: 20px;
     line-height: 1.3;
 }
@@ -132,15 +132,23 @@
     gap: 16px;
     padding: 15px 22px;
     border-radius: 10px;
-    background: var(--primary-headings);
-    color: #fff;
+    background: var(--cards-background);
+    color: var(--body-texts);
+    box-shadow: 0 2px 8px var(--popup-button-shadow);
     font-weight: 700;
     text-decoration: none;
+    transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
 .about-layout .mission-explore:hover {
-    transform:translateY(-2px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+    background: var(--selected-condition-background);
+    color: var(--selected-suboptions);
+    box-shadow: 0 4px 12px var(--popup-button-hover-shadow);
+}
+
+.about-layout .mission-explore:active {
+    transform: translateY(0);
 }
 
 .about-layout .team-grid {

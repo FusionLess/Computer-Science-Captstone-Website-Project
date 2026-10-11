@@ -1,5 +1,5 @@
 .controller {
-    --control-button-width: 70px;
+    --control-button-width: 76px;
     --control-button-margin: 2px;
 
     font-family: system-ui, -apple-system, sans-serif;
@@ -30,8 +30,8 @@
     padding: 5px 8px;
     margin: var(--control-button-margin);
     width: var(--control-button-width);
-    height: 50px;
-    font-size: 10px;
+    height: 54px;
+    font-size: 11px;
     font-weight: 200;
     border: none;
     border-radius: 20px;
@@ -93,4 +93,17 @@
     flex-shrink: 0;
     border-radius: 8px;
     background: var(--divider);
+}
+
+@media (width < 800px) {
+    .controller {
+        --control-button-width: 66px;
+        --control-button-margin: 1px;
+    }
+
+    .controller button {
+        height: 48px;
+        padding: 4px 6px;
+        font-size: 10px;
+    }
 }

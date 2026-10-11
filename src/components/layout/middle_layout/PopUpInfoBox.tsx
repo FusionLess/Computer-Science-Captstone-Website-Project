@@ -1,6 +1,6 @@
 import "./PopUpInfoBox.css"
 import type { MediaItem } from "../../../data/HeartDescriptions"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { HeartParts } from "../../../data/HeartParts"
 import type { Complexity } from "../../types/complexities"
@@ -76,7 +76,21 @@ function PopUpInfoBox({
         variant === "anatomy"
             ? currentPart.media?.[0]
             : undefined
-    
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                onClose()
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown)
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [onClose])
+
     return createPortal (
         <div className="popup_overlay" onClick={onClose}>
             <div className="popup_box" onClick={(e) => e.stopPropagation()}>
@@ -95,7 +109,12 @@ function PopUpInfoBox({
                         onClick={onClose}
                         aria-label="Close"
                     >
-                        x
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                             className="lucide lucide-x preview-icon">
+                            <path d="M18 6 6 18"/>
+                            <path d="m6 6 12 12"/>
+                        </svg>
                     </button>
                 </div>
 
@@ -130,12 +149,6 @@ function PopUpInfoBox({
                     {variant === "anatomy" && anatomyMedia && (
                         <div className="popup_media">
 
-                            <div className="gallery_status">
-                                <span>
-                                    {partIndex + 1} of {heartPartKeys.length}
-                                </span>
-                            </div>
-
                             <div className="popup_media_viewer">
 
                                 <button
@@ -161,6 +174,12 @@ function PopUpInfoBox({
 
                             </div>
 
+                            <div className="gallery_status">
+                                <span>
+                                    {partIndex + 1} of {heartPartKeys.length}
+                                </span>
+                            </div>
+
                             <div className="gallery_dots">
                                 {heartPartKeys.map((key, index) => (
                                     <button
@@ -170,6 +189,7 @@ function PopUpInfoBox({
                                         }`}
                                         onClick={() => setPartIndex(index)}
                                         aria-label={`View ${HeartParts[key].name}`}
+                                        aria-current={index === partIndex ? "true" : undefined}
                                     />
                                 ))}
                             </div>
@@ -181,14 +201,6 @@ function PopUpInfoBox({
                     {variant === "description" && currentMedia && (
                         <div className="popup_media">
 
-                            {hasGallery && (
-                                <div className="gallery_status">
-                                    <span>
-                                        {mediaIndex + 1} of {media.length}
-                                    </span>
-                                </div>
-                            )}
-
                             <div className="popup_media_viewer">
 
                                 {hasGallery && (
@@ -197,7 +209,12 @@ function PopUpInfoBox({
                                         onClick={previousMedia}
                                         aria-label="Previous media"
                                     >
-                                        ‹
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                                             strokeLinecap="round" strokeLinejoin="round"
+                                             className="lucide lucide-chevron-left preview-icon">
+                                            <path d="m15 18-6-6 6-6"/>
+                                        </svg>
                                     </button>
                                 )}
 
@@ -220,11 +237,24 @@ function PopUpInfoBox({
                                         onClick={nextMedia}
                                         aria-label="Next media"
                                     >
-                                        ›
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                                             strokeLinecap="round" strokeLinejoin="round"
+                                             className="lucide lucide-chevron-right preview-icon">
+                                            <path d="m9 18 6-6-6-6"/>
+                                        </svg>
                                     </button>
                                 )}
 
                             </div>
+
+                            {hasGallery && (
+                                <div className="gallery_status">
+                                    <span>
+                                        {mediaIndex + 1} of {media.length}
+                                    </span>
+                                </div>
+                            )}
 
                             {hasGallery && (
                                 <div className="gallery_dots">

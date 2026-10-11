@@ -1,0 +1,457 @@
+.middle-panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+
+.middle-panel-viewers {
+    display: flex;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+
+.middle-panel-viewers > .heart_panel {
+    min-width: 0;
+}
+
+.heart_panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    container-type: inline-size;
+    container-name: heart-panel;
+}
+
+.heart_viewer {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    position: relative;
+
+    padding: 0;
+    background: var(--home-background);
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.middle-panel button.compare-button {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background-color 180ms ease;
+}
+
+.middle-panel button.compare-button:hover {
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.middle-panel button.compare-button:active {
+    transform: translateX(50%) scale(0.97);
+}
+
+.middle-panel button.compare-button.not-comparing:hover {
+    transform: scale(1.05);
+}
+
+.middle-panel button.compare-button.not-comparing:active {
+    transform: scale(0.97);
+}
+
+.middle-panel .sync {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background-color 180ms ease;
+}
+
+.middle-panel .sync:hover {
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.middle-panel .sync:active {
+    transform: translateX(50%) scale(0.97);
+}
+
+button.compare-button {
+    position: absolute;
+    top: 10px;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 20;
+
+    width: 140px;
+    height: 44px;
+    margin: 0;
+
+    background: var(--cards-background);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+button.compare-button.not-comparing {
+    position: fixed;
+    right: var(--side-margin);
+    top: calc( var(--bar-height) + 10px);
+    transform: none;
+
+    z-index: 50;
+}
+
+.sync {
+    position: absolute;
+    top: 64px;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 10;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    height: 32px;
+    min-height: 0;
+    padding: 0 12px;
+
+    font-size: 12px;
+    line-height: 1;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+}
+
+.sync svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.middle-panel-viewers > .heart_panel ~ .heart_panel {
+    position: relative;
+}
+
+.middle-panel-viewers > .heart_panel ~ .heart_panel::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 130px;
+    bottom: 16px;
+    width: 1px;
+    background: var(--divider);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.viewer-controls {
+    position: absolute;
+
+    left: var(--side-margin);
+    bottom: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    z-index: 20;
+}
+
+.shared-heart-controller {
+    position: absolute;
+    
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    
+        z-index: 20;
+}
+
+.shared-heart-controller .heart-controller {
+    position: static;
+    transform: none;
+}
+
+@media (width < 800px) {
+    .middle-panel {
+        flex-direction: column;
+        min-height: 400px;
+        position: relative;
+        padding-top: 54px;
+
+        transition: padding-bottom 250ms ease;
+    }
+
+    .middle-panel > button.compare-button {
+        position: absolute;
+        top: 10px;
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    .middle-panel:has(.sync) {
+        padding-top: 116px;
+    }
+
+    .middle-panel > button.compare-button,
+    .middle-panel > button.compare-button.not-comparing {
+        position: fixed;
+        top: calc(var(--bar-height) + 5px);
+        right: var(--side-margin);
+
+        width: auto;
+        min-width: 0;
+        height: 32px;
+        padding: 0 12px;
+
+        transform: none;
+        z-index: 110;
+    }
+
+    .middle-panel > button.compare-button:hover,
+    .middle-panel > button.compare-button.not-comparing:hover {
+        transform: scale(1.05);
+    }
+
+    .middle-panel > button.compare-button:active,
+    .middle-panel > button.compare-button.not-comparing:active {
+        transform: scale(0.97);
+    }
+
+    /* One viewer, or Selection 2: reserve space below the viewer stack. */
+    .middle-panel:has(.slice-controller:not(.is-collapsed)) {
+        padding-bottom: 120px;
+    }
+
+    .middle-panel:has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) {
+        padding-bottom: 170px;
+    }
+
+    /* With descriptions hidden, GraphPanel provides the extra space. */
+    .content.descriptions-hidden .middle-panel:has(.slice-controller:not(.is-collapsed)) {
+        padding-bottom: 0;
+    }
+
+    /* A single viewer moves the following Description panel without resizing. */
+    .content:not(.descriptions-hidden) .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)):has(.slice-controller:not(.is-collapsed)) {
+        padding-bottom: 0;
+        margin-bottom: 130px;
+        transition: margin-bottom 250ms ease, padding-bottom 250ms ease;
+    }
+
+    .content:not(.descriptions-hidden) .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)):has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) {
+        margin-bottom: 170px;
+    }
+
+    .heart_viewer,
+    .heart_viewer > div {
+        overflow: visible !important;
+    }
+
+    /* Compare CSS */
+    .middle-panel > .sync {
+        position: fixed;
+        top: calc(var(--bar-height) + 5px);
+        right: calc(var(--side-margin) + 130px);
+
+        transform: none;
+        z-index: 110;
+    }
+
+    .middle-panel > .sync:hover {
+        transform: scale(1.05);
+    }
+
+    .middle-panel > .sync:active {
+        transform: scale(0.97);
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers {
+        flex-direction: column;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_panel {
+        min-height: 0;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers > .heart_panel ~ .heart_panel::before {
+        top: 0;
+        right: var(--side-margin);
+        bottom: auto;
+        left: var(--side-margin);
+
+        width: auto;
+        height: 1px;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) {
+        padding-top: 0;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_panel {
+        position: relative;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_buttons {
+        position: absolute;
+        top: 8px;
+        right: var(--side-margin);
+        left: auto;
+        z-index: 30;
+
+        width: auto;
+        align-items: flex-end;
+        background: transparent;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .toggle_buttons {
+        flex: none;
+        margin: 0 0 4px;
+        width: max-content;
+        max-width: none;
+        overflow: visible;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .toggle_buttons > button {
+        width: 36px;
+        min-height: 36px;
+        padding: 0;
+        flex: 0 0 36px;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_button_label {
+        display: none;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .options_buttons {
+        align-self: flex-end;
+        margin: 0;
+        padding: 3px;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .options_buttons button {
+        width: 34px;
+        min-width: 34px;
+        min-height: 30px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .heart_option_label {
+        display: none;
+    }
+
+    .middle-panel > button.compare-button,
+    .middle-panel > .sync {
+
+        border: 0;
+        border-radius: 20px;
+        background: var(--cards-background);
+        color: var(--body-texts);
+        box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
+
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .middle-panel > button.compare-button:not(.not-comparing),
+    .middle-panel > .sync.is-active {
+        background: var(--selected-condition-background);
+        color: var(--selected-suboptions);
+    }
+
+    .heart_viewer {
+        width: calc(100% - (var(--side-margin) * 2));
+        margin-inline: auto;
+    }
+
+    .viewer-controls {
+        left: 0;
+    }
+
+    /* Keep comparison viewer sizes unchanged while Selection 1 opens. */
+    .middle-panel:has(.middle-panel-viewers > .heart_panel ~ .heart_panel) .middle-panel-viewers > .heart_panel ~ .heart_panel {
+        transition: transform 250ms ease;
+    }
+
+    /* Selection 1 moves only Selection 2, not content below the viewer stack. */
+    .middle-panel:has(.middle-panel-viewers > .heart_panel:first-child .slice-controller:not(.is-collapsed)):not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel .slice-controller:not(.is-collapsed))) {
+        padding-bottom: 0;
+    }
+
+    .middle-panel:has(.middle-panel-viewers > .heart_panel:first-child .slice-controller:not(.is-collapsed)):not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel .slice-controller:not(.is-collapsed))) .middle-panel-viewers > .heart_panel ~ .heart_panel {
+        transform: translateY(120px);
+    }
+
+    .middle-panel:has(.middle-panel-viewers > .heart_panel:first-child .slice-controller:not(.is-collapsed)):has(.slice-adjustments):not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel .slice-controller:not(.is-collapsed))) .middle-panel-viewers > .heart_panel ~ .heart_panel {
+        transform: translateY(170px);
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .controller-actions {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, var(--control-button-width));
+        width: calc((var(--control-button-width) * 2) + 2px);
+        grid-auto-rows: 48px;
+        gap: 2px;
+
+        max-height: 102px;
+        overflow: visible;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller.is-collapsed .controller-actions {
+        width: var(--control-button-width);
+        max-height: 0;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .controller-actions button {
+        width: var(--control-button-width);
+        height: 48px;
+        padding: 3px;
+        font-size: 8px;
+        line-height: 1.1;
+        white-space: normal;
+    }
+
+    .middle-panel:has( .middle-panel-viewers > .heart_panel ~ .heart_panel ) .middle-panel-viewers .heart-controller .full-view-button {
+        position: absolute;
+        top: calc(100% + 2px);
+        left: calc(var(--control-button-width) + 2px);
+        transform: none;
+    }
+
+    .middle-panel:has(.shared-heart-controller) .shared-heart-controller {
+        display: none;
+    }
+
+    .middle-panel:has(.shared-heart-controller),
+    .middle-panel-viewers > .heart_panel ~ .heart_panel .viewer-controls {
+        display: flex;
+    }
+
+    .content .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)),
+    .content.descriptions-hidden .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel)) {
+        flex: 0 0 clamp(430px, 58dvh, 520px);
+        min-height: clamp(430px, 58dvh, 520px);
+    }
+}

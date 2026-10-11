@@ -1,0 +1,30 @@
+.content {
+    display: flex;
+    box-sizing: border-box;
+    background: var(--home-background);
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+.content button {
+    transition:
+            translate 180ms ease,
+            scale 180ms ease;
+}
+
+@media (max-width: 800px) {
+    .content {
+        margin-top: calc(var(--bar-height) + var(--mobile-complexity-title-height));
+        position: relative;
+        flex-direction: column;
+        flex: 0 0 auto;
+        min-height: 0;
+        padding-bottom: 0;
+    }
+
+    /* Graph sits just above the bottom navigation. */
+    .content.descriptions-hidden + .graph-panel {
+        margin: 10px var(--side-margin);
+    }
+}

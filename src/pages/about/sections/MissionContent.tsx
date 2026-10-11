@@ -2,6 +2,7 @@ import "./AboutContent.css"
 import { AboutInfo } from "../../../data/AboutInfo.ts"
 
 import { Link } from "react-router"
+import { getHeartPath } from "../../../utils/heartRoutes"
 
 export default function MissionContent() {
     const Info = AboutInfo["mission"]
@@ -30,7 +31,7 @@ export default function MissionContent() {
             </div>
 
             <div className="mission-action">
-                <Link className="mission-explore" to="/">
+                <Link className="mission-explore" to={getHeartPath("standard", "healthy", "Healthy")}>
                     Explore the heart →
                 </Link>
                 <p>Start exploring with Project Atrium.</p>

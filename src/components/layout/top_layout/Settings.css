@@ -7,7 +7,7 @@
     height: calc(100vh - var(--bar-height) - 20px);
     background: var(--cards-background);
     right: 10px;
-    box-shadow: 0px 0px 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
     border-radius: 30px;
     padding: 20px;
     box-sizing: border-box;
@@ -59,8 +59,7 @@
 }
 
 .sidebar h4 {
-    margin: 0;
-    margin-bottom: 5px;
+    margin: 0 0 5px;
     font-size: 14px;
 }
 
@@ -78,5 +77,53 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0px 0px 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+    box-shadow: 0 0 5px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+}
+
+.settings_close {
+    align-self: flex-end;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--body-texts);
+    cursor: pointer;
+}
+
+.settings_close:hover {
+    color: var(--red-text);
+    background: var(--secondary-cards-background);
+}
+
+.settings_close + .settings_section {
+    margin-top: 4px;
+    padding-top: 10px;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        top: calc(var(--bar-height) + 10px);
+        bottom: calc(var(--bar-height) + 10px);
+
+        width: min(var(--settings-panel-width), calc(100vw - 20px));
+        height: auto;
+        right: 10px;
+        overflow-y: auto;
+    }
+
+    .description_toggle {
+        display: block;
+    }
+
+    .app:has(.compare-button:not(.not-comparing)) .description_toggle {
+        display: none;
+    }
 }

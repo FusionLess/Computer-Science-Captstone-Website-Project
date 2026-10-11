@@ -6,6 +6,7 @@
     flex-shrink: 0;
     height: var(--graph-height);
     margin: var(--side-margin);
+    transition: transform 250ms ease;
 }
 
 .graph-panel.comparing {
@@ -87,11 +88,10 @@
     position: absolute;
     z-index: 1;
     inset: 0;
-    border-radius: inherit;
-    background: rgba(252, 252, 252, 0.7);
+    border-radius: 16px;
+    background: var(--graph-card-hover-overlay);
     backdrop-filter: blur(1px);
     opacity: 0;
-    border-radius: 20px;
     pointer-events: none;
     transition: opacity 200ms ease;
 }
@@ -110,6 +110,7 @@
     box-shadow: 0 2px 6px color-mix(in srgb, var(--primary-headings) 20%, transparent);
     flex-shrink: 0;
 }
+
 .graph-bar-label {
     position: absolute;
     top: 8px;
@@ -197,30 +198,30 @@
 .pressure-waveform,
 .ecg-waveform {
     fill: none;
-    stroke-width: 1.5;
-    stroke: #35e87b;
-    color: #35e87b;
+    strokeWidth: 1.5;
+    stroke: var(--graph-pressure);
+    color: var(--graph-pressure);
 }
 
 .condition-waveform {
     fill: none;
-    stroke-width: 1.5;
+    strokeWidth: 1.5;
 }
 
 .condition-waveform.minor {
-    stroke: rgb(255, 157, 0);
-    color: rgb(255, 157, 0);
+    stroke: var(--graph-minor);
+    color: var(--graph-minor);
 }
 
 .condition-waveform.major {
-    stroke: red;
-    color: red;
+    stroke: var(--graph-major);
+    color: var(--graph-major);
 }
 .volume-waveform {
     fill: none;
-    stroke: #003f73;
-    color: #003f73;
-    stroke-width: 2;
+    stroke: var(--graph-volume);
+    color: var(--graph-volume);
+    strokeWidth: 2;
     stroke-dasharray: 6 3;
 }
 
@@ -261,22 +262,22 @@
 }
 
 .pressure-line {
-    background: #35e87b;
+    background: var(--graph-pressure);
 }
 
 .volume-line {
-    border-top: 2px dashed #003f73;
+    border-top: 2px dashed var(--graph-volume);
 }
 
 .pressure-line.minor {
-    background: rgb(255, 157, 0);
+    background: var(--graph-minor);
 }
 
 .pressure-line.major {
-    background: red;
+    background: var(--graph-major);
 }
 .healthy-line {
-    background: #35e87b;
+    background: var(--graph-pressure);
 }
 .graph-toggle {
     border: 1px solid var(--divider);
@@ -328,7 +329,7 @@
 
 .heartrate.container::after {
     right: 0;
-    width: 1px;
+    width: 2px;
 }
 
 .heartrate.container::before {
@@ -411,13 +412,12 @@
 }
 
 @media (max-width: 800px) {
-    .graphs {
-        position: relative;
-        height: 120px;
-    }
-
     .container {
         padding: 6px 8px;
+    }
+
+    .graph-marker {
+        width: 2px;
     }
 
     .pressure-scale,
@@ -437,85 +437,159 @@
         font-size: 10px;
     }
 
-    .ecg.container,
-    .pressure.container {
-        grid-row: 1;
-        min-width: 0;
+    .graph-panel {
+        --graph-height: clamp(135px, 18dvh, 155px);
+
+        --heartrate-panel-mobile-width: 80px;
+        --graph-switch-width: 34px;
     }
 
-    .mobile_graph_switch {
+    .graph-description {
+        flex-wrap: wrap;
+        row-gap: 2px;
+        padding-block: 2px;
+    }
+
+    .graphs {
+        --mobile-waveform-width: calc(100% - var(--heartrate-panel-mobile-width) - var(--graph-switch-width) - var(--mobile-switch-gap));
+        --mobile-switch-gap: 6px;
+
+        display: block;
+        position: relative;
+    }
+
+    /* ECG and Pressure occupy opposite sides and animate open/closed. */
+    .graphs .ecg.container,
+    .graphs .pressure.container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+
+        width: var(--mobile-waveform-width);
+        min-width: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+
+        transition:
+                width 300ms ease,
+                opacity 220ms ease;
+    }
+
+    .graphs .ecg.container {
+        left: 0;
+    }
+
+    .graphs .pressure.container {
+        right: 0;
+    }
+
+    /* Heart Rate slides between the two waveform positions. */
+    .graphs .heartrate.container {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        box-sizing: border-box;
+
+        width: var(--heartrate-panel-mobile-width);
+        z-index: 4;
+
+        transition: left 300ms ease;
+    }
+
+    /* Arrow slides from one outer edge to the other. */
+    .graphs .mobile_graph_switch {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+
         display: grid;
         place-items: center;
-        grid-row: 1;
-
         width: var(--graph-switch-width);
-        height: 100%;
         padding: 0;
         border: 0;
         color: var(--active-labels);
         z-index: 5;
+
+        transition: left 300ms ease;
     }
 
-    .mobile_graph_switch svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    .graphs.mobile_ecg {
-        grid-template-columns: minmax(0, 1fr) var(--heartrate-panel-mobile-width) var(--graph-switch-width);
-    }
-
+    /* ECG | HR | < */
     .graphs.mobile_ecg .ecg.container {
-        grid-column: 1;
+        width: var(--mobile-waveform-width);
         opacity: 1;
         pointer-events: auto;
-    }
-
-    .graphs.mobile_ecg .heartrate.container {
-        grid-column: 2;
-        grid-row: 1;
     }
 
     .graphs.mobile_ecg .mobile_graph_switch {
-        grid-column: 3;
-        border-top-right-radius: 16px;
-        border-bottom-right-radius: 16px;
+        left: calc(100% - var(--graph-switch-width));
     }
 
     .graphs.mobile_ecg .pressure.container {
-        grid-column: 1;
+        width: 0;
         opacity: 0;
         pointer-events: none;
     }
 
-    .graphs.mobile_pressure {
-        grid-template-columns: var(--graph-switch-width) var(--heartrate-panel-mobile-width) minmax(0, 1fr);
-    }
-
-    .graphs.mobile_pressure .mobile_graph_switch {
-        grid-column: 1;
-        border-top-left-radius: 16px;
-        border-bottom-left-radius: 16px;
+    .graphs.mobile_ecg .heartrate.container {
+        left: var(--mobile-waveform-width);
     }
 
     .graphs.mobile_pressure .heartrate.container {
-        grid-column: 2;
-        grid-row: 1;
+        left: calc(var(--graph-switch-width) + var(--mobile-switch-gap));
+    }
+
+    /* > | HR | Pressure */
+    .graphs.mobile_pressure .ecg.container {
+        width: 0;
+        opacity: 0;
+        pointer-events: none;
     }
 
     .graphs.mobile_pressure .pressure.container {
-        grid-column: 3;
+        width: var(--mobile-waveform-width);
         opacity: 1;
-        transform: scaleX(1);
-        transform-origin: left;
         pointer-events: auto;
     }
 
-    .graphs.mobile_pressure .ecg.container {
-        grid-column: 3;
-        opacity: 0;
-        transform: scaleX(0);
-        transform-origin: right;
-        pointer-events: none;
+    .graphs.mobile_pressure .mobile_graph_switch {
+        left: 0;
     }
+
+    /* Selected-heart label stays centred above Heart Rate. */
+    .graph-bar-label {
+        top: 6px;
+        left: 0;
+        width: max-content;
+        transform: translateX(-50%);
+        z-index: 6;
+        pointer-events: none;
+
+        transition: left 300ms ease;
+    }
+
+    .graphs.mobile_ecg .graph-bar-label {
+        left: calc(var(--mobile-waveform-width) + (var(--heartrate-panel-mobile-width) / 2));
+    }
+
+    .graphs.mobile_pressure .graph-bar-label {
+        left: calc(var(--graph-switch-width) + var(--mobile-switch-gap) + (var(--heartrate-panel-mobile-width) / 2));
+    }
+
+    .graph-card.front .mobile_graph_switch {
+        background: var(--cards-background);
+    }
+
+    .graph-card.back .mobile_graph_switch {
+        background: var(--secondary-cards-background);
+    }
+
+    /* One viewer or Selection 2 moves the graph when descriptions are hidden. */
+    .content.descriptions-hidden:has(.slice-controller:not(.is-collapsed)) + .graph-panel {
+        transform: translateY(120px);
+    }
+
+    .content.descriptions-hidden:has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) + .graph-panel {
+        transform: translateY(170px);
+    }
+
 }

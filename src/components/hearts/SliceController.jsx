@@ -23,7 +23,7 @@ export default function SliceController({
     showAdvancedSliceControls
 }) {
 
-    const [controlsShowing, setControlsShowing] = useState(true)
+    const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
     const controlsId = useId()
 
     const showSliders =  showAdvancedSliceControls

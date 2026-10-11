@@ -12,12 +12,15 @@ type GraphBarProps = {
     active: HeartState,
     graphActive: boolean,
     glowActive: boolean,
+    mobileGraph: "ecg" | "pressure",
+    setMobileGraph: (value: "ecg" | "pressure") => void,
 }
 
 export default function GraphPanel({compareState, graphActive, glowActive}
                          : {compareState : CompareState, graphActive : boolean, glowActive : boolean}) {
     const { selection1, selection2, isComparing } = compareState
     const [frontGraph, setFrontGraph] = useState(0)
+    const [mobileGraph, setMobileGraph] = useState<"ecg" | "pressure">("ecg")
 
     if (!graphActive) return null
 
@@ -34,7 +37,7 @@ export default function GraphPanel({compareState, graphActive, glowActive}
                         className={`graph-card ${isFront ? "front" : "back"}`}
                     >
                         <div className="graph-card-content" inert={!isFront}>
-                            <GraphBar active={selection} graphActive={graphActive} glowActive={glowActive}/>
+                            <GraphBar active={selection} graphActive={graphActive} glowActive={glowActive} mobileGraph={mobileGraph} setMobileGraph={setMobileGraph}/>
                         </div>
                         {!isFront && (
                             <button
@@ -52,7 +55,7 @@ export default function GraphPanel({compareState, graphActive, glowActive}
 
 }
 
-function GraphBar({ active, graphActive, glowActive}: GraphBarProps) {
+function GraphBar({ active, graphActive, glowActive, mobileGraph, setMobileGraph}: GraphBarProps) {
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
@@ -107,11 +110,10 @@ function GraphBar({ active, graphActive, glowActive}: GraphBarProps) {
 
     const profile1 = getECGProfile()
     const profile2 = getPressureProfile()
-    const [visibleGraph, setVisibleGraph] = useState<"ecg" | "pressure">("ecg")
 
     if (!graphActive) return null
     return (
-        <footer className={`graphs mobile_${visibleGraph}`}>
+        <footer className={`graphs mobile_${mobileGraph}`}>
             <h3 className="graph-bar-label">{active.option}</h3>
             <ICUContainer
                 phase={graphPhase}
@@ -125,25 +127,25 @@ function GraphBar({ active, graphActive, glowActive}: GraphBarProps) {
             <button
                 className="mobile_graph_switch"
                 onClick={() =>
-                    setVisibleGraph(
-                        visibleGraph === "ecg" ? "pressure" : "ecg"
+                    setMobileGraph(
+                        mobileGraph === "ecg" ? "pressure" : "ecg"
                     )
                 }
                 aria-label={
-                    visibleGraph === "ecg"
+                    mobileGraph === "ecg"
                         ? "Show pressure and volume graph"
                         : "Show ECG graph"
                 }
             >
-                {visibleGraph === "ecg" ? (
+                {mobileGraph === "ecg" ? (
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                          className="lucide lucide-chevron-left preview-icon">
                         <path d="m15 18-6-6 6-6"/>
                     </svg>
                 ) : (
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                          className="lucide lucide-chevron-right preview-icon">
                         <path d="m9 18 6-6-6-6"/>
                     </svg>
