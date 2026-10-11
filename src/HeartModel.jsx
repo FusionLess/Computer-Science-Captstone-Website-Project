@@ -24,7 +24,7 @@ const RO_OTHER = 13
 const RO_VESSELS = 14
 
 // Renders the companion 3D coronary vessel mesh exported by the Python script
-function SingleVesselFrame({ url, isVisible, clipPlane }) {
+function SingleVesselFrame({ url, isVisible, clipPlane, showArteries = true, showVeins = true }) {
   const { scene } = useGLTF(url)
 
   useEffect(() => {
@@ -47,6 +47,17 @@ function SingleVesselFrame({ url, isVisible, clipPlane }) {
       child.renderOrder = RO_VESSELS
     })
   }, [scene, url])
+
+  // Visibility toggle for arteries and veins
+  useEffect(() => {
+    scene.traverse((child) => {
+      if (!child.isMesh) return
+      const name = child.name.toLowerCase()
+      const isVein = name.includes('vein') || name.includes('mesh1')
+
+      child.visible = isVein ? showVeins : showArteries
+    })
+  }, [scene, showArteries, showVeins])
 
   useEffect(() => {
     const planes = clipPlane ? [clipPlane] : []
@@ -180,6 +191,8 @@ function SingleFrame({ url, isVisible, showEpi, clipPlane, capColor }) {
 export function HeartModel({
   bpm = 60,
   showEpi = true,
+  showArteries = true,
+  showVeins = true,
   clipPlane = null,
   isPaused = false,
   forcedFrame = null,
@@ -266,13 +279,15 @@ export function HeartModel({
       ))}
 
       {/* Render matching 3D vessel tubes synchronized with active cardiac cycle frame */}
-      {showEpi &&
+      {showEpi && (showArteries || showVeins) &&
         vesselPaths.map((path, idx) => (
           <SingleVesselFrame
             key={path}
             url={path}
             isVisible={idx === activeFrame}
             clipPlane={clipPlane}
+            showArteries={showArteries}
+            showVeins={showVeins}
           />
         ))}
     </group>

@@ -80,6 +80,10 @@ export default function App() {
   const [isPaused, setIsPaused] = useState(false)
   const [showEpi, setShowEpi] = useState(true)
 
+  // Artery and vein visibility states declared in App scope
+  const [showArteries, setShowArteries] = useState(true)
+  const [showVeins, setShowVeins] = useState(true)
+
   // sets the preset states you can slice the heart
   const [sliceEnabled, setSliceEnabled] = useState(false)
   const [showPlaneGuide, setShowPlaneGuide] = useState(true)
@@ -228,6 +232,9 @@ export default function App() {
                 <HeartModel
                   bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
                   showEpi={showEpi}
+                  // Exposes the options for showing veins and arteries
+                  showArteries={showArteries}
+                  showVeins={showVeins}
                   clipPlane={clipPlane}
                   isPaused={isPaused}
                   rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
@@ -344,6 +351,30 @@ export default function App() {
                 style={{ cursor: 'pointer', accentColor: '#e74c3c' }}
               />
             </label>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <input
+                type="checkbox"
+                id="toggle-arteries"
+                checked={showArteries}
+                onChange={(e) => setShowArteries(e.target.checked)}
+              />
+              <label htmlFor="toggle-arteries" style={{ color: '#fff', fontSize: '13px' }}>
+                Coronary Arteries
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <input
+                type="checkbox"
+                id="toggle-veins"
+                checked={showVeins}
+                onChange={(e) => setShowVeins(e.target.checked)}
+              />
+              <label htmlFor="toggle-veins" style={{ color: '#fff', fontSize: '13px' }}>
+                Coronary Veins
+              </label>
+            </div>
 
             <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.1)', margin: '2px 0' }} />
 
