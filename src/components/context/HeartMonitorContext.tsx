@@ -1,12 +1,28 @@
-import { createContext, useContext, useState, type ReactNode, type Dispatch, type SetStateAction } from "react"
+import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore, type ReactNode, type Dispatch, type SetStateAction } from "react"
+
+function createPhaseStore() {
+    let phase = 0
+    const listeners = new Set<() => void>()
+    return {
+        getSnapshot: () => phase,
+        subscribe: (listener: () => void) => {
+            listeners.add(listener)
+            return () => { listeners.delete(listener) }
+        },
+        update: (nextPhase: number) => {
+            if (Object.is(phase, nextPhase)) return
+            phase = nextPhase
+            listeners.forEach(listener => listener())
+        },
+    }
+}
 
 type HeartMonitorContextType = {
     bpm: number
     setBpm: (value: number | ((prev: number) => number)) => void
     isPaused: boolean
     setIsPaused: Dispatch<SetStateAction<boolean>>
-    singlePhase: number
-    graphPhase: number
+    phaseStore: ReturnType<typeof createPhaseStore>
     beatInterval: (elapsedSeconds: number) => void
 }
 
@@ -17,23 +33,29 @@ export const GRAPH_BEAT_COUNT = window.matchMedia("(max-width: 768px)").matches 
 export function HeartMonitorProvider({ children }: { children: ReactNode }) {
     const [bpm, setBpm] = useState<number>(60)
     const [isPaused, setIsPaused] = useState<boolean>(false)
-    const [singlePhase, setSinglePhase] = useState<number>(0)
-    const [graphPhase, setGraphPhase] = useState<number>(0)
-    const beatInterval = (elapsedSeconds: number) => {
+    // Only the animated graphs subscribe to ticks; controls stay in React state.
+    const [phaseStore] = useState(createPhaseStore)
+    const beatInterval = useCallback((elapsedSeconds: number) => {
         const cycleDuration = 60 / bpm
         const completedBeats = elapsedSeconds / cycleDuration
 
-        setSinglePhase(completedBeats % 1)
+        phaseStore.update((completedBeats % GRAPH_BEAT_COUNT) / GRAPH_BEAT_COUNT)
+    }, [bpm, phaseStore])
 
-        setGraphPhase((completedBeats % GRAPH_BEAT_COUNT) / GRAPH_BEAT_COUNT)
-    }
+    const value = useMemo(() => ({ bpm, setBpm, isPaused, setIsPaused, phaseStore, beatInterval }),
+        [bpm, isPaused, phaseStore, beatInterval])
 
 
     return (
-        <HeartMonitorContext.Provider value={{ bpm, setBpm, isPaused, setIsPaused, singlePhase, graphPhase, beatInterval }}>
+        <HeartMonitorContext.Provider value={value}>
             {children}
         </HeartMonitorContext.Provider>
     )
+}
+
+export function useGraphPhase() {
+    const { phaseStore } = useHeartMonitor()
+    return useSyncExternalStore(phaseStore.subscribe, phaseStore.getSnapshot)
 }
 
 export function useHeartMonitor() {

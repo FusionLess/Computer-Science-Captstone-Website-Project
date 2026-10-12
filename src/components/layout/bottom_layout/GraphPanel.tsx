@@ -1,5 +1,5 @@
 import "./GraphPanel.css"
-import { GRAPH_BEAT_COUNT, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
+import { GRAPH_BEAT_COUNT, useGraphPhase, useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
 import { ecgProfiles, type ECGProfile } from "../../../data/ECGParameters.ts"
 import type { HeartState } from "../../types/states.ts"
 import type { CompareState } from "../../types/compare.ts"
@@ -59,7 +59,7 @@ function GraphBar({ active, graphActive, glowActive, mobileGraph, setMobileGraph
     const [showVolume, setShowVolume] = useState(true)
     const [showPressure, setShowPressure] = useState(true)
     const [showHealthyPressure, setShowHealthyPressure] = useState(true)
-    const {bpm, graphPhase} = useHeartMonitor()
+    const {bpm} = useHeartMonitor()
     const getECGProfile = () => {
         switch (active.option) {
             case "Healthy":
@@ -116,7 +116,6 @@ function GraphBar({ active, graphActive, glowActive, mobileGraph, setMobileGraph
         <footer className={`graphs mobile_${mobileGraph}`}>
             <h3 className="graph-bar-label">{active.option}</h3>
             <ICUContainer
-                phase={graphPhase}
                 type="ecg"
                 d={generateECGPath(ecgProfiles.healthy)}
                 overlayD={profile1.severity !== "healthy" ? generateECGPath(profile1) : undefined}
@@ -152,7 +151,6 @@ function GraphBar({ active, graphActive, glowActive, mobileGraph, setMobileGraph
                 )}
             </button>
             <ICUContainer
-                phase={graphPhase}
                 type="pressure"
                 d={generatePressurePath(pressureProfiles.healthy)}
                 overlayD={profile2.severity !== "healthy" ? generatePressurePath(profile2) : undefined}
@@ -388,7 +386,8 @@ function generatePressurePath(profile2: PressureProfile) {
     return fullD
 }
 
-function ICUContainer({ phase, type, d, overlayD, severity, volumeD, showVolume, onToggleVolume, showPressure, onTogglePressure, showHealthyPressure, onToggleHealthyPressure, isFibrillation, glowActive }: { phase: number; type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major', volumeD?: string, showVolume?: boolean, onToggleVolume?: () => void, showPressure?: boolean, onTogglePressure?: () => void, showHealthyPressure?: boolean, onToggleHealthyPressure?: () => void, isFibrillation?: boolean, glowActive?: boolean }) {
+function ICUContainer({ type, d, overlayD, severity, volumeD, showVolume, onToggleVolume, showPressure, onTogglePressure, showHealthyPressure, onToggleHealthyPressure, isFibrillation, glowActive }: { type: 'ecg' | 'pressure'; d: string; overlayD?: string, overlay?: string, severity?: 'minor' | 'major', volumeD?: string, showVolume?: boolean, onToggleVolume?: () => void, showPressure?: boolean, onTogglePressure?: () => void, showHealthyPressure?: boolean, onToggleHealthyPressure?: () => void, isFibrillation?: boolean, glowActive?: boolean }) {
+    const phase = useGraphPhase()
     const graphId = useId()
     const safePhase = isNaN(phase) ? 0 : phase
     const xPos = safePhase * 100

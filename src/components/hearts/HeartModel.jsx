@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react'
+import React, { useRef, useEffect, useLayoutEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
@@ -8,9 +8,13 @@ import { HeartParts } from "../../data/HeartParts"
 const NUM_FRAMES = HEART_FRAME_COUNT
 const ES_FRAME = 25
 // All frames are loaded; only the active frame is displayed.
-function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHover, onSelect, isUnhealthy, capStyleRef, capColor }) {
+function SingleFrame({ url, frameIndex, framesRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
   const { scene } = useGLTF(url)
-  const model = useMemo(() => cloneHeartScene(scene), [scene])
+  const model = useMemo(() => {
+    const clone = cloneHeartScene(scene)
+    clone.visible = false
+    return clone
+  }, [scene])
 
   useEffect(() => {
     model.traverse((child) => {
@@ -63,13 +67,12 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
     })
   }, [model, clipPlane])
 
-  useEffect(() => {
-    if (!isVisible || !capStyleRef) return
-    capStyleRef.current = null
+  const capStyle = useMemo(() => {
+    let style = null
     model.traverse((child) => {
       if (!child.isMesh || !isMuscle(child)) return
       const material = materialsOf(child)[0]
-      capStyleRef.current = {
+      style = {
         color: capColor
           ? new THREE.Color(capColor)
           : child.geometry.attributes.color ? null : material.color?.clone(),
@@ -77,7 +80,14 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
         metalness: material.metalness,
       }
     })
-  }, [model, isVisible, capStyleRef, capColor])
+    return style
+  }, [model, capColor])
+
+  useLayoutEffect(() => {
+    const frames = framesRef.current
+    frames[frameIndex] = { model, capStyle }
+    return () => { delete frames[frameIndex] }
+  }, [model, capStyle, frameIndex, framesRef])
 
   const getSelectedMesh = (event) => {
     if (!clipPlane || !showEpi || !isMuscle(event.object)) {
@@ -94,7 +104,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
   }
 
   return (
-    <primitive object={model} visible={isVisible}
+    <primitive object={model}
       onPointerMove={(event) => {
        const mesh = getSelectedMesh(event)
        event.stopPropagation()
@@ -134,23 +144,32 @@ export function HeartModel({
   ...props
 }) {
   const framePath = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+56) % NUM_FRAMES}.glb`), [frameFolder])
-  const [activeFrame, setActiveFrame] = useState(0)
+  const framesRef = useRef([])
   const animElapsed = useRef(0)
   const totalElapsed = useRef(0)
   const currentFrameRef = useRef(0)
 
   const safeBpm = Number(bpm) || 60
-  const isUnhealthy = frameFolder !== "frames"
-  // MRI playback supplies the cycle position so both views use the same frame clock.
-  const displayedFrame = animationPhase === undefined
-    ? activeFrame
-    : phaseToFrame(animationPhase)
+  const displayFrame = (targetFrame) => {
+    const next = framesRef.current[targetFrame]
+    if (!next) return
+    const previous = framesRef.current[currentFrameRef.current]
+    if (previous && previous !== next) previous.model.visible = false
+    next.model.visible = true
+    currentFrameRef.current = targetFrame
+    if (capStyleRef) capStyleRef.current = next.capStyle
+  }
 
   useFrame((_, delta) => {
-    if (animationPhase !== undefined) return
-
-    // stop advancing the animation timeline if paused
-    if (isPaused || bpm <= 0) return
+    // Imaging views own their timeline, including manual scrubbing while paused.
+    if (animationPhase !== undefined) {
+      displayFrame(phaseToFrame(animationPhase))
+      return
+    }
+    if (isPaused || bpm <= 0) {
+      displayFrame(currentFrameRef.current)
+      return
+    }
 
     // Cap delta to prevent frame spikes when dragging the slider
     const dt = Math.min(delta, 0.05)
@@ -191,11 +210,8 @@ export function HeartModel({
 
     targetFrame = Math.min(Math.max(targetFrame, 0), NUM_FRAMES - 1)
 
-    // Direct ref check prevents frame thrashing and guarantees state stability
-    if (targetFrame !== currentFrameRef.current) {
-      currentFrameRef.current = targetFrame
-      setActiveFrame(targetFrame)
-    }
+    // Switch scene visibility directly without reconciling all 75 React children.
+    displayFrame(targetFrame)
   })
 
   return (
@@ -204,21 +220,18 @@ export function HeartModel({
         <SingleFrame
           key={path}
           url={path}
-          isVisible={idx === displayedFrame}
+          frameIndex={idx}
+          framesRef={framesRef}
           showEpi={showEpi}
           ventricleOnly={ventricleOnly}
           clipPlane={clipPlane}
-          capStyleRef={capStyleRef}
           capColor={capColor}
 
           onHover={onHover}
           onSelect={onSelect}
-          isUnhealthy={isUnhealthy}
 
         />
       ))}
     </group>
   )
 }
-
-// FRAME_PATHS.forEach((path) => useGLTF.preload(path))
