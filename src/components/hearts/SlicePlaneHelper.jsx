@@ -15,7 +15,9 @@ export function SlicePlaneHelper({ clipPlane, size = 180, visible = true }) {
 
     // position on the plane closest to world origin: P = -constant * normal
     const planeOrigin = normal.clone().multiplyScalar(-constant)
-    groupRef.current.position.copy(planeOrigin)
+    groupRef.current.position
+        .copy(planeOrigin)
+        .addScaledVector(normal, -0.5)
 
     // precisely rotate default +Z normal of PlaneGeometry to match clipPlane.normal
     groupRef.current.quaternion.setFromUnitVectors(defaultNormal, normal)
