@@ -21,11 +21,25 @@ export function cloneHeartScene(scene) {
       : child.material.clone()
     const originalRaycast = child.raycast
     child.raycast = function (raycaster, intersections) {
-      // Three's raycaster can visit children of an invisible object.
       for (let ancestor = this; ancestor; ancestor = ancestor.parent) {
         if (!ancestor.visible) return
       }
-      originalRaycast.call(this, raycaster, intersections)
+
+      const hits = []
+      originalRaycast.call(this, raycaster, hits)
+
+      for (const hit of hits) {
+        const material = Array.isArray(this.material)
+            ? this.material[hit.face?.materialIndex ?? 0]
+            : this.material
+
+        const planes = material?.clippingPlanes ?? []
+        const isClipped = planes.some(
+            plane => plane.distanceToPoint(hit.point) < 0
+        )
+
+        if (!isClipped) intersections.push(hit)
+      }
     }
   })
   return model

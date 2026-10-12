@@ -48,7 +48,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
   }, [model, showEpi, ventricleOnly])
 
   useEffect(() => {
-    if (!clipPlane) return
+    if (!clipPlane || !showEpi) return
     return addStencilHelpers(model, clipPlane)
   }, [model, clipPlane])
 
@@ -79,25 +79,41 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
     })
   }, [model, isVisible, capStyleRef, capColor])
 
+  const getSelectedMesh = (event) => {
+    if (!clipPlane || !showEpi || !isMuscle(event.object)) {
+      return event.object
+    }
+
+    const ventricleHit = event.intersections.find(hit =>
+        hit.eventObject === event.eventObject &&
+        (hit.object.name === 'mesh1' || hit.object.name === 'mesh4') &&
+        Math.abs(hit.distance - event.distance) <= 0.01
+    )
+
+    return ventricleHit?.object ?? event.object
+  }
+
   return (
     <primitive object={model} visible={isVisible}
       onPointerMove={(event) => {
-        event.stopPropagation()
-        const meshId = event.object.name
-        const heartPart = HeartParts[meshId]  
-        onHover?.({
-          name: heartPart?.name ?? meshId,
-          x: event.clientX,
-          y: event.clientY,
-        })
+       const mesh = getSelectedMesh(event)
+       event.stopPropagation()
+
+       onHover?.({
+         name: HeartParts[mesh.name]?.name ?? mesh.name,
+         x: event.clientX,
+         y: event.clientY,
+       })
       }}
       onPointerOut={(event) => {
         event.stopPropagation()
         onHover?.(null)
       }}
       onPointerDown={(event) => {
-        event.stopPropagation()
-        onSelect?.(event.object.name)
+       const mesh = getSelectedMesh(event)
+       event.stopPropagation()
+      
+       onSelect?.(mesh.name)
       }}
     />
   )
