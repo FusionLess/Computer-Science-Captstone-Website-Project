@@ -112,7 +112,7 @@ function SingleFrame({ url, isVisible, showEpi, ventricleOnly, clipPlane, onHove
       onPointerDown={(event) => {
        const mesh = getSelectedMesh(event)
        event.stopPropagation()
-      
+
        onSelect?.(mesh.name)
       }}
     />

@@ -10,6 +10,18 @@
     display: flex;
 }
 
+.slice-controller .slice-options,
+.slice-controller .slice-axis-presets:has(+ .slice-adjustments) {
+    position: relative;
+    padding-right: var(--control-divider-space);
+}
+
+.slice-controller .slice-options::after,
+.slice-controller .slice-axis-presets:has(+ .slice-adjustments)::after {
+    left: auto;
+    right: var(--control-divider-gap);
+}
+
 .slice-axis-presets {
     display: flex;
     gap: 3px;
@@ -173,9 +185,61 @@
         padding: 0 2px;
     }
 
-    .slice-controller .controller-divider {
+    .slice-controller .slice-options,
+    .slice-controller .slice-axis-presets:has(+ .slice-adjustments) {
+        box-sizing: border-box;
+        padding-right: 0;
+        padding-bottom: 13px;
+    }
+
+    .slice-controller .slice-options::after,
+    .slice-controller .slice-axis-presets:has(+ .slice-adjustments)::after {
+        top: auto;
+        bottom: 2px;
+        right: 0;
         width: 100%;
         height: 1px;
-        margin: 2px 0;
+        transform: none;
+    }
+}
+
+@media (width >= 800px) {
+    .slice-controller {
+        --slice-button-count: 4;
+        --slice-slider-space: 0px;
+    }
+
+    .slice-controller:has(.slice-options button + button) {
+        --slice-button-count: 5;
+    }
+
+    .slice-controller:has(.slice-adjustments) {
+        --slice-slider-space: 445px;
+    }
+
+    .slice-controller .controller-actions {
+        width: calc(
+                (var(--control-button-width) +
+                var(--control-button-margin) * 2) *
+                var(--slice-button-count) +
+                20px + var(--slice-slider-space)
+        );
+
+        overflow: hidden;
+        opacity: 1;
+
+        transition:
+                width 250ms ease,
+                opacity 200ms ease;
+    }
+
+    .slice-controller .controller-actions > * {
+        flex-shrink: 0;
+    }
+
+    .slice-controller.is-collapsed .controller-actions {
+        width: 0;
+        opacity: 0;
+        pointer-events: none;
     }
 }

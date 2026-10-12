@@ -10,6 +10,38 @@
     transform: scale(0.95);
 }
 
+.viewer-controls button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.heart-controller .controller-actions button svg {
+    width: 18px;
+    height: 18px;
+}
+
+@media (width >= 800px) {
+    .heart-controller .controller-actions {
+        width: calc(
+                var(--control-button-width) * 5 +
+                var(--control-button-margin) * 10
+        );
+
+        opacity: 1;
+        overflow: hidden;
+
+        transition:
+                width 250ms ease,
+                opacity 200ms ease;
+    }
+
+    .heart-controller.is-collapsed .controller-actions {
+        width: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
 @media (width < 800px) {
     .heart-controller {
         flex-direction: column-reverse;

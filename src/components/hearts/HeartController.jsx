@@ -26,8 +26,21 @@ export default function HeartController({
                 className={`show-controls-button ${controlsShowing ? 'showing' : 'hiding'}`}
                 aria-expanded={controlsShowing}
                 aria-controls={controlsId}
-                >
-                { controlsShowing ? 'HIDE' : 'HEART CONTROLS' }
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     className="lucide lucide-sliders-horizontal preview-icon">
+                    <path d="M10 5H3"/>
+                    <path d="M12 19H3"/>
+                    <path d="M14 3v4"/>
+                    <path d="M16 17v4"/>
+                    <path d="M21 12h-9"/>
+                    <path d="M21 19h-5"/>
+                    <path d="M21 5h-7"/>
+                    <path d="M8 10v4"/>
+                    <path d="M8 12H3"/>
+                </svg>
+                {controlsShowing ? 'HIDE' : 'CONTROLS'}
             </button>
             <div
                 id={controlsId}
@@ -107,22 +120,34 @@ export default function HeartController({
                     onClick={handleVentricleView}
                     className={`ventricle-button${ventricleOnly ? ' is-active' : ''}`}
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="preview-icon"
-                    >
-                        <path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 4.5 8 4.1 10 6 12 8c2-2 4-3.9 6.5-3.5C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z" />
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <defs>
+                            <path id="stacked-heart"
+                                  d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5Z"/>
+
+                            <mask id="stacked-heart-mask"
+                                  maskUnits="userSpaceOnUse"
+                                  x="0" y="0" width="24" height="24">
+                                <rect width="24" height="24" fill="white" stroke="none"/>
+                                <use href="#stacked-heart"
+                                     transform="translate(0 2) scale(.8)"
+                                     fill="black" stroke="black" stroke-width="3"/>
+                            </mask>
+                        </defs>
+
+                        <g mask="url(#stacked-heart-mask)">
+                            <use href="#stacked-heart"
+                                 transform="translate(5 2) scale(.8)"/>
+                        </g>
+
+                        <use href="#stacked-heart"
+                             transform="translate(0 2) scale(.8)"/>
                     </svg>
 
-                    {ventricleOnly ? 'SHOW ALL' : 'Ventricles'}
+                    {ventricleOnly ? 'FULL HEART' : 'VENTRICLES'}
                 </button>
 
                 <button
@@ -130,8 +155,28 @@ export default function HeartController({
                     onClick={handleFullView}
                     className={`full-view-button${!sliceEnabled && fullView ? ' is-active' : ''}`}
                 >
-                    FULL VIEW
+                    {(fullView && !sliceEnabled) ?
+                        <>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24" height="24" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>
+                            <path d="M12 7v14" stroke-dasharray="2 3"/>
+                        </svg>
+                        SLICE
+                        </> :
+                        <>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" className="lucide lucide-heart preview-icon">
+                                <path
+                                    d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>
+                            </svg>
+                            FULL
+                        </>}
                 </button>
             </div>
         </div>
-    )}
+    )
+}

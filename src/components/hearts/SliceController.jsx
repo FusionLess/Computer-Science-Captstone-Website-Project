@@ -23,7 +23,7 @@ export default function SliceController({
     showAdvancedSliceControls
 }) {
 
-    const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
+    const [controlsShowing, setControlsShowing] = useState(() => false)
     const controlsId = useId()
 
     const showSliders =  showAdvancedSliceControls
@@ -42,7 +42,13 @@ export default function SliceController({
                 aria-expanded={controlsShowing}
                 aria-controls={controlsId}
             >
-                {controlsShowing ? 'HIDE' : 'SLICE CONTROLS'}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     className="lucide lucide-circle-slash-2 preview-icon">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M22 2 2 22"/>
+                </svg>
+                {controlsShowing ? 'HIDE' : 'SlICE'}
             </button>
 
             <div
@@ -76,8 +82,6 @@ export default function SliceController({
                     )}
                 </div>
 
-                <div className="controller-divider" />
-
                 <div className="slice-axis-presets">
                     <button
                         type="button"
@@ -107,8 +111,6 @@ export default function SliceController({
                 {showSliders && sliceEnabled && (
                     <>
                     
-                        <div className="controller-divider" />
-
                         <div className="slice-adjustments">
                             <div className="slice-slider">
                                 <div className="slice-slider-label">
