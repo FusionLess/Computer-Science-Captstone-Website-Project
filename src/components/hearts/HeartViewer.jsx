@@ -20,7 +20,7 @@ const CAMERA_POSITIONS = {
     shortAxis: [-180, 150, -220],
 
     topDown: [0.1, 300, 0.02],
-    titledShortAxis: [280, 150, 56],
+    tiltedShortAxis: [280, 150, 56],
 }
 
 export default function HeartViewer({
@@ -68,7 +68,7 @@ export default function HeartViewer({
         frameFolder === "compensated_heart" ||
             frameFolder === "decompensated_heart"
             ? "frontal"
-            : "shortAxis"
+            : "frontal"
 
     const viewPreset = cameraView ?? defaultPreset
     const initialCameraPos = CAMERA_POSITIONS[viewPreset] ?? CAMERA_POSITIONS[defaultPreset]
@@ -287,16 +287,16 @@ export default function HeartViewer({
 
     const handleResetView = () => {
         const shortAxis = defaultPreset === "shortAxis"
-        setFullView(false)
-        setVentricleOnly(true)
+        setFullView(true)
+        setVentricleOnly(false)
         setShowEpi(true)
         // Restore predetermined slicing
         // if (complexity === "basic") {
         //     setSliceEnabled(false)
         //     setShowPlaneGuide(false)
         // } else {
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
 
         setActivePreset(defaultPreset)
 
@@ -421,7 +421,9 @@ export default function HeartViewer({
                             beatInterval={beatInterval}
                         />
                     </Center>
-                    <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
+                    {showEpi && (
+                        <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
+                    )}
 
                     {/* Soft contact floor shadow */}
                     <ContactShadows
@@ -475,20 +477,6 @@ export default function HeartViewer({
             {showControls !== false && (!useSharedControls || showSyncedControls) && (
                 <>
                     <div className="viewer-controls">
-
-                        <HeartController
-                            isPaused={isPaused}
-                            setIsPaused={setIsPaused}
-                            syncEnabled={syncEnabled}
-                            showEpi={showEpi}
-                            setShowEpi={setShowEpi}
-                            ventricleOnly={ventricleOnly}
-                            setVentricleOnly={setVentricleOnly}
-                            fullView={fullView}
-                            handleFullView={handleFullView}
-                            handleResetView={handleResetView}
-                            handleVentricleView={handleVentricleView}
-                        />
                         <SliceControls
                             index={index}
                             sliceControlEnabled={sliceControlEnabled}
@@ -510,6 +498,20 @@ export default function HeartViewer({
                             showAdvancedSliceControls={showAdvancedSliceControls}
 
                         />
+                        <HeartController
+                        isPaused={isPaused}
+                        setIsPaused={setIsPaused}
+                        syncEnabled={syncEnabled}
+                        showEpi={showEpi}
+                        setShowEpi={setShowEpi}
+                        ventricleOnly={ventricleOnly}
+                        setVentricleOnly={setVentricleOnly}
+                        fullView={fullView}
+                        handleFullView={handleFullView}
+                        handleResetView={handleResetView}
+                        handleVentricleView={handleVentricleView}
+                        sliceEnabled={sliceEnabled}
+                    />
                     </div>
                 </>
             )}
