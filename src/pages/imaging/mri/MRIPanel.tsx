@@ -1,10 +1,10 @@
 import "./MRIPanel.css"
 import { useEffect, useState, useMemo, useId } from "react"
 import MRIViewer from "./MRIViewer.tsx"
-import HeartViewer from "../../hearts/HeartViewer"
-import { useHeartMonitor } from "../../context/HeartMonitorContext.tsx"
+import HeartViewer from "../../../components/hearts/HeartViewer"
+import { useHeartMonitor } from "../../../components/context/HeartMonitorContext.tsx"
 import * as THREE from 'three'
-import { HEART_FRAME_COUNT } from '../../hearts/heartRendering'
+import { HEART_FRAME_COUNT } from '../../../components/hearts/heartRendering'
 
 export default function MRIPanel() {
     const sliceSliderId = useId();
@@ -18,8 +18,8 @@ export default function MRIPanel() {
 
     const totalSlices = 10;
     const totalFrames = 30;
-    const heartFrameOffset = 20;
-    const modelFrameOffset = 18;
+    const heartFrameOffset = 2;
+    const modelFrameOffset = 19;
 
     useEffect(() => {
         if (!isPlaying || bpm <= 0) return;

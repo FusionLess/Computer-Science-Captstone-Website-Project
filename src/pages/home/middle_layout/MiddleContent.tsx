@@ -1,13 +1,13 @@
 import "./MiddleContent.css"
 
-import type { HeartState } from "../../types/states.ts";
-import type { CompareState } from "../../types/compare.ts"
+import type { HeartState } from "../../../components/types/states.ts";
+import type { CompareState } from "../../../components/types/compare.ts"
 
 import { useEffect, useState } from "react";
 import LeftBox from "./ConditionDes.tsx"
 import HeartController2 from "./HeartController2.tsx"
 import RightBox from "./DescriptionPanel.tsx";
-import type { Complexity } from "../../types/complexities.ts";
+import type { Complexity } from "../../../components/types/complexities.ts";
 
 function Content({ compareState, complexity, showDescriptions, showAdvancedSliceControls } :
                  { active: HeartState, setActive: (v: HeartState) => void, compareState: CompareState, complexity: Complexity, showDescriptions: boolean, showAdvancedSliceControls: boolean, }) {

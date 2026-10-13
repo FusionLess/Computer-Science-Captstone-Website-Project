@@ -1,6 +1,6 @@
 import { HeartParts } from "../../../data/HeartParts.ts"
 import "./HeartPartInfo.css"
-import type { Complexity } from "../../types/complexities.ts"
+import type { Complexity } from "../../../components/types/complexities.ts"
 import { useState } from "react"
 import PopUpInfoBox from "./PopUpInfoBox.tsx"
 function HeartPartInfo({

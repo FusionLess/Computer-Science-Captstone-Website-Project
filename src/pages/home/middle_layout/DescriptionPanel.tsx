@@ -1,9 +1,9 @@
 import {useEffect, useRef, useState} from "react";
 import "./DescriptionPanel.css"
 import HeartPartInfo from "./HeartPartInfo.tsx";
-import type { CompareState } from "../../types/compare.ts"
+import type { CompareState } from "../../../components/types/compare.ts"
 import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
-import type { Complexity } from "../../types/complexities.ts";
+import type { Complexity } from "../../../components/types/complexities.ts";
 import PopUpInfoBox from "./PopUpInfoBox"
 
 function RightBox({compareState, selectedPart, complexity} :
