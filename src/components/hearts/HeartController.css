@@ -2,10 +2,6 @@
     position: relative;
 }
 
-.heart-controller .reset-button {
-    transition: transform 0.1s ease, background 0.2s;
-}
-
 .heart-controller .reset-button:active:hover {
     transform: scale(0.95);
 }
@@ -19,6 +15,36 @@
     width: 18px;
     height: 18px;
 }
+
+.content .controller button {
+    transition:
+            width 250ms ease,
+            margin-right 250ms ease,
+            scale 140ms ease,
+            background-color 180ms ease,
+            color 180ms ease;
+}
+
+.content .controller button svg {
+    transition: translate 180ms ease;
+}
+
+.content .controller button:not(:disabled):hover svg {
+    translate: 0 -2px;
+}
+
+.content .controller button:not(:disabled):not(.show-controls-button):not(.is-active):hover {
+    background-color: color-mix(
+            in srgb,
+            var(--active-labels) 10%,
+            transparent
+    );
+}
+
+.controller button:active:hover {
+    transform: scale(0.95);
+}
+
 
 @media (width >= 800px) {
     .heart-controller .controller-actions {
@@ -45,14 +71,12 @@
 @media (width < 800px) {
     .heart-controller {
         flex-direction: column-reverse;
-        align-items: flex-start;
+        align-items: center;
     }
 
     .heart-controller .controller-actions {
         flex-direction: column-reverse;
         align-items: stretch;
-
-        width: var(--control-button-width);
         max-height: 360px;
         overflow: hidden;
 
@@ -70,5 +94,9 @@
 
     .heart-controller .show-controls-button::after {
         display: none;
+    }
+
+    .heart-controller .controller-actions button {
+        width: calc(var(--control-button-width) - 4px);
     }
 }

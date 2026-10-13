@@ -24,7 +24,6 @@
 
 .slice-axis-presets {
     display: flex;
-    gap: 3px;
 }
 
 
@@ -94,10 +93,9 @@
     }
 
     .slice-controller > .show-controls-button {
-        align-self: flex-start;
+        align-self: center;
 
         width: var(--control-button-width);
-        height: 54px;
         margin: var(--control-button-margin);
 
         transition: width 250ms ease;
@@ -201,45 +199,18 @@
         height: 1px;
         transform: none;
     }
-}
-
-@media (width >= 800px) {
-    .slice-controller {
-        --slice-button-count: 4;
-        --slice-slider-space: 0px;
+    
+    .viewer-controls {
+        left: 0;
+        right: 0;
     }
 
-    .slice-controller:has(.slice-options button + button) {
-        --slice-button-count: 5;
-    }
-
-    .slice-controller:has(.slice-adjustments) {
-        --slice-slider-space: 445px;
+    .slice-controller:not(.is-collapsed) {
+        width: 100%;
     }
 
     .slice-controller .controller-actions {
-        width: calc(
-                (var(--control-button-width) +
-                var(--control-button-margin) * 2) *
-                var(--slice-button-count) +
-                20px + var(--slice-slider-space)
-        );
-
-        overflow: hidden;
-        opacity: 1;
-
-        transition:
-                width 250ms ease,
-                opacity 200ms ease;
-    }
-
-    .slice-controller .controller-actions > * {
-        flex-shrink: 0;
-    }
-
-    .slice-controller.is-collapsed .controller-actions {
-        width: 0;
-        opacity: 0;
-        pointer-events: none;
+        left: -1px;
+        width: calc(100% + 2px);
     }
 }

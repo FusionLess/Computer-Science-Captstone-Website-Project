@@ -1,9 +1,5 @@
 .controller {
-    --control-button-width: 76px;
-    --control-button-margin: 2px;
-    --control-divider-width: 2px;
-    --control-divider-gap: 6px;
-    --control-divider-space: calc(var(--control-divider-width) + var(--control-divider-gap) * 2);
+    --control-button-width: 66px;
 
     font-family: system-ui, -apple-system, sans-serif;
 
@@ -21,6 +17,7 @@
 
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+    padding: 0 2px 0 2px;
 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -31,11 +28,11 @@
     align-items: center;
     justify-content: center;
     padding: 5px 8px;
-    margin: var(--control-button-margin);
+    margin: 4px 2px 4px 2px;
     width: var(--control-button-width);
     height: 54px;
     font-size: 10px;
-    font-weight: 200;
+    font-weight: 400;
     border: none;
     border-radius: 20px;
     gap: 2px;
@@ -71,51 +68,47 @@
     position: relative;
     font-weight: 500;
     text-wrap: auto;
-    /*font-size: 8px;*/
 }
-
-.controller .show-controls-button::after,
-.controller .slice-options::after,
-.controller .slice-axis-presets:has(+ .slice-adjustments)::after {
-    content: "";
-    position: absolute;
-    left: calc(100% + var(--control-button-margin) + var(--control-divider-gap));
-    top: 50%;
-    transform: translateY(-50%);
-    width: var(--control-divider-width);
-    height: 40px;
-    border-radius: 8px;
-    background: var(--divider);
-    transition: opacity 200ms ease;
-}
-
-.controller.is-collapsed .show-controls-button::after,
-.controller.is-collapsed .slice-options::after,
-.controller.is-collapsed .slice-axis-presets:has(+ .slice-adjustments)::after {
-    opacity: 0;
-}
-
-
 
 @media (width >= 800px) {
-    .controller .show-controls-button {
-        transition: margin-right 250ms ease;
+    .controller.is-collapsed .show-controls-button::after {
+        display: none;
     }
 
-    .controller:not(.is-collapsed) .show-controls-button {
-        margin-right: calc(var(--control-button-margin) + var(--control-divider-space));
+    .controller .controller-actions::before {
+        content: "";
+        width: 2px;
+        height: 40px;
+        margin: 0 2px;
+        flex-shrink: 0;
+        background: var(--divider);
+    }
+
+    .controller .slice-options::after {
+        content: "";
+        width: 2px;
+        height: 40px;
+        margin: 0 2px;
+        flex-shrink: 0;
+        background: var(--divider);
     }
 }
 
 @media (width < 800px) {
     .controller {
-        --control-button-width: 66px;
-        --control-button-margin: 1px;
+        padding: 4px 0;
     }
 
     .controller button {
-        height: 48px;
-        padding: 4px 6px;
-        font-size: 10px;
+        margin: 2px;
+    }
+
+    .controller .slice-options::after {
+        position: absolute;
+        content: "";
+        width: 60%;
+        height: 1px;
+        flex-shrink: 0;
+        background: var(--divider);
     }
 }

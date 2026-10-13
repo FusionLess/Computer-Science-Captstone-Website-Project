@@ -318,7 +318,7 @@ export default function HeartViewer({
     const handleVentricleView = () => {
         const next = !ventricleOnly
         setVentricleOnly(next)
-        setFullView(false)
+        if (!useSharedControls) setFullView(false)
         if (next && activePreset === "shortAxis") {
             // but move to a useful ventricular depth
             setPitch(-90)
@@ -367,6 +367,10 @@ export default function HeartViewer({
     }, [sliceEnabled, pitch, yaw, sliceDistance])
 
     const clipPlane = externalClipPlane ?? modelClipPlane
+
+    const shadowColour = getComputedStyle(document.documentElement)
+        .getPropertyValue('--shadow-colour')
+        .trim()
 
     return (
       
@@ -433,7 +437,7 @@ export default function HeartViewer({
                         blur={5.0}               // Softness edge blur
                         far={300}                // Vertical projection distance
                         resolution={512}
-                        color="#050508"
+                        color={shadowColour}
                     />
                 </Suspense>
 
@@ -477,6 +481,20 @@ export default function HeartViewer({
             {showControls !== false && (!useSharedControls || showSyncedControls) && (
                 <>
                     <div className="viewer-controls">
+                        <HeartController
+                        isPaused={isPaused}
+                        setIsPaused={setIsPaused}
+                        syncEnabled={syncEnabled}
+                        showEpi={showEpi}
+                        setShowEpi={setShowEpi}
+                        ventricleOnly={ventricleOnly}
+                        setVentricleOnly={setVentricleOnly}
+                        fullView={fullView}
+                        handleFullView={handleFullView}
+                        handleResetView={handleResetView}
+                        handleVentricleView={handleVentricleView}
+                        sliceEnabled={sliceEnabled}
+                        />
                         <SliceControls
                             index={index}
                             sliceControlEnabled={sliceControlEnabled}
@@ -498,20 +516,6 @@ export default function HeartViewer({
                             showAdvancedSliceControls={showAdvancedSliceControls}
 
                         />
-                        <HeartController
-                        isPaused={isPaused}
-                        setIsPaused={setIsPaused}
-                        syncEnabled={syncEnabled}
-                        showEpi={showEpi}
-                        setShowEpi={setShowEpi}
-                        ventricleOnly={ventricleOnly}
-                        setVentricleOnly={setVentricleOnly}
-                        fullView={fullView}
-                        handleFullView={handleFullView}
-                        handleResetView={handleResetView}
-                        handleVentricleView={handleVentricleView}
-                        sliceEnabled={sliceEnabled}
-                    />
                     </div>
                 </>
             )}

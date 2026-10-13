@@ -29,6 +29,7 @@
     font-size: 16px;
     padding: 0;
     margin-top: 20px;
+    white-space: pre-line;
 }
 
 @media (width < 800px) {

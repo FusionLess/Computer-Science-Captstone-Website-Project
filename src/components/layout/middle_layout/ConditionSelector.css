@@ -218,3 +218,17 @@
         display: none;
     }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+    .content .heart_buttons button {
+        transition:
+                background-color 180ms ease,
+                color 180ms ease,
+                scale 140ms ease,
+                gap 180ms ease;
+    }
+
+    .content .heart_buttons button:active {
+        scale: 0.96;
+    }
+}

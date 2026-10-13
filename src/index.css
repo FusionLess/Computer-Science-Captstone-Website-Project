@@ -66,6 +66,8 @@
 
     --blue-gradient-start: #b0e8ff;
     --blue-text: #317e9e;
+
+    --shadow-colour: #050508
 }
 
 :root[data-theme="dark"] {
@@ -112,6 +114,8 @@
 
     --blue-gradient-start: rgba(59, 130, 246, 0.25);
     --blue-text: #60a5fa;
+
+    --shadow-colour: #e0eaff
 }
 
 /* Applied briefly while switching themes so every themed surface fades together. */
