@@ -10,9 +10,20 @@
     display: flex;
 }
 
+.slice-controller .slice-options,
+.slice-controller .slice-axis-presets:has(+ .slice-adjustments) {
+    position: relative;
+    padding-right: var(--control-divider-space);
+}
+
+.slice-controller .slice-options::after,
+.slice-controller .slice-axis-presets:has(+ .slice-adjustments)::after {
+    left: auto;
+    right: var(--control-divider-gap);
+}
+
 .slice-axis-presets {
     display: flex;
-    gap: 3px;
 }
 
 
@@ -82,10 +93,9 @@
     }
 
     .slice-controller > .show-controls-button {
-        align-self: flex-start;
+        align-self: center;
 
         width: var(--control-button-width);
-        height: 54px;
         margin: var(--control-button-margin);
 
         transition: width 250ms ease;
@@ -173,9 +183,34 @@
         padding: 0 2px;
     }
 
-    .slice-controller .controller-divider {
+    .slice-controller .slice-options,
+    .slice-controller .slice-axis-presets:has(+ .slice-adjustments) {
+        box-sizing: border-box;
+        padding-right: 0;
+        padding-bottom: 13px;
+    }
+
+    .slice-controller .slice-options::after,
+    .slice-controller .slice-axis-presets:has(+ .slice-adjustments)::after {
+        top: auto;
+        bottom: 2px;
+        right: 0;
         width: 100%;
         height: 1px;
-        margin: 2px 0;
+        transform: none;
+    }
+    
+    .viewer-controls {
+        left: 0;
+        right: 0;
+    }
+
+    .slice-controller:not(.is-collapsed) {
+        width: 100%;
+    }
+
+    .slice-controller .controller-actions {
+        left: -1px;
+        width: calc(100% + 2px);
     }
 }

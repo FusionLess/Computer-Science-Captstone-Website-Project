@@ -17,7 +17,7 @@ import HeartController from './HeartController'
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
     frontal: [-193, 0, -230],
-    shortAxis: [0, 300, 0],
+    shortAxis: [-1.93, 300, -2.3],
     sagittal: [-230, 0 , 193],
 
     topDown: [0.1, 300, 0.02],
@@ -78,7 +78,7 @@ export default function HeartViewer({
         : cameraPreset)
     const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
-    const { bpm, isPaused, setIsPaused, singlePhase } = useHeartMonitor()
+    const { bpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
     // sets the preset states you can slice the heart
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
@@ -185,10 +185,10 @@ export default function HeartViewer({
     useEffect(() => {
         setLocalFullView(true)
         setVentricleOnly(false)
-        
+
         setSliceEnabled(false)
         setShowPlaneGuide(false)
-       
+
         setLocalActivePreset("frontal")
         setCameraPreset("frontal")
 
@@ -244,12 +244,12 @@ export default function HeartViewer({
     }
 
     const handleResetView = () => {
-        setFullView(false)
-        setVentricleOnly(true)
+        setFullView(true)
+        setVentricleOnly(false)
         setShowEpi(true)
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
-        
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
+
         setActivePreset("frontal")
         setSliceOrientation(0, 40, 0)
         setCameraPreset("frontal")
@@ -263,7 +263,7 @@ export default function HeartViewer({
     const handleVentricleView = () => {
         const next = !ventricleOnly
         setVentricleOnly(next)
-        setFullView(false)
+        if (!useSharedControls) setFullView(false)
         if (next && activePreset === "shortAxis") {
             // but move to a useful ventricular depth
             setPitch(-90)
@@ -281,7 +281,7 @@ export default function HeartViewer({
         setPitch(p)
         setYaw(y)
         setSliceDistance(presetDepths[presetKey])
-        
+
         setCameraPreset(presetKey)
         setResetTrigger(prev => prev + 1)
     }
@@ -332,8 +332,12 @@ export default function HeartViewer({
 
     const clipPlane = externalClipPlane ?? modelClipPlane
 
+    const shadowColour = getComputedStyle(document.documentElement)
+        .getPropertyValue('--shadow-colour')
+        .trim()
+
     return (
-      
+
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
              {title && (
                 <h3 className="heart-viewer-title"
@@ -376,15 +380,18 @@ export default function HeartViewer({
                             ventricleOnly={ventricleOnly}
                             clipPlane={clipPlane}
                             capStyleRef={capStyleRef}
-                            beatPhase={singlePhase}
+                            isPaused={isPaused}
+                            beatInterval={beatInterval}
                             animationPhase={animationPhase}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             onSelect={setSelectedPart}
                             onHover={setHoverInfo}
-                            
+
                         />
                     </Center>
-                    <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
+                    {showEpi && (
+                        <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
+                    )}
 
                     {/* Soft contact floor shadow */}
                     <ContactShadows
@@ -394,7 +401,7 @@ export default function HeartViewer({
                         blur={5.0}               // Softness edge blur
                         far={300}                // Vertical projection distance
                         resolution={512}
-                        color="#050508"
+                        color={shadowColour}
                     />
                 </Suspense>
 
@@ -414,7 +421,7 @@ export default function HeartViewer({
                     index={index}
                 />
             </Canvas>
-            
+
             {/* Hover popup */}
             {hoverInfo && (
             <div
@@ -438,19 +445,19 @@ export default function HeartViewer({
             {showControls !== false && (!useSharedControls || showSyncedControls) && (
                 <>
                     <div className="viewer-controls">
-
                         <HeartController
-                            isPaused={isPaused}
-                            setIsPaused={setIsPaused}
-                            syncEnabled={syncEnabled}
-                            showEpi={showEpi}
-                            setShowEpi={setShowEpi}
-                            ventricleOnly={ventricleOnly}
-                            setVentricleOnly={setVentricleOnly}
-                            fullView={fullView}
-                            handleFullView={handleFullView}
-                            handleResetView={handleResetView}
-                            handleVentricleView={handleVentricleView}
+                        isPaused={isPaused}
+                        setIsPaused={setIsPaused}
+                        syncEnabled={syncEnabled}
+                        showEpi={showEpi}
+                        setShowEpi={setShowEpi}
+                        ventricleOnly={ventricleOnly}
+                        setVentricleOnly={setVentricleOnly}
+                        fullView={fullView}
+                        handleFullView={handleFullView}
+                        handleResetView={handleResetView}
+                        handleVentricleView={handleVentricleView}
+                        sliceEnabled={sliceEnabled}
                         />
                         <SliceControls
                             index={index}

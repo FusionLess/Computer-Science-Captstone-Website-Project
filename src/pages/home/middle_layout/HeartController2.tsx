@@ -99,13 +99,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
     }
 
     const handleSharedVentricleView = () => {
-        // setSharedVentricleOnly(prev => !prev)
-        const nextVentricleOnly = !sharedVentricleOnly
-        setSharedVentricleOnly(nextVentricleOnly)
-
-        if (nextVentricleOnly) {
-            setSharedFullView(false)
-        }
+        setSharedVentricleOnly(prev => !prev)
     }
 
     const handleSharedFullView = () => {

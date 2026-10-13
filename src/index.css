@@ -40,6 +40,8 @@
 
     --heartrate-text-slider: #0066FF;
     --secondary-cards-background: #f7f8fa;
+    --secondary-cards-border: #dfe2e8;
+
 
     --graph-pressure: #35e87b;
     --graph-volume: #003f73;
@@ -48,7 +50,7 @@
     --graph-card-hover-overlay: rgb(252 252 252 / 70%);
     --graph-label-shadow: rgb(7 27 61 / 6%);
 
-    --popup-overlay: rgb(0 20 50 / 65%);
+    --popup-overlay: rgb(0 4 18 / 35%);
     --popup-button-shadow: rgb(0 0 0 / 20%);
     --popup-button-hover-shadow: rgb(0 0 0 / 25%);
     --mri-viewer-label: rgb(255 255 255 / 40%);
@@ -64,6 +66,8 @@
 
     --blue-gradient-start: #b0e8ff;
     --blue-text: #317e9e;
+
+    --shadow-colour: #050508
 }
 
 :root[data-theme="dark"] {
@@ -85,6 +89,7 @@
 
     --heartrate-text-slider: #3b82f6;
     --secondary-cards-background: #101927;
+    --secondary-cards-border: #4e5b80;
 
     --graph-pressure: #35e87b;
     --graph-volume: #60a5fa;
@@ -109,6 +114,8 @@
 
     --blue-gradient-start: rgba(59, 130, 246, 0.25);
     --blue-text: #60a5fa;
+
+    --shadow-colour: #e0eaff
 }
 
 /* Applied briefly while switching themes so every themed surface fades together. */
@@ -148,6 +155,7 @@ button {
 
     cursor: pointer;
     font-weight: bolder;
+    user-select: none;
 
     background: var(--cards-background);
     color: var(--body-texts);
