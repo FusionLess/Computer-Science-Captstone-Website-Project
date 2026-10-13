@@ -17,7 +17,7 @@ import HeartController from './HeartController'
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
     frontal: [-193, 0, -230],
-    shortAxis: [0, 300, 0],
+    shortAxis: [-1.93, 300, -2.3],
     sagittal: [-230, 0 , 193],
 
     topDown: [0.1, 300, 0.02],
