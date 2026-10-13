@@ -13,7 +13,8 @@ export default function HeartController({
                                             handleFullView,
                                             handleResetView,
                                             handleVentricleView,
-                                            sliceEnabled
+                                            sliceEnabled,
+                                            onOpenSliceControls
                                         }) {
     const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
     const controlsId = useId()
@@ -152,7 +153,12 @@ export default function HeartController({
 
                 <button
                     type="button"
-                    onClick={handleFullView}
+                    onClick={() => {
+                        if (fullView) {
+                            onOpenSliceControls?.()
+                        }
+                        handleFullView()
+                    }}
                     className={`full-view-button${!sliceEnabled && fullView ? ' is-active' : ''}`}
                 >
                     {(fullView && !sliceEnabled) ?

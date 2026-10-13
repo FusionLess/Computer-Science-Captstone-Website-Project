@@ -17,6 +17,8 @@ function Settings({
                       setShowAdvancedSliceControls,
                       isDark,
                       setIsDark,
+                      sliceEnabled
+                      
                   }:
                   {
                       isOpen: boolean,
@@ -33,6 +35,7 @@ function Settings({
                       setShowAdvancedSliceControls: (v: boolean) => void,
                       isDark: boolean,
                       setIsDark: (value: boolean) => void,
+                      sliceEnabled: boolean
                   }) {
 
     return (
@@ -115,7 +118,8 @@ function Settings({
                 </div>
             )}
             <div className="settings_section">
-                    <h4>Advanced Slice Controls</h4>
+                <h4>Advanced Slice Controls</h4>
+                {sliceEnabled ? (
                     <div className="selector_section">
                         <button
                             className={showAdvancedSliceControls ? "active" : "inactive"}
@@ -131,7 +135,29 @@ function Settings({
                             Off
                         </button>
                     </div>
-                </div>
+                ) : (
+                    <div className="slice-disabled-message">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+
+                        <span>Turn on Slice to enable Advanced Slice Controls.</span>
+                    </div>
+                )}
+            </div>
+                
             <div className="theme_selector">
                 <button
                     onClick={() => setIsDark(!isDark)}

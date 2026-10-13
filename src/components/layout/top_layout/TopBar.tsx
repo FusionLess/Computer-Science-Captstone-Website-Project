@@ -6,7 +6,7 @@ import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
 import { getHeartPath } from "../../../utils/heartRoutes"
 
-function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
+function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, sliceEnabled = false}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void, sliceEnabled?: boolean}) {
     const { pathname } = useLocation()
     const isHeartPage =
         /^\/(basic|standard|advanced)\/(heart|heart-attack|heart-electricity|heart-failure)\/[^/]+$/.test(pathname) ||
@@ -102,6 +102,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setShowAdvancedSliceControls={setShowAdvancedSliceControls}
                     isDark={isDark}
                     setIsDark={setIsDark}
+                    sliceEnabled={sliceEnabled}
                 />}
             </div>
             {!isHeartPage && (
@@ -124,6 +125,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                         setShowAdvancedSliceControls={setShowAdvancedSliceControls}
                         isDark={isDark}
                         setIsDark={setIsDark}
+                        sliceEnabled={sliceEnabled}
                     />
                 )}
                 {!isHeartPage && <ThemeButton isDark={isDark} setIsDark={setIsDark} />}
@@ -138,8 +140,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, isDark, setIsDark}:
-                        { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void, isDark: boolean, setIsDark: (value: boolean) => void}) {
+function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, isDark, setIsDark, sliceEnabled}:
+                        { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void, isDark: boolean, setIsDark: (value: boolean) => void, sliceEnabled: boolean}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -175,6 +177,7 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 setShowAdvancedSliceControls={setShowAdvancedSliceControls}
                 isDark={isDark}
                 setIsDark={setIsDark}
+                sliceEnabled={sliceEnabled}
             />
         </div>
     )
