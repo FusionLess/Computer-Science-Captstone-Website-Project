@@ -8,27 +8,43 @@ import { HeartParts } from "../../data/HeartParts"
 const NUM_FRAMES = HEART_FRAME_COUNT
 const ES_FRAME = 25
 // All frames are loaded; only the active frame is displayed.
-function SingleFrame({ url, frameIndex, framesRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
-  const { scene } = useGLTF(url)
+function SingleFrame({ url, vesselUrl, frameIndex, framesRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
+  const [{ scene }, { scene: vesselScene }] = useGLTF([url, vesselUrl])
   const model = useMemo(() => {
-    const clone = cloneHeartScene(scene)
-    clone.visible = false
-    return clone
-  }, [scene])
+    const heart = cloneHeartScene(scene)
+    const vessels = cloneHeartScene(vesselScene)
+    vessels.traverse((child) => {
+      if (!child.isMesh) return
+      const isVein = child.name.toLowerCase().includes('vein') || child.name === 'mesh1'
+      // Vessel exports reuse the heart's mesh names; keep anatomical picking separate.
+      child.name = isVein ? 'coronaryVeins' : 'coronaryArteries'
+      child.userData.isCoronaryVessel = true
+      child.raycast = () => {}
+    })
+    const group = new THREE.Group()
+    group.add(heart, vessels)
+    group.visible = false
+    return group
+  }, [scene, vesselScene])
 
   useEffect(() => {
     model.traverse((child) => {
       if (!child.isMesh || child.name === 'stencilHelper') return
       const muscle = isMuscle(child)
-      child.renderOrder = muscle ? 12 : 13
+      const vessel = child.userData.isCoronaryVessel
+      child.renderOrder = vessel ? 14 : muscle ? 12 : 13
       materialsOf(child).forEach((material) => {
         material.side = THREE.DoubleSide
         material.flatShading = false
         material.transparent = false
         material.depthWrite = true
-        material.polygonOffset = true
+        material.polygonOffset = !vessel
         material.polygonOffsetFactor = muscle ? -1 : 1
         material.polygonOffsetUnits = muscle ? -1 : 1
+        if (vessel) {
+          material.roughness = 0.35
+          material.metalness = 0.05
+        }
         material.needsUpdate = true
       })
     })
@@ -45,7 +61,9 @@ function SingleFrame({ url, frameIndex, framesRef, showEpi, ventricleOnly, clipP
     model.traverse((child) => {
       if (!child.isMesh || child.name === 'stencilHelper') return
       const name = child.name
-      child.visible = isMuscle(child)
+      child.visible = child.userData.isCoronaryVessel
+        ? showEpi && !ventricleOnly
+        : isMuscle(child)
         ? showEpi
         : !ventricleOnly || name === 'mesh1' || name === 'mesh4'
     })
@@ -143,7 +161,13 @@ export function HeartModel({
   onSelect,
   ...props
 }) {
-  const framePath = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => `/${frameFolder}/frame_${(i+56) % NUM_FRAMES}.glb`), [frameFolder])
+  const framePaths = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => {
+    const frame = (i + 56) % NUM_FRAMES
+    return {
+      heart: `/${frameFolder}/frame_${frame}.glb`,
+      vessels: `/${frameFolder}/vessels_${frame}.glb`,
+    }
+  }), [frameFolder])
   const framesRef = useRef([])
   const animElapsed = useRef(0)
   const totalElapsed = useRef(0)
@@ -216,10 +240,11 @@ export function HeartModel({
 
   return (
     <group {...props}>
-      {framePath.map((path, idx) => (
+      {framePaths.map((path, idx) => (
         <SingleFrame
-          key={path}
-          url={path}
+          key={path.heart}
+          url={path.heart}
+          vesselUrl={path.vessels}
           frameIndex={idx}
           framesRef={framesRef}
           showEpi={showEpi}
