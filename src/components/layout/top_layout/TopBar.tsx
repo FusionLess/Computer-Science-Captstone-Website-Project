@@ -6,7 +6,7 @@ import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
 import { getHeartPath } from "../../../utils/heartRoutes"
 
-function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}: { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
+function TopBar({showVeins, setShowVeins, showArteries, setShowArteries, graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls}: { showVeins?: boolean, setShowVeins?: (value: boolean) => void, showArteries?: boolean, setShowArteries?: (value: boolean) => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void}) {
     const { pathname } = useLocation()
     const isHeartPage =
         /^\/(basic|standard|advanced)\/(heart|heart-attack|heart-electricity|heart-failure)\/[^/]+$/.test(pathname) ||
@@ -120,6 +120,10 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     setShowDescriptions={setShowDescriptions}
                     showAdvancedSliceControls={showAdvancedSliceControls}
                     setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                    showVeins={showVeins}
+                    setShowVeins={setShowVeins}
+                    showArteries={showArteries}
+                    setShowArteries={setShowArteries}
                     isDark={isDark}
                     setIsDark={setIsDark}
                 />}
@@ -142,6 +146,10 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                         setShowDescriptions={setShowDescriptions}
                         showAdvancedSliceControls={showAdvancedSliceControls}
                         setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                        showVeins={showVeins}
+                        setShowVeins={setShowVeins}
+                        showArteries={showArteries}
+                        setShowArteries={setShowArteries}
                         isDark={isDark}
                         setIsDark={setIsDark}
                     />
@@ -158,8 +166,8 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     )
 }
 
-function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, isDark, setIsDark}:
-                        { graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void, isDark: boolean, setIsDark: (value: boolean) => void}) {
+function SettingsButton({showVeins, setShowVeins, showArteries, setShowArteries, setGraphActive, graphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, isDark, setIsDark}:
+                        { showVeins?: boolean, setShowVeins?: (value: boolean) => void, showArteries?: boolean, setShowArteries?: (value: boolean) => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void, isDark: boolean, setIsDark: (value: boolean) => void}) {
     const [isOpen, setOpen] = useState(false)
 
     return (
@@ -193,6 +201,10 @@ function SettingsButton({setGraphActive, graphActive, glowActive, setGlowActive,
                 setShowDescriptions={setShowDescriptions}
                 showAdvancedSliceControls={showAdvancedSliceControls}
                 setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                showVeins={showVeins}
+                setShowVeins={setShowVeins}
+                showArteries={showArteries}
+                setShowArteries={setShowArteries}
                 isDark={isDark}
                 setIsDark={setIsDark}
             />
