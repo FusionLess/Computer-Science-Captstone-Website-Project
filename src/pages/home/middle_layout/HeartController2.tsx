@@ -18,7 +18,7 @@ import SliceControls from "../../../components/hearts/SliceController.jsx"
 import type { Complexity } from "../../../components/types/complexities.ts";
 import { useNavigate } from "react-router"
 import { getComparePath, getHeartPath } from "../../../utils/heartRoutes"
-export default function HeartController2({ compareState, setSelectedPart, complexity,showAdvancedSliceControls}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean}) {
+export default function HeartController2({ compareState, setSelectedPart, complexity,showAdvancedSliceControls, showVeins, showArteries}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean, showVeins: boolean, showArteries: boolean}) {
 
     const {
         selection1,
@@ -214,6 +214,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
             <div className="middle-panel-viewers">
 
                 <HeartPanel
+                    showVeins={showVeins}
+                    showArteries={showArteries}
                     active={selection1}
                     setActive={chooseSelection1}
                     syncState={syncState}
@@ -254,6 +256,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 
                 {isComparing && (
                     <HeartPanel
+                        showVeins={showVeins}
+                        showArteries={showArteries}
                         active={selection2}
                         setActive={chooseSelection2}
                         syncState={{ ...syncState, index: 1 }}
@@ -348,6 +352,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 }
 
 function HeartPanel({
+                        showVeins,
+                        showArteries,
                         active,
                         setActive,
                         syncState,
@@ -380,6 +386,8 @@ function HeartPanel({
                         onNavigate
                     }: {
     active: HeartState,
+    showVeins: boolean,
+    showArteries: boolean,
     setActive: (v: HeartState) => void,
     syncState: SyncState,
     setSelectedPart: (part: string | null) => void,
@@ -425,6 +433,8 @@ function HeartPanel({
                     compareSide={compareSide} onNavigate={onNavigate}/>
             <div className="heart_viewer">
                 <HeartViewer
+                    showVeins={showVeins}
+                    showArteries={showArteries}
                     frameFolder={FRAMES[active.option]}
                     setSelectedPart={setSelectedPart}
                     title={HEART_STATE_TITLES[active.option]}

@@ -11,6 +11,7 @@
     border-radius: 30px;
     padding: 20px;
     box-sizing: border-box;
+    overflow-y: auto;
 
     transform: translateX(120%);
     transition: transform 0.3s ease;

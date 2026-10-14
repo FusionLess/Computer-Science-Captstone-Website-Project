@@ -20,6 +20,8 @@ export default function HomePage() {
 
     const [graphActive, setGraphActive] = useState<boolean>(true)
     const [glowActive, setGlowActive] = useState(true)
+    const [showVeins, setShowVeins] = useState(true)
+    const [showArteries, setShowArteries] = useState(true)
 
     const [isComparing, setIsComparing] = useState(false)
 
@@ -115,6 +117,10 @@ export default function HomePage() {
     return (
         <main className="app">
             <TopBar
+                showVeins={showVeins}
+                setShowVeins={setShowVeins}
+                showArteries={showArteries}
+                setShowArteries={setShowArteries}
                 graphActive={graphActive}
                 setGraphActive={setGraphActive}
                 glowActive={glowActive}
@@ -128,6 +134,8 @@ export default function HomePage() {
 
             />
             <Content active={active} 
+                showVeins={showVeins}
+                showArteries={showArteries}
                 setActive={setActive}
                 compareState={compareState}
                 complexity={complexity}

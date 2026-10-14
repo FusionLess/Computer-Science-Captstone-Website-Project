@@ -15,6 +15,10 @@ function Settings({
                       setShowDescriptions,
                       showAdvancedSliceControls,
                       setShowAdvancedSliceControls,
+                      showVeins,
+                      setShowVeins,
+                      showArteries,
+                      setShowArteries,
                       isDark,
                       setIsDark,
                   }:
@@ -31,6 +35,10 @@ function Settings({
                       setShowDescriptions?: (value: boolean) => void,
                       showAdvancedSliceControls: boolean,
                       setShowAdvancedSliceControls: (v: boolean) => void,
+                      showVeins?: boolean,
+                      setShowVeins?: (value: boolean) => void,
+                      showArteries?: boolean,
+                      setShowArteries?: (value: boolean) => void,
                       isDark: boolean,
                       setIsDark: (value: boolean) => void,
                   }) {
@@ -153,6 +161,36 @@ function Settings({
                             onClick={() => setShowDescriptions(false)}
                             aria-pressed={!showDescriptions}
                         >
+                            Off
+                        </button>
+                    </div>
+                </div>
+            )}
+            {typeof showVeins === "boolean" && setShowVeins && (
+                <div className="settings_section">
+                    <h4>Show Coronary Veins</h4>
+                    <div className="selector_section">
+                        <button className={showVeins ? "active" : "inactive"}
+                            onClick={() => setShowVeins(true)} aria-pressed={showVeins}>
+                            On
+                        </button>
+                        <button className={!showVeins ? "active" : "inactive"}
+                            onClick={() => setShowVeins(false)} aria-pressed={!showVeins}>
+                            Off
+                        </button>
+                    </div>
+                </div>
+            )}
+            {typeof showArteries === "boolean" && setShowArteries && (
+                <div className="settings_section">
+                    <h4>Show Coronary Arteries</h4>
+                    <div className="selector_section">
+                        <button className={showArteries ? "active" : "inactive"}
+                            onClick={() => setShowArteries(true)} aria-pressed={showArteries}>
+                            On
+                        </button>
+                        <button className={!showArteries ? "active" : "inactive"}
+                            onClick={() => setShowArteries(false)} aria-pressed={!showArteries}>
                             Off
                         </button>
                     </div>

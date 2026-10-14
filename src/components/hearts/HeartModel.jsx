@@ -8,7 +8,7 @@ import { HeartParts } from "../../data/HeartParts"
 const NUM_FRAMES = HEART_FRAME_COUNT
 const ES_FRAME = 25
 // All frames are loaded; only the active frame is displayed.
-function SingleFrame({ url, vesselUrl, frameIndex, framesRef, pressRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
+function SingleFrame({ url, vesselUrl, frameIndex, framesRef, pressRef, showEpi, showVeins, showArteries, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
   const [{ scene }, { scene: vesselScene }] = useGLTF([url, vesselUrl])
   const model = useMemo(() => {
     const heart = cloneHeartScene(scene)
@@ -61,13 +61,17 @@ function SingleFrame({ url, vesselUrl, frameIndex, framesRef, pressRef, showEpi,
     model.traverse((child) => {
       if (!child.isMesh || child.name === 'stencilHelper') return
       const name = child.name
-      child.visible = child.userData.isCoronaryVessel
-        ? showEpi && !ventricleOnly
-        : isMuscle(child)
-        ? showEpi
-        : !ventricleOnly || name === 'mesh1' || name === 'mesh4'
+      if (child.userData.isCoronaryVessel) {
+        const showVessel = name === 'coronaryVeins' ? showVeins : showArteries
+        child.visible = showVessel && showEpi && !ventricleOnly
+      } else if (isMuscle(child)) {
+        child.visible = showEpi
+      } else {
+        const allowedByView = !ventricleOnly || name === 'mesh1' || name === 'mesh4'
+        child.visible = allowedByView
+      }
     })
-  }, [model, showEpi, ventricleOnly])
+  }, [model, showEpi, ventricleOnly, showVeins, showArteries])
 
   useEffect(() => {
     if (!clipPlane || !showEpi) return
@@ -166,6 +170,8 @@ export function HeartModel({
   frameFolder = "frames",
   bpm = 60,
   showEpi = true,
+  showVeins = true,
+  showArteries = true,
   ventricleOnly = false,
   clipPlane = null,
   isPaused = false,
@@ -276,6 +282,8 @@ export function HeartModel({
           framesRef={framesRef}
           pressRef={pressRef}
           showEpi={showEpi}
+          showVeins={showVeins}
+          showArteries={showArteries}
           ventricleOnly={ventricleOnly}
           clipPlane={clipPlane}
           capColor={capColor}
