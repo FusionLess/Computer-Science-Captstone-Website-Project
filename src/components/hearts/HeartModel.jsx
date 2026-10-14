@@ -184,7 +184,7 @@ export function HeartModel({
   ...props
 }) {
   const framePaths = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => {
-    const frame = (i + 56) % NUM_FRAMES
+    const frame = (i + 50) % NUM_FRAMES
     return {
       heart: `/${frameFolder}/frame_${frame}.glb`,
       vessels: `/${frameFolder}/vessels_${frame}.glb`,
