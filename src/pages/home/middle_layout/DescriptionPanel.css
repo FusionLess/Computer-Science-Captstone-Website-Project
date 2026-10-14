@@ -50,21 +50,11 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    scrollbar-width: none;
+    scrollbar-gutter: stable;
 }
 
 .right_scroll > * {
     flex-shrink: 0;
-}
-
-.right_scroll::-webkit-scrollbar {
-    display: none;
-}
-
-@media (width >= 800px) {
-    .right_scroll.has_more_below {
-        mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent);
-    }
 }
 
 .right_content.closed {
@@ -214,6 +204,7 @@
     .right_scroll {
         flex: none;
         overflow: visible;
+        scrollbar-gutter: auto;
         gap: 12px;
     }
 

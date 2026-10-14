@@ -16,8 +16,9 @@ import HeartController from './HeartController'
 
 // const INITIAL_CAMERA_POS = [-225, -20, -200]
 const CAMERA_POSITIONS = {
-    frontal: [-225, -20, -200],
-    shortAxis: [-180, 150, -220],
+    frontal: [-193, 0, -230],
+    shortAxis: [-1.93, 300, -2.3],
+    sagittal: [-230, 0 , 193],
 
     topDown: [0.1, 300, 0.02],
     tiltedShortAxis: [280, 150, 56],
@@ -62,42 +63,42 @@ export default function HeartViewer({
     cameraView,
     cameraViewResetTrigger = 0,
     externalClipPlane,
-    animationPhase
+    animationPhase,
 }) {
-    const defaultPreset =
-        frameFolder === "compensated_heart" ||
-            frameFolder === "decompensated_heart"
-            ? "frontal"
-            : "frontal"
+    const defaultPreset = "frontal"
 
     const viewPreset = cameraView ?? defaultPreset
     const initialCameraPos = CAMERA_POSITIONS[viewPreset] ?? CAMERA_POSITIONS[defaultPreset]
-    const isDefaultShortAxis = defaultPreset === "shortAxis"
     const [resetTrigger, setResetTrigger] = useState(0)
+    const [cameraPreset, setCameraPreset] = useState(defaultPreset)
+
+    const effectiveCameraPreset = cameraView
+    ?? (useSharedControls
+        ? sharedActivePreset ?? defaultPreset
+        : cameraPreset)
     const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
     const { bpm, isPaused, setIsPaused, beatInterval } = useHeartMonitor()
 
-
     // sets the preset states you can slice the heart
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
     const [localSliceEnabled, setLocalSliceEnabled] =
-        useState(isDefaultShortAxis)
+        useState(false)
 
     const [localShowPlaneGuide, setLocalShowPlaneGuide] =
         useState(false)
 
-    const [localPitch, setLocalPitch] =
-        useState(isDefaultShortAxis ? -90 : 0)
-
-    const [localYaw, setLocalYaw] =
-        useState(isDefaultShortAxis ? 0 : 40)
-
-    const [localSliceDistance, setLocalSliceDistance] =
-        useState(isDefaultShortAxis ? -18 : 0)
+    const [localPitch, setLocalPitch] = useState(0)
+    const [localYaw, setLocalYaw] = useState(40)
+    const [localSliceDistance, setLocalSliceDistance] = useState(0)
 
     const [localActivePreset, setLocalActivePreset] =
         useState(defaultPreset)
+    const setSliceOrientation = (pitch, yaw, depth) => {
+        setPitch(pitch)
+        setYaw(yaw)
+        setSliceDistance(depth)
+    }
     const sliceEnabled = useSharedControls
         ? sharedSliceEnabled
         : localSliceEnabled
@@ -182,25 +183,14 @@ export default function HeartViewer({
         : setLocalFullView
 
     useEffect(() => {
-        const shortAxis = defaultPreset === "shortAxis"
-
         setLocalFullView(true)
-
+        setVentricleOnly(false)
 
         setSliceEnabled(false)
         setShowPlaneGuide(false)
 
-        setLocalActivePreset(defaultPreset)
-
-        if (shortAxis) {
-            setLocalPitch(-90)
-            setLocalYaw(0)
-            setLocalSliceDistance(-18)
-        } else {
-            setLocalPitch(0)
-            setLocalYaw(40)
-            setLocalSliceDistance(0)
-        }
+        setLocalActivePreset("frontal")
+        setCameraPreset("frontal")
 
         setResetTrigger(prev => prev + 1)
     }, [frameFolder, complexity])
@@ -233,82 +223,37 @@ export default function HeartViewer({
             setSliceEnabled(false)
             setShowPlaneGuide(false)
             setActivePreset(defaultPreset)
-
-        } else {
-            const shortAxis = defaultPreset === "shortAxis"
-            setFullView(false)
-
-            setSliceEnabled(true)
-            setShowPlaneGuide(true)
-            setActivePreset(defaultPreset)
-
-            if (shortAxis) {
-                setPitch(-90)
-                setYaw(0)
-                setSliceDistance(-18)
-            } else {
-                setPitch(0)
-                setYaw(40)
-                setSliceDistance(0)
-            }
-        }
-    }
-    useEffect(() => {
-        if (!useSharedControls) return
-
-        if (fullView) {
-            // Enter Full View
-            setFullView(true)
-            setVentricleOnly(false)
-            setShowEpi(true)
-
-            setSliceEnabled(false)
-            setShowPlaneGuide(false)
-            setActivePreset(defaultPreset)
-        } else {
-            // Return to this heart's predetermined view
-            const shortAxis = defaultPreset === "shortAxis"
-
-            setSliceEnabled(true)
-            setShowPlaneGuide(true)
-            setActivePreset(defaultPreset)
-
-            if (shortAxis) {
-                setPitch(-90)
-                setYaw(0)
-                setSliceDistance(-18)
-            } else {
-                setPitch(0)
-                setYaw(40)
-                setSliceDistance(0)
-            }
-        }
-    }, [fullView, useSharedControls])
-
-    const handleResetView = () => {
-        const shortAxis = defaultPreset === "shortAxis"
-        setFullView(true)
-        setVentricleOnly(false)
-        setShowEpi(true)
-        // Restore predetermined slicing
-        // if (complexity === "basic") {
-        //     setSliceEnabled(false)
-        //     setShowPlaneGuide(false)
-        // } else {
-        setSliceEnabled(false)
-        setShowPlaneGuide(false)
-
-        setActivePreset(defaultPreset)
-
-        if (shortAxis) {
-            setPitch(-90)
-            setYaw(0)
-            setSliceDistance(-18)
-        } else {
             setPitch(0)
             setYaw(40)
             setSliceDistance(0)
+
+            setCameraPreset(defaultPreset)
+            setResetTrigger(prev => prev + 1)
+
+        } else {
+            setFullView(false)
+            setSliceEnabled(true)
+            setShowPlaneGuide(true)
+
+            setActivePreset(defaultPreset)
+            setSliceOrientation(0, 40, 0)
+
+            setCameraPreset(defaultPreset)
+            setResetTrigger(prev => prev + 1)
         }
+    }
+
+    const handleResetView = () => {
+        setFullView(true)
+        setVentricleOnly(false)
+        setShowEpi(true)
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
+
+        setActivePreset("frontal")
+        setSliceOrientation(0, 40, 0)
+        setCameraPreset("frontal")
+
         if (syncEnabled && setSharedResetTrigger) {
             setSharedResetTrigger((prev) => prev + 1)
         } else {
@@ -330,11 +275,15 @@ export default function HeartViewer({
     const handlePresetSelect = (presetKey, p, y) => {
         setFullView(false)
         setSliceEnabled(true)
+        setVentricleOnly(true)
         setShowPlaneGuide(true)
         setActivePreset(presetKey)
         setPitch(p)
         setYaw(y)
         setSliceDistance(presetDepths[presetKey])
+
+        setCameraPreset(presetKey)
+        setResetTrigger(prev => prev + 1)
     }
 
     const handleDepthSliderChange = (newDepth) => {
@@ -344,6 +293,21 @@ export default function HeartViewer({
                 ...prev,
                 [activePreset]: newDepth,
             }))
+        }
+    }
+
+    const handleSliceToggle = (enabled) => {
+        setSliceEnabled(enabled)
+
+        if (enabled) {
+            setFullView(false)
+            setVentricleOnly(true)
+
+            setActivePreset(defaultPreset)
+            setSliceOrientation(0, 40, 0)
+
+            setCameraPreset(defaultPreset)
+            setResetTrigger(prev => prev + 1)
         }
     }
     const [hoverInfo, setHoverInfo] = useState(null)
@@ -373,7 +337,7 @@ export default function HeartViewer({
         .trim()
 
     return (
-      
+
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
              {title && (
                 <h3 className="heart-viewer-title"
@@ -417,12 +381,12 @@ export default function HeartViewer({
                             clipPlane={clipPlane}
                             capStyleRef={capStyleRef}
                             isPaused={isPaused}
+                            beatInterval={beatInterval}
                             animationPhase={animationPhase}
                             rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                             onSelect={setSelectedPart}
                             onHover={setHoverInfo}
-                            
-                            beatInterval={beatInterval}
+
                         />
                     </Center>
                     {showEpi && (
@@ -450,14 +414,14 @@ export default function HeartViewer({
 
                 <CameraController
                     resetTrigger={resetTrigger + cameraViewResetTrigger}
-                    initialPos={initialCameraPos}
-                    preset={viewPreset}
+                    initialPos={CAMERA_POSITIONS[effectiveCameraPreset]}
+                    preset={effectiveCameraPreset}
                     syncEnabled={syncEnabled}
                     syncedCameraRef={syncedCameraRef}
                     index={index}
                 />
             </Canvas>
-            
+
             {/* Hover popup */}
             {hoverInfo && (
             <div
@@ -500,7 +464,7 @@ export default function HeartViewer({
                             sliceControlEnabled={sliceControlEnabled}
                             setSliceControlEnabled={setSliceControlEnabled}
                             sliceEnabled={sliceEnabled}
-                            setSliceEnabled={setSliceEnabled}
+                            setSliceEnabled={handleSliceToggle}
                             showPlaneGuide={showPlaneGuide}
                             setShowPlaneGuide={setShowPlaneGuide}
                             activePreset={activePreset}

@@ -1,6 +1,6 @@
-import type {HeartCategory, HeartOption, HeartState} from "../../types/states.ts";
+import type {HeartCategory, HeartOption, HeartState} from "../../../components/types/states.ts";
 import "./ConditionSelector.css"
-import type { Complexity } from "../../types/complexities.ts"
+import type { Complexity } from "../../../components/types/complexities.ts"
 import { getHeartPath, getComparePath } from "../../../utils/heartRoutes"
 import { useNavigate } from "react-router"
 

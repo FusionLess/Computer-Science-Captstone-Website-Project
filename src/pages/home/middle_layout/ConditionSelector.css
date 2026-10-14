@@ -210,8 +210,52 @@
         z-index: 90;
     }
 
-    .middle-panel:not(.sync) {
-        padding-top: 130px;
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) > .heart_panel {
+        position: relative;
+    }
+
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) > .heart_panel > .heart_buttons {
+        position: absolute;
+        top: 12px;
+        right: var(--side-margin);
+        z-index: 25;
+        width: auto;
+        height: auto;
+        align-items: flex-end;
+        gap: 4px;
+        background: transparent;
+        pointer-events: none;
+    }
+
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) .toggle_buttons,
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) .options_buttons {
+        flex: none;
+        width: max-content;
+        max-width: none;
+        margin: 0;
+        overflow: visible;
+        pointer-events: auto;
+    }
+
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) .toggle_buttons > button,
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) .options_buttons > button {
+        position: relative;
+        width: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        height: 36px;
+        padding: 0;
+        gap: 0;
+    }
+
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) .heart_button_label,
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) .heart_option_label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
     }
 
     .heart-viewer-title {

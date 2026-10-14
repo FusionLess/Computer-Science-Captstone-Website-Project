@@ -1,7 +1,7 @@
 import "./ConditionDes.css"
-import type { CompareState } from "../../types/compare.ts";
+import type { CompareState } from "../../../components/types/compare.ts";
 import { PAGE_DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
-import type { Complexity } from "../../types/complexities.ts";
+import type { Complexity } from "../../../components/types/complexities.ts";
 
 function LeftBox({compareState, complexity} :
                  {compareState: CompareState, complexity: Complexity}) {

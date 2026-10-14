@@ -95,7 +95,7 @@
         margin-top: var(--bar-height);
         flex-direction: column;
         overflow-y: auto;
-        padding: 32px;
+        padding: var(--side-margin);
         gap: 32px;
     }
 

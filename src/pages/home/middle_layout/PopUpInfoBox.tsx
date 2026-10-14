@@ -3,7 +3,7 @@ import type { MediaItem } from "../../../data/HeartDescriptions"
 import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { HeartParts } from "../../../data/HeartParts"
-import type { Complexity } from "../../types/complexities"
+import type { Complexity } from "../../../components/types/complexities"
 
 
 

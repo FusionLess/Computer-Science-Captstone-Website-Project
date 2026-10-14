@@ -1,6 +1,6 @@
 import "./TopBar.css"
 import Settings from "./Settings.tsx"
-import { useEffect, useRef, useState, type MouseEvent } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react"
 import { NavLink, useLocation, useNavigate } from "react-router"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
@@ -17,11 +17,31 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
     const { setIsPaused } = useHeartMonitor()
     const isNavigating = useRef(false)
     const hasAppliedTheme = useRef(false)
-    const [isDark, setIsDark] = useState(
-        () => localStorage.getItem("theme") === "dark"
+    const [themePreference, setThemePreference] = useState<"system" | "light" | "dark">(() => {
+        const saved = localStorage.getItem("theme-preference")
+        return saved === "light" || saved === "dark" ? saved : "system"
+    })
+    const [systemIsDark, setSystemIsDark] = useState(
+        () => window.matchMedia("(prefers-color-scheme: dark)").matches
     )
+    const isDark = themePreference === "system" ? systemIsDark : themePreference === "dark"
+    const setIsDark = (dark: boolean) => {
+        const preference = dark ? "dark" : "light"
+        localStorage.setItem("theme-preference", preference)
+        setThemePreference(preference)
+    }
 
     useEffect(() => {
+        const browserTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        const handleBrowserThemeChange = (event: MediaQueryListEvent) => {
+            setSystemIsDark(event.matches)
+        }
+
+        browserTheme.addEventListener("change", handleBrowserThemeChange)
+        return () => browserTheme.removeEventListener("change", handleBrowserThemeChange)
+    }, [])
+
+    useLayoutEffect(() => {
         const theme = isDark ? "dark" : "light"
         const root = document.documentElement
 
@@ -30,7 +50,6 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
         }
 
         root.dataset.theme = theme
-        localStorage.setItem("theme", theme)
         hasAppliedTheme.current = true
 
         const timeout = window.setTimeout(() => {
@@ -83,6 +102,7 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
             {isHeartPage && (
                 <div className="complexity-title">
                     <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
+                    <div id="mobile-compare-buttons" className="mobile-compare-buttons" />
                 </div>
             )}
             <div className="desktop_navigation">
@@ -103,12 +123,12 @@ function TopBar({graphActive, setGraphActive, glowActive, setGlowActive, complex
                     isDark={isDark}
                     setIsDark={setIsDark}
                 />}
+                {!isHeartPage && (
+                    <div className="desktop_theme">
+                        <ThemeButton isDark={isDark} setIsDark={setIsDark} />
+                    </div>
+                )}
             </div>
-            {!isHeartPage && (
-                <div className="desktop_theme">
-                    <ThemeButton isDark={isDark} setIsDark={setIsDark} />
-                </div>
-            )}
             <div className="mobile_settings">
                 {isHeartPage && (
                     <SettingsButton

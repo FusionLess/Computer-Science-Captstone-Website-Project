@@ -1,0 +1,310 @@
+.middle-panel {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+
+.middle-panel-viewers {
+    display: flex;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+
+.middle-panel-viewers > .heart_panel {
+    min-width: 0;
+}
+
+.heart_panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    container-type: inline-size;
+    container-name: heart-panel;
+}
+
+.heart_viewer {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    position: relative;
+
+    padding: 0;
+    background: var(--home-background);
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.middle-panel button.compare-button {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background-color 180ms ease;
+}
+
+.middle-panel button.compare-button:hover {
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.middle-panel button.compare-button:active {
+    transform: translateX(50%) scale(0.97);
+}
+
+.middle-panel button.compare-button.not-comparing:hover {
+    transform: scale(1.05);
+}
+
+.middle-panel button.compare-button.not-comparing:active {
+    transform: scale(0.97);
+}
+
+.middle-panel .sync {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            background-color 180ms ease;
+}
+
+.middle-panel .sync:hover {
+    transform: translateX(50%) scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.middle-panel .sync:active {
+    transform: translateX(50%) scale(0.97);
+}
+
+button.compare-button {
+    position: absolute;
+    top: 10px;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 20;
+
+    width: 140px;
+    height: 44px;
+    margin: 0;
+
+    background: var(--cards-background);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+button.compare-button.not-comparing {
+    position: fixed;
+    right: var(--side-margin);
+    top: calc( var(--bar-height) + 10px);
+    transform: none;
+
+    z-index: 50;
+}
+
+.sync {
+    position: absolute;
+    top: 64px;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 10;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    height: 32px;
+    min-height: 0;
+    padding: 0 12px;
+
+    font-size: 12px;
+    line-height: 1;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--primary-headings) 30%, transparent);
+}
+
+.sync svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.middle-panel-viewers > .heart_panel ~ .heart_panel {
+    position: relative;
+}
+
+.middle-panel-viewers > .heart_panel ~ .heart_panel::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 130px;
+    bottom: 16px;
+    width: 1px;
+    background: var(--divider);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.viewer-controls {
+    position: absolute;
+
+    left: var(--side-margin);
+    bottom: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    z-index: 20;
+}
+
+.shared-heart-controller {
+    position: absolute;
+    
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    
+        z-index: 20;
+}
+
+.shared-heart-controller .heart-controller {
+    position: static;
+    transform: none;
+}
+
+@media (width < 800px) {
+    /* The fixed title row contains the phone Compare and Sync buttons. */
+    .middle-panel > .compare-button,
+    .middle-panel > .sync {
+        display: none;
+    }
+
+    .mobile-compare-buttons button,
+    .mobile-compare-buttons button.compare-button.not-comparing {
+        position: static;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        width: auto;
+        height: 28px;
+        min-height: 28px;
+        margin: 0;
+        padding: 0 9px;
+        transform: none;
+        border: 0;
+        border-radius: 16px;
+        background: var(--cards-background);
+        color: var(--body-texts);
+        box-shadow: 0 1px 4px rgb(0 0 0 / 14%);
+        font-size: 11px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .mobile-compare-buttons button.compare-button.not-comparing {
+        z-index: 20;
+    }
+
+    .mobile-compare-buttons .compare-button:not(.not-comparing),
+    .mobile-compare-buttons .sync.is-active {
+        background: var(--selected-condition-background);
+        color: var(--selected-suboptions);
+    }
+
+    .mobile-compare-buttons .sync svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .mobile-compare-buttons .sync {
+        order: -1;
+    }
+
+    .middle-panel {
+        flex: none;
+        min-height: 0;
+    }
+
+    /* The single-view selector is fixed below the title bar. */
+    .middle-panel:not(:has(.heart_panel + .heart_panel)) {
+        padding-top: 54px;
+    }
+
+    .middle-panel-viewers {
+        flex: none;
+        flex-direction: column;
+    }
+
+    .heart_panel {
+        flex: none;
+        height: clamp(430px, 58dvh, 520px);
+        min-height: 0;
+    }
+
+    .middle-panel-viewers:has(> .heart_panel + .heart_panel) > .heart_panel {
+        height: clamp(240px, 37dvh, 330px);
+    }
+
+    .middle-panel-viewers > .heart_panel + .heart_panel::before {
+        top: 0;
+        right: var(--side-margin);
+        bottom: auto;
+        left: var(--side-margin);
+        width: auto;
+        height: 1px;
+        background: var(--divider);
+        z-index: 2;
+    }
+
+    .heart_viewer {
+        width: calc(100% - 2 * var(--side-margin));
+        margin-inline: auto;
+        overflow: visible;
+    }
+
+    .heart_viewer > div {
+        overflow: visible !important;
+    }
+
+    .viewer-controls {
+        left: 0;
+        pointer-events: none;
+    }
+
+    .viewer-controls > .controller {
+        pointer-events: auto;
+    }
+
+    .shared-heart-controller {
+        left: var(--side-margin);
+        bottom: 10px;
+        transform: none;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .shared-heart-controller button svg {
+        width: 20px;
+        height: 20px;
+    }
+}

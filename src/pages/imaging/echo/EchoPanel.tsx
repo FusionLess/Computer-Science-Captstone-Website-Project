@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as THREE from 'three';
-import HeartViewer from '../../hearts/HeartViewer';
+import HeartViewer from '../../../components/hearts/HeartViewer';
 import EchoViewer, { type EchoView } from './EchoViewer';
 import './EchoPanel.css';
+import { HEART_FRAME_COUNT } from '../../../components/hearts/heartRendering';
 
 const totalFrames = 30;
+const modelFrameOffset = 25;
 
 export default function EchoPanel() {
   const [activeView, setActiveView] = useState<EchoView>('4CH');
@@ -38,7 +40,7 @@ export default function EchoPanel() {
             showControls={false}
             cameraView="frontal"
             externalClipPlane={externalClipPlane}
-            animationPhase={frame / totalFrames}
+            animationPhase={(frame / totalFrames + modelFrameOffset / HEART_FRAME_COUNT) % 1}
           />
         </div>
         <div className="echo-panel-viewer echo-viewer">

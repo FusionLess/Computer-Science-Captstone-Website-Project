@@ -582,14 +582,4 @@
     .graph-card.back .mobile_graph_switch {
         background: var(--secondary-cards-background);
     }
-
-    /* One viewer or Selection 2 moves the graph when descriptions are hidden. */
-    .content.descriptions-hidden:has(.slice-controller:not(.is-collapsed)) + .graph-panel {
-        transform: translateY(120px);
-    }
-
-    .content.descriptions-hidden:has(.slice-controller:not(.is-collapsed)):has(.slice-adjustments) + .graph-panel {
-        transform: translateY(170px);
-    }
-
 }

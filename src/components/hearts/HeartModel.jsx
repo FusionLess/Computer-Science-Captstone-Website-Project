@@ -10,6 +10,8 @@ const ES_FRAME = 25
 // All frames are loaded; only the active frame is displayed.
 function SingleFrame({ url, vesselUrl, frameIndex, framesRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
   const [{ scene }, { scene: vesselScene }] = useGLTF([url, vesselUrl])
+function SingleFrame({ url, frameIndex, framesRef, pressRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
+  const { scene } = useGLTF(url)
   const model = useMemo(() => {
     const heart = cloneHeartScene(scene)
     const vessels = cloneHeartScene(vesselScene)
@@ -124,6 +126,7 @@ function SingleFrame({ url, vesselUrl, frameIndex, framesRef, showEpi, ventricle
   return (
     <primitive object={model}
       onPointerMove={(event) => {
+       if (pressRef.current || event.pointerType !== 'mouse') return
        const mesh = getSelectedMesh(event)
        event.stopPropagation()
 
@@ -138,10 +141,25 @@ function SingleFrame({ url, vesselUrl, frameIndex, framesRef, showEpi, ventricle
         onHover?.(null)
       }}
       onPointerDown={(event) => {
-       const mesh = getSelectedMesh(event)
        event.stopPropagation()
-
-       onSelect?.(mesh.name)
+       if (event.button !== 0) return
+       pressRef.current = {
+         pointerId: event.pointerId,
+         x: event.clientX,
+         y: event.clientY,
+       }
+       onHover?.(null)
+      }}
+      onPointerUp={(event) => {
+       const press = pressRef.current
+       pressRef.current = null
+       if (!press || press.pointerId !== event.pointerId) return
+       event.stopPropagation()
+       if (Math.hypot(event.clientX - press.x, event.clientY - press.y) > 8) return
+       onSelect?.(getSelectedMesh(event).name)
+      }}
+      onPointerCancel={() => {
+       pressRef.current = null
       }}
     />
   )
@@ -169,9 +187,20 @@ export function HeartModel({
     }
   }), [frameFolder])
   const framesRef = useRef([])
+  const pressRef = useRef(null)
   const animElapsed = useRef(0)
   const totalElapsed = useRef(0)
   const currentFrameRef = useRef(0)
+
+  useEffect(() => {
+    const clearPress = () => { pressRef.current = null }
+    window.addEventListener('pointerup', clearPress)
+    window.addEventListener('pointercancel', clearPress)
+    return () => {
+      window.removeEventListener('pointerup', clearPress)
+      window.removeEventListener('pointercancel', clearPress)
+    }
+  }, [])
 
   const safeBpm = Number(bpm) || 60
   const displayFrame = (targetFrame) => {
@@ -247,6 +276,7 @@ export function HeartModel({
           vesselUrl={path.vessels}
           frameIndex={idx}
           framesRef={framesRef}
+          pressRef={pressRef}
           showEpi={showEpi}
           ventricleOnly={ventricleOnly}
           clipPlane={clipPlane}

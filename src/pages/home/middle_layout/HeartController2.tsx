@@ -1,20 +1,21 @@
 import "./HeartController2.css"
 
-import { HEART_STATE_TITLES } from "../../types/states.ts";
-import type { HeartState } from "../../types/states.ts";
-import type { CompareState } from "../../types/compare.ts"
-import type { SyncedCamera, SyncState } from "../../types/sync.ts";
+import { HEART_STATE_TITLES } from "../../../components/types/states.ts";
+import type { HeartState } from "../../../components/types/states.ts";
+import type { CompareState } from "../../../components/types/compare.ts"
+import type { SyncedCamera, SyncState } from "../../../components/types/sync.ts";
 
 import { FRAMES } from "../../../data/frames.ts"
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
-import HeartViewer from "../../hearts/HeartViewer.jsx"
+import HeartViewer from "../../../components/hearts/HeartViewer.jsx"
 import ConditionButtons from "./ConditionSelector.tsx";
 
-import HeartController from "../../hearts/HeartController.jsx"
-import { useHeartMonitor } from "../../context/HeartMonitorContext"
-import SliceControls from "../../hearts/SliceController.jsx"
-import type { Complexity } from "../../types/complexities.ts";
+import HeartController from "../../../components/hearts/HeartController.jsx"
+import { useHeartMonitor } from "../../../components/context/HeartMonitorContext"
+import SliceControls from "../../../components/hearts/SliceController.jsx"
+import type { Complexity } from "../../../components/types/complexities.ts";
 import { useNavigate } from "react-router"
 import { getComparePath, getHeartPath } from "../../../utils/heartRoutes"
 export default function HeartController2({ compareState, setSelectedPart, complexity,showAdvancedSliceControls}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean}) {
@@ -52,23 +53,25 @@ export default function HeartController2({ compareState, setSelectedPart, comple
     const showControls = complexity !== "basic"
 
     const [syncEnabled, setSyncEnabled] = useState(false)
+    const [compareButtonsTarget, setCompareButtonsTarget] = useState<HTMLElement | null>(null)
+    useEffect(() => {
+        setCompareButtonsTarget(document.getElementById("mobile-compare-buttons"))
+    }, [])
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
     const [sharedResetTrigger, setSharedResetTrigger] = useState(0)
 
     const [sharedShowEpi, setSharedShowEpi] = useState(true)
     const [sharedVentricleOnly, setSharedVentricleOnly] = useState(false)
-    const [sharedFullView, setSharedFullView] = useState(true)
+    const [sharedFullView, setSharedFullView] = useState(false)
 
     const useSharedControls = isComparing && syncEnabled
-    const [sharedSliceEnabled, setSharedSliceEnabled] = useState(true)
-    const [sharedShowPlaneGuide, setSharedShowPlaneGuide] = useState(true)
+    const [sharedSliceEnabled, setSharedSliceEnabled] = useState(false)
+    const [sharedShowPlaneGuide, setSharedShowPlaneGuide] = useState(false)
 
-    const [sharedActivePreset, setSharedActivePreset] =
-        useState<string | null>("shortAxis")
-
-    const [sharedPitch, setSharedPitch] = useState(-90)
-    const [sharedYaw, setSharedYaw] = useState(0)
-    const [sharedSliceDistance, setSharedSliceDistance] = useState(-18)
+    const [sharedActivePreset, setSharedActivePreset] = useState<string | null>("frontal")
+    const [sharedPitch, setSharedPitch] = useState(0)
+    const [sharedYaw, setSharedYaw] = useState(40)
+    const [sharedSliceDistance, setSharedSliceDistance] = useState(0)
 
     
     const {
@@ -87,9 +90,16 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 
     const handleSharedReset = () => {
         setSharedShowEpi(true)
-        setSharedVentricleOnly(false)
+        setSharedVentricleOnly(true)
         setSharedFullView(false)
 
+        setSharedSliceEnabled(true)
+        setSharedShowPlaneGuide(true)
+
+        setSharedActivePreset("frontal")
+        setSharedPitch(0)
+        setSharedYaw(40)
+        setSharedSliceDistance(0)
         setSharedResetTrigger(prev => prev + 1)
     }
 
@@ -98,7 +108,21 @@ export default function HeartController2({ compareState, setSelectedPart, comple
     }
 
     const handleSharedFullView = () => {
-        setSharedFullView(prev => !prev)
+        const nextFullView = !sharedFullView
+
+        setSharedFullView(nextFullView)
+        setSharedVentricleOnly(!nextFullView)
+        setSharedShowEpi(true)
+
+        setSharedSliceEnabled(!nextFullView)
+        setSharedShowPlaneGuide(!nextFullView)
+
+        setSharedActivePreset("frontal")
+        setSharedPitch(0)
+        setSharedYaw(40)
+        setSharedSliceDistance(0)
+
+        setSharedResetTrigger(prev => prev + 1)
     }
     const handleSharedPresetSelect = (
         presetKey: string,
@@ -109,18 +133,13 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 
         setSharedSliceEnabled(true)
         setSharedShowPlaneGuide(true)
+        setSharedVentricleOnly(true)
 
         setSharedActivePreset(presetKey)
         setSharedPitch(pitch)
         setSharedYaw(yaw)
 
-        if (presetKey === "frontal") {
-            setSharedSliceDistance(0)
-        } else if (presetKey === "sagittal") {
-            setSharedSliceDistance(-3)
-        } else if (presetKey === "shortAxis") {
-            setSharedSliceDistance(-18)
-        }
+        setSharedSliceDistance(0)
         setSharedResetTrigger(prev => prev + 1)
     }
 
@@ -135,9 +154,25 @@ export default function HeartController2({ compareState, setSelectedPart, comple
         setSharedResetTrigger,
         index: 0
     }
+    const handleSharedSliceToggle = (enabled: boolean) => {
+        setSharedSliceEnabled(enabled)
+        setSharedShowPlaneGuide(enabled)
 
-    return (
-        <section className="middle-panel">
+        if (enabled) {
+            setSharedFullView(false)
+            setSharedVentricleOnly(true)
+
+            setSharedActivePreset("frontal")
+            setSharedPitch(0)
+            setSharedYaw(40)
+            setSharedSliceDistance(0)
+
+            setSharedResetTrigger(prev => prev + 1)
+        }
+    }
+
+    const compareButtons = (
+        <>
             <button
                 type="button"
                 className={`compare-button ${isComparing ? "" : "not-comparing"}`}
@@ -168,6 +203,13 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                     Sync
                 </button>
             }
+        </>
+    )
+
+    return (
+        <section className="middle-panel">
+            {compareButtons}
+            {compareButtonsTarget && createPortal(compareButtons, compareButtonsTarget)}
 
             <div className="middle-panel-viewers">
 
@@ -245,9 +287,9 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         complexity={complexity}
                         updateRoute={false}
                         showAdvancedSliceControls={showAdvancedSliceControls}
-                    otherHeart={selection1}
-                    compareSide="second"
-                    onNavigate={navigateWithPause}
+                        otherHeart={selection1}
+                        compareSide="second"
+                        onNavigate={navigateWithPause}
                     />
                     
                 )}
@@ -276,7 +318,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         index={0}
 
                         sliceEnabled={sharedSliceEnabled}
-                        setSliceEnabled={setSharedSliceEnabled}
+                        setSliceEnabled={handleSharedSliceToggle}
 
                         showPlaneGuide={sharedShowPlaneGuide}
                         setShowPlaneGuide={setSharedShowPlaneGuide}
@@ -367,7 +409,7 @@ function HeartPanel({
     otherHeart?: HeartState,
     compareSide?: "first" | "second",
     onNavigate?: (to: string) => void,
-    showControls?: boolean
+    showControls?: boolean,
 }) {
     const {
         syncEnabled,

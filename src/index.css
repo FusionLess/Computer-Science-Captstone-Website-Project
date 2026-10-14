@@ -4,6 +4,8 @@
 @import '@fontsource/roboto-slab/700.css';
 
 :root {
+    color-scheme: light;
+
     --bar-height: 65px;
     --graph-height: clamp(100px, 10vh, 120px);
     --left-panel-width: clamp(200px, 20vw, 300px);
@@ -19,10 +21,10 @@
 
     font-family: 'Inter', sans-serif;
 
-    --side-margin: 24px;
+    --side-margin: 28px;
     --mobile-width: 800px;
 
-    --mobile-complexity-title-height: 42px;
+    --mobile-complexity-title-height: 40px;
 
     --home-background: #F7FAFD;
     --cards-background: #ffffff;
