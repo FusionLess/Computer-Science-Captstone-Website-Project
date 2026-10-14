@@ -8,10 +8,8 @@ import { HeartParts } from "../../data/HeartParts"
 const NUM_FRAMES = HEART_FRAME_COUNT
 const ES_FRAME = 25
 // All frames are loaded; only the active frame is displayed.
-function SingleFrame({ url, vesselUrl, frameIndex, framesRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
+function SingleFrame({ url, vesselUrl, frameIndex, framesRef, pressRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
   const [{ scene }, { scene: vesselScene }] = useGLTF([url, vesselUrl])
-function SingleFrame({ url, frameIndex, framesRef, pressRef, showEpi, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
-  const { scene } = useGLTF(url)
   const model = useMemo(() => {
     const heart = cloneHeartScene(scene)
     const vessels = cloneHeartScene(vesselScene)
@@ -74,7 +72,7 @@ function SingleFrame({ url, frameIndex, framesRef, pressRef, showEpi, ventricleO
   useEffect(() => {
     if (!clipPlane || !showEpi) return
     return addStencilHelpers(model, clipPlane)
-  }, [model, clipPlane])
+  }, [model, clipPlane, showEpi])
 
   useEffect(() => {
     const planes = clipPlane ? [clipPlane] : []
