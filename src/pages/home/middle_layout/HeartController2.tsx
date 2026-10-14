@@ -6,7 +6,8 @@ import type { CompareState } from "../../../components/types/compare.ts"
 import type { SyncedCamera, SyncState } from "../../../components/types/sync.ts";
 
 import { FRAMES } from "../../../data/frames.ts"
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 import HeartViewer from "../../../components/hearts/HeartViewer.jsx"
 import ConditionButtons from "./ConditionSelector.tsx";
@@ -52,6 +53,10 @@ export default function HeartController2({ compareState, setSelectedPart, comple
     const showControls = complexity !== "basic"
 
     const [syncEnabled, setSyncEnabled] = useState(false)
+    const [compareButtonsTarget, setCompareButtonsTarget] = useState<HTMLElement | null>(null)
+    useEffect(() => {
+        setCompareButtonsTarget(document.getElementById("mobile-compare-buttons"))
+    }, [])
     const syncedCameraRef = useRef<SyncedCamera | null>(null)
     const [sharedResetTrigger, setSharedResetTrigger] = useState(0)
 
@@ -166,8 +171,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
         }
     }
 
-    return (
-        <section className="middle-panel">
+    const compareButtons = (
+        <>
             <button
                 type="button"
                 className={`compare-button ${isComparing ? "" : "not-comparing"}`}
@@ -198,6 +203,13 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                     Sync
                 </button>
             }
+        </>
+    )
+
+    return (
+        <section className="middle-panel">
+            {compareButtons}
+            {compareButtonsTarget && createPortal(compareButtons, compareButtonsTarget)}
 
             <div className="middle-panel-viewers">
 

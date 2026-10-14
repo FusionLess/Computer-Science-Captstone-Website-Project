@@ -5,9 +5,12 @@
     flex-direction: column;
     height: 100%;
     padding: 20px;
-    justify-content: center;
+    justify-content: safe center;
     box-sizing: border-box;
     position: relative;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .left_heading {
@@ -41,6 +44,8 @@
         height: auto;
         margin: 0 0 12px;
         padding: 20px;
+        overflow-y: visible;
+        scrollbar-gutter: auto;
 
         background: var(--cards-background);
         border: 1px solid var(--divider);

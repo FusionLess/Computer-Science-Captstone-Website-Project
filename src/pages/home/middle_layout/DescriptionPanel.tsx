@@ -21,28 +21,6 @@ function RightBox({compareState, selectedPart, complexity} :
     }, [compareState.isComparing])
 
     const heartPartInfoRef = useRef<HTMLDivElement>(null);
-    const scrollRef = useRef<HTMLDivElement>(null);
-    const [hasMoreBelow, setHasMoreBelow] = useState(false);
-
-    useEffect(() => {
-        const panel = scrollRef.current;
-        if (!panel) return;
-
-        const updateFade = () => setHasMoreBelow(
-            panel.scrollHeight - panel.clientHeight - panel.scrollTop > 2
-        );
-
-        updateFade();
-        panel.addEventListener("scroll", updateFade, {passive: true});
-        const observer = new ResizeObserver(updateFade);
-        observer.observe(panel);
-        Array.from(panel.children).forEach(child => observer.observe(child));
-
-        return () => {
-            panel.removeEventListener("scroll", updateFade);
-            observer.disconnect();
-        };
-    }, []);
 
     useEffect(() => {
         if (!selectedPart) return;
@@ -76,7 +54,7 @@ function RightBox({compareState, selectedPart, complexity} :
             </button>}
 
             <div className={`right_content ${isOpen ? "" : "closed"}`}>
-                <div className={`right_scroll ${hasMoreBelow ? "has_more_below" : ""}`} ref={scrollRef}>
+                <div className="right_scroll">
                     <div className="heart_state_info">
                         <p className={`current_selection ${selectionTone[active.option]}`}>
                             Current selection

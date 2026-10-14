@@ -46,6 +46,10 @@
 
 }
 
+.mobile-compare-buttons {
+    display: none;
+}
+
 .desktop_navigation{
     display: flex;
     justify-content: right;
@@ -57,11 +61,16 @@
 .desktop_theme {
     display: flex;
     align-items: center;
-    margin-left: 10px;
 }
 
 .theme_button svg {
     margin: 0;
+}
+
+.desktop_theme .theme_button {
+    background: transparent;
+    color: var(--body-texts);
+    transition: background-color 150ms ease, color 150ms ease;
 }
 
 .desktop_navigation button,
@@ -124,6 +133,12 @@
 .topbar .nav_button:active {
     transform: scale(0.95);
     z-index: 10;
+}
+
+.topbar .desktop_theme .theme_button:hover,
+.topbar .desktop_theme .theme_button:focus-visible {
+    background: var(--secondary-cards-background);
+    color: var(--active-labels);
 }
 
 .backdrop {
@@ -236,19 +251,29 @@
         left: 0;
         width: 100%;
         height: var(--mobile-complexity-title-height);
+        box-sizing: border-box;
 
         display: flex;
         align-items: center;
         justify-content: flex-start;
 
         transform: none;
-        padding-left: 20px;
+        padding: 0 12px;
         background: var(--home-background);
         color: var(--primary-headings);
-        font-size: 20px;
+        font-size: clamp(13px, 4vw, 16px);
     }
 
     .complexity-title h5 {
         margin: 0;
+        white-space: nowrap;
+    }
+
+    .mobile-compare-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        pointer-events: auto;
     }
 }

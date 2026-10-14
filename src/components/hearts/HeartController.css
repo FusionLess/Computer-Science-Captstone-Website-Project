@@ -70,33 +70,71 @@
 
 @media (width < 800px) {
     .heart-controller {
-        flex-direction: column-reverse;
-        align-items: center;
+        display: grid;
+        grid-template-columns: var(--control-button-width) 0px;
+        grid-template-rows: 0px 0px 54px;
+        gap: 0;
+        align-items: stretch;
+        padding: 4px;
+        overflow: hidden;
+        transition:
+                grid-template-columns 250ms ease,
+                grid-template-rows 250ms ease,
+                gap 250ms ease;
+    }
+
+    .heart-controller:not(.is-collapsed) {
+        grid-template-columns: var(--control-button-width) var(--control-button-width);
+        grid-template-rows: 54px 54px 54px;
+        gap: 4px;
     }
 
     .heart-controller .controller-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-        max-height: 360px;
-        overflow: hidden;
-
-        transition:
-                max-height 250ms ease,
-                opacity 200ms ease;
+        display: contents;
     }
 
-    .heart-controller.is-collapsed .controller-actions {
+    .heart-controller .show-controls-button {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .heart-controller button {
         width: var(--control-button-width);
-        max-height: 0;
+        margin: 0;
+    }
+
+    .heart-controller .controller-actions button {
+        height: 100%;
+        min-height: 0;
+        box-sizing: border-box;
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+        transition:
+                opacity 180ms ease,
+                transform 250ms ease,
+                visibility 0s;
+    }
+
+    .heart-controller.is-collapsed .controller-actions button {
         opacity: 0;
+        transform: translateY(8px);
+        visibility: hidden;
         pointer-events: none;
+        transition:
+                opacity 180ms ease,
+                transform 250ms ease,
+                visibility 0s linear 250ms;
     }
 
     .heart-controller .show-controls-button::after {
         display: none;
     }
+}
 
+@media (width < 800px) and (prefers-reduced-motion: reduce) {
+    .heart-controller,
     .heart-controller .controller-actions button {
-        width: calc(var(--control-button-width) - 4px);
+        transition: none;
     }
 }
