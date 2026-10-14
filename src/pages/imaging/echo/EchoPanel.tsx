@@ -6,12 +6,16 @@ import './EchoPanel.css';
 import { HEART_FRAME_COUNT } from '../../../components/hearts/heartRendering';
 
 const totalFrames = 30;
-const modelFrameOffset = 25;
+const modelFrameOffsets: Record<EchoView, number> = {
+  '4CH': 63, // Adjust this number for 4CH
+  '2CH': 66, // Adjust this number for 2CH
+};
 
 export default function EchoPanel() {
   const [activeView, setActiveView] = useState<EchoView>('4CH');
   const [frame, setFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const currentOffset = modelFrameOffsets[activeView];
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -40,7 +44,7 @@ export default function EchoPanel() {
             showControls={false}
             cameraView="frontal"
             externalClipPlane={externalClipPlane}
-            animationPhase={(frame / totalFrames + modelFrameOffset / HEART_FRAME_COUNT) % 1}
+            animationPhase={(frame / totalFrames + currentOffset / HEART_FRAME_COUNT) % 1}
           />
         </div>
         <div className="echo-panel-viewer echo-viewer">
