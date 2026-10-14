@@ -90,7 +90,7 @@
 .imaging-description { min-height: 200px; }
 .imaging-sidepanel-extra { min-height: 120px; }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .imaging-layout {
         margin-top: var(--bar-height);
         flex-direction: column;

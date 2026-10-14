@@ -156,7 +156,7 @@
     display: none;
 }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .topbar {
         position: fixed;
         top: 0;
@@ -165,10 +165,6 @@
 
     .topbar:has(.sidebar.open) {
         z-index: 120;
-    }
-
-    .topbar:has(.sidebar.open) .complexity-title {
-        background: transparent;
     }
 
     .logo img {

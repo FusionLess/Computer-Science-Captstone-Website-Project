@@ -8,7 +8,7 @@
     overflow: hidden;
 }
 
-@media (width < 800px) {
+@media (orientation: portrait) {
     .app {
         overflow-y: auto;
         padding-bottom: var(--bar-height);

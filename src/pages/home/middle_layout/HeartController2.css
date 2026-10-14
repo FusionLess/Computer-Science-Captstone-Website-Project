@@ -191,7 +191,7 @@ button.compare-button.not-comparing {
     transform: none;
 }
 
-@media (width < 800px) {
+@media (orientation: portrait) {
     /* The fixed title row contains the phone Compare and Sync buttons. */
     .middle-panel > .compare-button,
     .middle-panel > .sync {

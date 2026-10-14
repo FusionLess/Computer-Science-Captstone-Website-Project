@@ -169,7 +169,7 @@
     border: 2px solid var(--secondary-cards-border);
 }
 
-@media (width < 800px) {
+@media (orientation: portrait) {
     .right {
         position: static;
         order: 3;

@@ -11,10 +11,11 @@
     border-radius: 30px;
     padding: 20px;
     box-sizing: border-box;
+    overflow-y: auto;
 
     transform: translateX(120%);
     transition: transform 0.3s ease;
-    z-index: 20;
+    z-index: 50;
 }
 
 .sidebar.open {
@@ -115,7 +116,7 @@
     padding-top: 10px;
 }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .sidebar {
         top: calc(var(--bar-height) + 10px);
         bottom: calc(var(--bar-height) + 10px);
@@ -123,7 +124,6 @@
         width: min(var(--settings-panel-width), calc(100vw - 20px));
         height: auto;
         right: 10px;
-        overflow-y: auto;
     }
 
     .description_toggle {

@@ -8,7 +8,7 @@ import PopUpInfoBox from "./PopUpInfoBox"
 
 function RightBox({compareState, selectedPart, complexity} :
                   {compareState : CompareState, selectedPart: string | null, complexity: Complexity}) {
-    const isMobile = window.matchMedia("(width < 800px)").matches;
+    const isMobile = window.matchMedia("(orientation: portrait)").matches;
     const active = compareState.selection1
     const selectionTone = {Healthy: "green", Minor: "amber", Severe: "red", Fibrillation: "blue", Compensated: "amber", Decompensated: "red",}
 

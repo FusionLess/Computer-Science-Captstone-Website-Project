@@ -46,33 +46,31 @@
 }
 
 
-@media (width >= 800px) {
-    .heart-controller .controller-actions {
-        width: calc(
-                var(--control-button-width) * 5 +
-                var(--control-button-margin) * 10
-        );
+.heart-controller .controller-actions {
+    width: calc(
+            var(--control-button-width) * 5 +
+            var(--control-button-margin) * 10
+    );
 
-        opacity: 1;
-        overflow: hidden;
+    opacity: 1;
+    overflow: hidden;
 
-        transition:
-                width 250ms ease,
-                opacity 200ms ease;
-    }
-
-    .heart-controller.is-collapsed .controller-actions {
-        width: 0;
-        opacity: 0;
-        pointer-events: none;
-    }
+    transition:
+            width 250ms ease,
+            opacity 200ms ease;
 }
 
-@media (width < 800px) {
+.heart-controller.is-collapsed .controller-actions {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (orientation: portrait) {
     .heart-controller {
         display: grid;
-        grid-template-columns: var(--control-button-width) 0px;
-        grid-template-rows: 0px 0px 54px;
+        grid-template-columns: var(--control-button-width) 0;
+        grid-template-rows: 0 0 54px;
         gap: 0;
         align-items: stretch;
         padding: 4px;
@@ -132,7 +130,7 @@
     }
 }
 
-@media (width < 800px) and (prefers-reduced-motion: reduce) {
+@media (orientation: portrait) and (prefers-reduced-motion: reduce) {
     .heart-controller,
     .heart-controller .controller-actions button {
         transition: none;

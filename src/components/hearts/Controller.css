@@ -70,31 +70,7 @@
     text-wrap: auto;
 }
 
-@media (width >= 800px) {
-    .controller.is-collapsed .show-controls-button::after {
-        display: none;
-    }
-
-    .controller .controller-actions::before {
-        content: "";
-        width: 2px;
-        height: 40px;
-        margin: 0 2px;
-        flex-shrink: 0;
-        background: var(--divider);
-    }
-
-    .controller .slice-options::after {
-        content: "";
-        width: 2px;
-        height: 40px;
-        margin: 0 2px;
-        flex-shrink: 0;
-        background: var(--divider);
-    }
-}
-
-@media (width < 800px) {
+@media (orientation: portrait) {
     .controller {
         padding: 4px 0;
     }

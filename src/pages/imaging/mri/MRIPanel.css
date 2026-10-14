@@ -198,7 +198,7 @@
     transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .mri-panel-viewers {
         flex-direction: column;
     }
