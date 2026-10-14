@@ -201,7 +201,7 @@
     }
 }
 
-@media (width < 800px) {
+@media (orientation: portrait) {
     .middle-panel:not(:has(.middle-panel-viewers > .heart_panel ~ .heart_panel))
     .heart_buttons {
         position: fixed;

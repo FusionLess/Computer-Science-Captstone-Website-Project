@@ -35,7 +35,7 @@
     white-space: pre-line;
 }
 
-@media (width < 800px) {
+@media (orientation: portrait) {
     .left {
         order: 2;
         align-self: center;

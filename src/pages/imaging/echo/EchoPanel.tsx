@@ -6,12 +6,16 @@ import './EchoPanel.css';
 import { HEART_FRAME_COUNT } from '../../../components/hearts/heartRendering';
 
 const totalFrames = 30;
-const modelFrameOffset = 25;
+const modelFrameOffsets: Record<EchoView, number> = {
+  '4CH': 63, // Adjust this number for 4CH
+  '2CH': 69, // Adjust this number for 2CH
+};
 
 export default function EchoPanel() {
   const [activeView, setActiveView] = useState<EchoView>('4CH');
   const [frame, setFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const currentOffset = modelFrameOffsets[activeView];
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -23,12 +27,22 @@ export default function EchoPanel() {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  const externalClipPlane = useMemo(() => new THREE.Plane(
-    activeView === '4CH'
-      ? new THREE.Vector3(0, 1, 0)
-      : new THREE.Vector3(1, 0, 0),
-    0,
-  ), [activeView]);
+  const externalClipPlane = useMemo(() => {
+    const settings = activeView === '4CH'
+        ? { pitch: 0, yaw: 40, depth: 0 }
+        : { pitch: 0, yaw: 324, depth: 14 };
+
+    const pitch = THREE.MathUtils.degToRad(settings.pitch);
+    const yaw = THREE.MathUtils.degToRad(settings.yaw);
+
+    const normal = new THREE.Vector3(
+        Math.cos(pitch) * Math.sin(yaw),
+        Math.sin(pitch),
+        Math.cos(pitch) * Math.cos(yaw),
+    ).normalize();
+
+    return new THREE.Plane(normal, settings.depth);
+  }, [activeView]);
 
   return (
     <section className="echo-panel">
@@ -38,9 +52,9 @@ export default function EchoPanel() {
           <span>Heart Viewer</span>
           <HeartViewer
             showControls={false}
-            cameraView="frontal"
+            cameraView={activeView === '4CH' ? 'fourCH' : 'twoCH'}
             externalClipPlane={externalClipPlane}
-            animationPhase={(frame / totalFrames + modelFrameOffset / HEART_FRAME_COUNT) % 1}
+            animationPhase={(frame / totalFrames + currentOffset / HEART_FRAME_COUNT) % 1}
           />
         </div>
         <div className="echo-panel-viewer echo-viewer">

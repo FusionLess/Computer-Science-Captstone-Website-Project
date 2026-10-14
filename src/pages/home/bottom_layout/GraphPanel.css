@@ -411,7 +411,7 @@
     display: none;
 }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .container {
         padding: 6px 8px;
     }

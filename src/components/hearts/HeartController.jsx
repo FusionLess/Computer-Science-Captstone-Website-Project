@@ -15,7 +15,7 @@ export default function HeartController({
                                             handleVentricleView,
                                             sliceEnabled
                                         }) {
-    const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(width < 800px)").matches)
+    const [controlsShowing, setControlsShowing] = useState(() => !window.matchMedia("(orientation: portrait)").matches)
     const controlsId = useId()
 
     return (

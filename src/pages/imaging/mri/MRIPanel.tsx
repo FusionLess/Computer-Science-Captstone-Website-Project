@@ -18,8 +18,8 @@ export default function MRIPanel() {
 
     const totalSlices = 10;
     const totalFrames = 30;
-    const heartFrameOffset = 2;
-    const modelFrameOffset = 19;
+    const heartFrameOffset = 0;
+    const modelFrameOffset = 63;
 
     useEffect(() => {
         if (!isPlaying || bpm <= 0) return;

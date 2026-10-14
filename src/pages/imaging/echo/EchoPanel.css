@@ -152,7 +152,7 @@
 }
 
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .echo-panel {
         flex: none;
         width: 100%;

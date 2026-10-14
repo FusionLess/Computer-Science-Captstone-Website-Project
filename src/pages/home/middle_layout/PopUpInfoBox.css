@@ -266,7 +266,7 @@
     box-shadow: 0 2px 8px var(--popup-button-shadow);
 }
 
-@media (max-width: 800px) {
+@media (orientation: portrait) {
     .popup_header {
         align-items: flex-start;
         padding: 18px 14px;
@@ -290,7 +290,7 @@
 
     .popup_content {
         grid-template-columns: minmax(0, 1fr);
-        gap: 24px;
+        gap: 16px;
     }
 
     .popup_media {
@@ -303,7 +303,7 @@
     }
 
     .popup_media_viewer {
-        height: min(30dvh, 240px);
+        height: clamp(220px, 30dvh, 380px);
         min-height: 0;
     }
 
