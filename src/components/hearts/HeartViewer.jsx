@@ -22,9 +22,14 @@ const CAMERA_POSITIONS = {
 
     topDown: [0.1, 300, 0.02],
     tiltedShortAxis: [280, 150, 56],
+
+    twoCH: [240, -20, -200],
+    fourCH: [-225, 50, -200]
 }
 
 export default function HeartViewer({
+    showVeins = true,
+    showArteries = true,
     frameFolder,
     setSelectedPart,
     title,
@@ -374,6 +379,8 @@ export default function HeartViewer({
                 <Suspense fallback={null}>
                     <Center position={[0,15,0]}>
                             <HeartModel
+                            showVeins={showVeins}
+                            showArteries={showArteries}
                             frameFolder={frameFolder}
                             bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
                             showEpi={showEpi}
