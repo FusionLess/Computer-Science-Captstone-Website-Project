@@ -20,10 +20,11 @@ export default function SliceController({
     handlePresetSelect,
     handleDepthSliderChange,
     complexity,
-    showAdvancedSliceControls
+    showAdvancedSliceControls,
+    controlsShowing,
+    setControlsShowing
 }) {
 
-    const [controlsShowing, setControlsShowing] = useState(() => false)
     const controlsId = useId()
 
     const showSliders =  showAdvancedSliceControls

@@ -69,6 +69,7 @@ export default function HeartViewer({
     cameraViewResetTrigger = 0,
     externalClipPlane,
     animationPhase,
+    onSliceEnabledChange,
 }) {
     const defaultPreset = "frontal"
 
@@ -87,6 +88,7 @@ export default function HeartViewer({
 
     // sets the preset states you can slice the heart
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
+    const [sliceControlsOpen, setSliceControlsOpen] = useState(false)
     const [localSliceEnabled, setLocalSliceEnabled] =
         useState(false)
 
@@ -228,9 +230,7 @@ export default function HeartViewer({
             setSliceEnabled(false)
             setShowPlaneGuide(false)
             setActivePreset(defaultPreset)
-            setPitch(0)
-            setYaw(40)
-            setSliceDistance(0)
+            setSliceOrientation(0, 40, 0)
 
             setCameraPreset(defaultPreset)
             setResetTrigger(prev => prev + 1)
@@ -249,11 +249,11 @@ export default function HeartViewer({
     }
 
     const handleResetView = () => {
-        setFullView(true)
+        setFullView(false)
         setVentricleOnly(false)
         setShowEpi(true)
-        setSliceEnabled(false)
-        setShowPlaneGuide(false)
+        setSliceEnabled(true)
+        setShowPlaneGuide(true)
 
         setActivePreset("frontal")
         setSliceOrientation(0, 40, 0)
@@ -340,7 +340,9 @@ export default function HeartViewer({
     const shadowColour = getComputedStyle(document.documentElement)
         .getPropertyValue('--shadow-colour')
         .trim()
-
+    useEffect(() => {
+        onSliceEnabledChange?.(sliceEnabled)
+    }, [sliceEnabled, onSliceEnabledChange])
     return (
 
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
@@ -465,6 +467,8 @@ export default function HeartViewer({
                         handleResetView={handleResetView}
                         handleVentricleView={handleVentricleView}
                         sliceEnabled={sliceEnabled}
+                        onOpenSliceControls={() => setSliceControlsOpen(true)}
+
                         />
                         <SliceControls
                             index={index}
@@ -485,6 +489,8 @@ export default function HeartViewer({
                             handleDepthSliderChange={handleDepthSliderChange}
                             complexity={complexity}
                             showAdvancedSliceControls={showAdvancedSliceControls}
+                            controlsShowing={sliceControlsOpen}
+                            setControlsShowing={setSliceControlsOpen}
 
                         />
                     </div>

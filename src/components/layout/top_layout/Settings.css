@@ -115,6 +115,11 @@
     margin-top: 4px;
     padding-top: 10px;
 }
+.slice-disabled-message {
+    display: flex;
+    font-size: 12px;
+    color: gray;
+}
 
 @media (orientation: portrait) {
     .sidebar {
