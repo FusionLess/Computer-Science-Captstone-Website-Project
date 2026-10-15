@@ -8,6 +8,7 @@
 
 .slice-options {
     display: flex;
+    margin: 0;
 }
 
 .slice-controller .slice-options,
@@ -30,34 +31,28 @@
     gap: 4px;
 }
 
-.slice-slider {
-    width: 125px;
-    padding: 0 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    flex-shrink: 0;
+.slice-controller:not(.is-shared) .slice-slider {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+
+    padding: 0 4px;
+    box-sizing: border-box;
 }
 
 .slice-slider-label {
     display: flex;
     justify-content: space-between;
-    font-size: 8px;
-    color: grey;
-}
 
-.slice-slider input[type="range"] {
-    width: 100%;
-    margin: 0;
-    cursor: pointer;
-    accent-color: var(--active-labels);
+    font-size: clamp(7px, 0.5vw, 9px);
+    color: grey;
 }
 
 .slice-controller.is-shared {
     position: relative;
 }
 .slice-slider input[type="range"] {
-    width: 100%;
+    width: fit-content;
     margin: 0;
     cursor: pointer;
     accent-color: var(--active-labels);
@@ -173,5 +168,215 @@
     .slice-controller,
     .slice-controller .controller-actions {
         transition: none;
+    }
+}
+@media (min-width: 800px) {
+    /* Main container */
+    .slice-controller:not(.is-shared) {
+        display: flex;
+        flex-direction: row;
+        width: fit-content;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Collapsed / expanded container */
+    .slice-controller.is-collapsed {
+        width: fit-content;
+        align-items: center;
+    }
+
+    .slice-controller:not(.is-collapsed) {
+        align-items: stretch;
+    }
+
+    .slice-controller.is-collapsed>.show-controls-button {
+        height: var(--control-button-height);
+        min-height: var(--control-button-height);
+        align-self: center;
+    }
+
+    .slice-controller:not(.is-collapsed)>.show-controls-button {
+        height: auto;
+        align-self: stretch;
+    }
+
+    /* Divider beside HIDE */
+    .slice-controller .controller-actions::before {
+        display: none;
+    }
+
+    .slice-controller:not(.is-collapsed)>.show-controls-button::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        right: -5px;
+        width: 2px;
+        background: var(--divider);
+    }
+
+    /* Expanded controls */
+    .slice-controller:not(.is-collapsed)>.controller-actions {
+        padding-left: 6px;
+        box-sizing: border-box;
+    }
+
+    .slice-controller:not(.is-shared) .controller-actions {
+        display: grid;
+        grid-template-columns: max-content max-content;
+        grid-template-areas: "options presets";
+        align-items: center;
+        justify-content: start;
+        gap: 4px;
+        row-gap: 0;
+        width: max-content;
+        max-width: 100%;
+        overflow: visible;
+    }
+
+    /* Add a second row only when sliders are visible */
+    .slice-controller:not(.is-shared) .controller-actions:has(.slice-adjustments) {
+        grid-template-areas:
+            "options presets"
+            "sliders sliders";
+    }
+
+    /* First row */
+    .slice-controller:not(.is-shared) .slice-options,
+    .slice-controller:not(.is-shared) .slice-axis-presets {
+        display: flex;
+        width: max-content;
+    }
+
+    .slice-controller:not(.is-shared) .slice-options {
+        grid-area: options;
+    }
+
+    .slice-controller:not(.is-shared) .slice-axis-presets {
+        grid-area: presets;
+    }
+
+    /* Second row */
+    .slice-controller:not(.is-shared) .slice-adjustments {
+        grid-area: sliders;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        gap: 6px;
+    }
+
+    .slice-controller:not(.is-shared) .slice-slider input[type="range"] {
+        width: 100%;
+        min-width: 0;
+    }
+      
+    /* Keep all synced controls in one row */
+    .slice-controller.is-shared:not(.is-collapsed) .controller-actions {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        width: max-content;
+        height: auto;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    /* Match Heart Controller button spacing */
+    .slice-controller.is-shared .slice-options button,
+    .slice-controller.is-shared .slice-axis-presets button {
+        width: calc(var(--control-button-width) - 6px);
+        height: var(--control-button-height);
+        margin: 4px 2px;
+        padding: 5px 4px;
+        box-sizing: border-box;
+        white-space: nowrap;
+    }
+    /* Keep shared Slice Controller the same height as Heart Controller */
+    .slice-controller.is-shared:not(.is-collapsed) {
+        align-items: center;
+    }
+
+    .slice-controller.is-shared:not(.is-collapsed)>.show-controls-button {
+        height: var(--control-button-height);
+        align-self: center;
+    }
+
+    .slice-controller.is-shared:not(.is-collapsed)>.controller-actions {
+        align-items: center;
+    }
+    
+    .slice-controller .slice-options,
+    .slice-controller .slice-axis-presets {
+        gap: var(--control-group-gap);
+    }
+
+    .slice-controller .slice-adjustments {
+        gap: var(--control-slider-gap);
+    }
+
+    /* Keep sliders compact */
+    .slice-controller.is-shared .slice-slider {
+        padding: 0 4px;
+    }
+
+    /* Divider before synced sliders */
+    .slice-controller.is-shared .slice-adjustments {
+        position: relative;
+        margin-left: 8px;
+        padding-left: 8px;
+    }
+
+    /* Divider between Indicator and Frontal */
+    .slice-controller .slice-options {
+        position: relative;
+        padding-right: 8px;
+        margin-right: 4px;
+    }
+
+    .slice-controller .slice-options::after {
+        content: "";
+        position: absolute;
+        top: 7px;
+        bottom: 7px;
+        right: 0;
+        width: 2px;
+        height: auto;
+        background: var(--divider);
+    }
+
+    /* Match full controller height in synced mode */
+    .slice-controller.is-shared:not(.is-collapsed) .slice-options {
+        align-self: stretch;
+    }
+
+    /* Divider between presets and sliders (shared controls only) */
+    .slice-controller.is-shared .slice-adjustments {
+        position: relative;
+        margin-left: 8px;
+        padding-left: 8px;
+    }
+
+    .slice-controller.is-shared .slice-adjustments::before {
+        content: "";
+        position: absolute;
+        top: 1px;
+        bottom: 1px;
+        left: 0;
+        width: 2px;
+        height: auto;
+        background: var(--divider);
+    }
+
+    /* Collapsed controls */
+    .slice-controller.is-collapsed>.controller-actions {
+        width: 0;
+        min-width: 0;
+        height: 0;
+        padding: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
     }
 }
