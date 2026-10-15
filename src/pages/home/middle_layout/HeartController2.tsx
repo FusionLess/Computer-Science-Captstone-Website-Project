@@ -18,8 +18,7 @@ import SliceControls from "../../../components/hearts/SliceController.jsx"
 import type { Complexity } from "../../../components/types/complexities.ts";
 import { useNavigate } from "react-router"
 import { getComparePath, getHeartPath } from "../../../utils/heartRoutes"
-export default function HeartController2({ compareState, setSelectedPart, complexity,showAdvancedSliceControls, showVeins, showArteries}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean, showVeins: boolean, showArteries: boolean}) {
-
+export default function HeartController2({ compareState, setSelectedPart, complexity,showAdvancedSliceControls, showVeins, showArteries, onSliceEnabledChange}: { compareState: CompareState, setSelectedPart: (part: string | null) => void, complexity: Complexity, showAdvancedSliceControls: boolean, showVeins: boolean, showArteries: boolean,onSliceEnabledChange?: (enabled: boolean) => void}) {
     const {
         selection1,
         selection2,
@@ -62,11 +61,14 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 
     const [sharedShowEpi, setSharedShowEpi] = useState(true)
     const [sharedVentricleOnly, setSharedVentricleOnly] = useState(false)
-    const [sharedFullView, setSharedFullView] = useState(false)
+    const [sharedFullView, setSharedFullView] = useState(true)
 
     const useSharedControls = isComparing && syncEnabled
     const [sharedSliceEnabled, setSharedSliceEnabled] = useState(false)
     const [sharedShowPlaneGuide, setSharedShowPlaneGuide] = useState(false)
+    const [sharedSliceControlsOpen, setSharedSliceControlsOpen] = useState(false)
+    const [leftSliceEnabled, setLeftSliceEnabled] = useState(false)
+    const [rightSliceEnabled, setRightSliceEnabled] = useState(false)
 
     const [sharedActivePreset, setSharedActivePreset] = useState<string | null>("frontal")
     const [sharedPitch, setSharedPitch] = useState(0)
@@ -170,6 +172,15 @@ export default function HeartController2({ compareState, setSelectedPart, comple
             setSharedResetTrigger(prev => prev + 1)
         }
     }
+    const effectiveSliceEnabled = isComparing
+        ? useSharedControls
+            ? sharedSliceEnabled
+            : leftSliceEnabled || rightSliceEnabled
+        : leftSliceEnabled
+
+    useEffect(() => {
+        onSliceEnabledChange?.(effectiveSliceEnabled)
+    }, [effectiveSliceEnabled, onSliceEnabledChange])
 
     const compareButtons = (
         <>
@@ -251,6 +262,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                     otherHeart={selection2}
                     compareSide={isComparing ? "first" : undefined}
                     onNavigate={navigateWithPause}
+                    onSliceEnabledChange={setLeftSliceEnabled}
 
                 />
 
@@ -294,6 +306,7 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         otherHeart={selection1}
                         compareSide="second"
                         onNavigate={navigateWithPause}
+                        onSliceEnabledChange={setRightSliceEnabled}
                     />
                     
                 )}
@@ -316,6 +329,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         handleFullView={handleSharedFullView}
                         handleVentricleView={handleSharedVentricleView}
                         sliceEnabled={sharedSliceEnabled}
+                        onOpenSliceControls={() => setSharedSliceControlsOpen(true)}
+
                     />
                     <SliceControls
                         shared
@@ -342,6 +357,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         handleDepthSliderChange={handleSharedDepthSliderChange}
                         complexity={complexity}
                         showAdvancedSliceControls={showAdvancedSliceControls}
+                        controlsShowing={sharedSliceControlsOpen}
+                        setControlsShowing={setSharedSliceControlsOpen}
 
                     />
                 </div>
@@ -383,7 +400,8 @@ function HeartPanel({
                         showAdvancedSliceControls,
                         otherHeart,
                         compareSide,
-                        onNavigate
+                        onNavigate,
+                        onSliceEnabledChange
                     }: {
     active: HeartState,
     showVeins: boolean,
@@ -418,6 +436,7 @@ function HeartPanel({
     compareSide?: "first" | "second",
     onNavigate?: (to: string) => void,
     showControls?: boolean,
+    onSliceEnabledChange?: (enabled: boolean) => void,
 }) {
     const {
         syncEnabled,
@@ -472,7 +491,7 @@ function HeartPanel({
 
                     complexity={complexity}
                     showAdvancedSliceControls={showAdvancedSliceControls} showControls={undefined}
-                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined}                />
+                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined} onSliceEnabledChange={onSliceEnabledChange}               />
             </div>
         </div>
     )

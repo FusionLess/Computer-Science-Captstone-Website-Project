@@ -114,6 +114,14 @@ export default function HomePage() {
         setComplexity(level)
         setIsComparing(true)
     }, [first, second, routeComplexity])
+    const [sliceEnabled, setSliceEnabled] = useState<boolean>(false)
+    useEffect(() => {
+        if (!sliceEnabled) {
+            setShowAdvancedSliceControls(false)
+        } else if (complexity === "advanced") {
+            setShowAdvancedSliceControls(true)
+        }
+    }, [complexity, sliceEnabled])
     return (
         <main className="app">
             <TopBar
@@ -131,6 +139,8 @@ export default function HomePage() {
                 setComplexity={handleComplexityChange}
                 showAdvancedSliceControls={showAdvancedSliceControls}
                 setShowAdvancedSliceControls={setShowAdvancedSliceControls}
+                sliceEnabled={sliceEnabled}
+
 
             />
             <Content active={active} 
@@ -141,6 +151,7 @@ export default function HomePage() {
                 complexity={complexity}
                 showAdvancedSliceControls={showAdvancedSliceControls}
                 showDescriptions={showDescriptions}
+                setSliceEnabled={setSliceEnabled}
             />
             <GraphPanel compareState={compareState} graphActive={graphActive} glowActive={glowActive} />
         </main>
