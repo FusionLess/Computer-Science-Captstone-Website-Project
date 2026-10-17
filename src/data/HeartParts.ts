@@ -159,4 +159,45 @@ export const HeartParts: Record<string, HeartPart> =  {
       }
     ]
   },
+  coronaryArteries: {
+    name: "Coronary Arteries",
+    description: {
+        basic: "The coronary arteries are tubes that bring blood to the heart muscle itself, so the heart gets the oxygen it needs to keep beating. There are two main ones, the right coronary artery and the left main coronary artery, and together they cover the whole heart",
+        standard: "The coronary arteries supply blood to the heart muscle, with different arteries responsible for different regions. The two main coronary arteries are the right coronary artery and the left main coronary artery, which supply the right and left sides of the heart.",
+        advanced: "Coronary arteries send blood to the entire heart muscle, each part of the heart being serviced by an individual artery. The two main arteries are the right coronary artery and the left main coronary artery, which send blood to the right and left side of the heart muscle."
+    },
+    function: {
+        basic: "The left main coronary artery feeds the left side of the heart, including the left atrium and left ventricle. It splits into two smaller branches: one goes to the left and middle part of the heart, and the other goes around to the outer side and back.\n\n" + "The right coronary artery feeds the right side of the heart and also splits into two branches that reach the back and bottom of the heart.\n\n" + "Together, these arteries make sure every part of the heart, even the wall in the middle, gets blood.",
+        standard: "The left main coronary artery supplies the left ventricle and left atrium, then branches into two smaller arteries: the left anterior descending artery, which supplies the left and middle regions of the heart, and the left circumflex artery, which supplies the outer and back regions.\n\n " + "The right coronary artery branches into the right posterior descending artery and the acute marginal artery, which supply the back and lower parts of the heart.\n\n" + "Between them, these arteries also supply the septum, the muscular wall between the heart's left and right sides",
+        advanced: "The left main coronary artery, which delivers blood to the left ventricle and left atrium as well, further branches off into two additional subarteries: the left anterior descending artery, which sends blood to the left side and middle of the heart, and the left circumflex artery which sends to the outer side and back of the heart. \n\n" + "The right coronary artery, meanwhile, divides into the right posterior descending artery and the acute marginal artery. They all also deliver to the middle (septum) of the heart."
+    },
+    media: [
+      {
+        type: "image",
+        src: "/images/heartParts/ca.png",
+        alt: "Schematic of the aorta"
+      }
+    ]
+  },
+
+  coronaryVeins: {
+    name: "Coronary Veins",
+    description: {
+        basic: "Coronary veins collect blood that has already given up its oxygen and nutrients to the heart muscle, and carry it back to the right atrium so it can be refreshed with oxygen again.",
+        standard: "Coronary veins remove deoxygenated, nutrient-depleted blood from the heart muscle and return it to the right atrium, where it can be reoxygenated. These veins make up the coronary venous system, which has two parts: the greater and lesser cardiac venous systems.",
+        advanced: "Coronary veins remove deoxygenated and nutrient-poor blood from the heart muscle and return it to the right atrium where they can be replenished. They are actually part of a coronary venous system, containing the greater and lesser cardiac venous systems."
+    },
+    function: {
+        basic: "There are two groups of these veins working together. \n\n"+"The bigger group drains most of the blood, about three-quarters of it, into a vessel called the coronary sinus, which empties into the right atrium.\n\n"+"The smaller group drains the rest, carrying blood straight into the heart's chambers instead.",
+        standard: "The greater system centers on the coronary sinus, which empties into the right atrium and drains about 75% of the heart's deoxygenated blood.\n\n"+"The lesser system handles the remaining blood through smaller vessels, including the anterior cardiac veins and the Thebesian veins, which drain directly into the heart chambers rather than through the coronary sinus.",
+        advanced: "The greater system, which centers around the coronary sinus that empties into the right atrium, drains about 75% of the deoxygenated blood from the heart. \n\n"+"The lesser system takes the remainder and is comprised of smaller vessels such as the anterior cardiac veins and Thebesian veins that drain directly into the heart chambers."
+    },
+    media: [
+      {
+        type: "image",
+        src: "/images/heartParts/cv.png",
+        alt: "Schematic of the aorta"
+      }
+    ]
+  }
 } as const

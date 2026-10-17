@@ -19,7 +19,6 @@ function SingleFrame({ url, vesselUrl, frameIndex, framesRef, pressRef, showEpi,
       // Vessel exports reuse the heart's mesh names; keep anatomical picking separate.
       child.name = isVein ? 'coronaryVeins' : 'coronaryArteries'
       child.userData.isCoronaryVessel = true
-      child.raycast = () => {}
     })
     const group = new THREE.Group()
     group.add(heart, vessels)
