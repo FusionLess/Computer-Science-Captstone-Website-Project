@@ -1,0 +1,55 @@
+import {test, expect} from '@playwright/test'
+
+// Use real pages and assets; these checks cover UI wiring, not visual accuracy.
+test('condition selection updates the URL and survives a reload', async ({page}) => {
+    await page.goto('/')
+    await expect(page).toHaveURL('/standard/heart/healthy')
+    await page.getByRole('button', {name: 'Attack', exact: true}).click()
+    await expect(page).toHaveURL('/standard/heart-attack/minor')
+    await page.getByRole('button', {name: 'Severe', exact: true}).click()
+    await expect(page).toHaveURL('/standard/heart-attack/severe')
+    await page.reload()
+    await expect(page.getByRole('button', {name: 'Severe', exact: true})).toHaveClass(/selected/)
+    await page.getByRole('button', {name: 'The Heart', exact: true}).click()
+    await expect(page).toHaveURL('/standard/heart/healthy')
+})
+
+test('comparison keeps each heart selection separate and can be stopped', async ({page}) => {
+    await page.goto('/standard/heart/healthy')
+    await page.getByRole('button', {name: 'Compare', exact: true}).click()
+    await expect(page).toHaveURL('/standard/compare/healthy/minor')
+    await page.getByRole('button', {name: 'Failure', exact: true}).nth(1).click()
+    await expect(page).toHaveURL('/standard/compare/healthy/compensated')
+    await expect(page.getByRole('button', {name: 'Healthy', exact: true}).first()).toHaveClass(/selected/)
+    await page.getByRole('button', {name: 'Stop Comparing', exact: true}).click()
+    await expect(page).toHaveURL('/standard/heart/healthy')
+    await expect(page.getByRole('button', {name: 'Compare', exact: true})).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('BPM input stays synchronized with its slider and clamps to the allowed range', async ({page}) => {
+    await page.goto('/standard/heart/healthy')
+    const bpm = page.getByRole('spinbutton', {name: 'Heart rate in BPM'})
+    const slider = page.locator('.bpm-slider')
+    await bpm.fill('90')
+    await expect(bpm).toHaveValue('90')
+    await expect(slider).toHaveValue('90')
+    await slider.focus()
+    await slider.press('ArrowRight')
+    await expect(bpm).toHaveValue('91')
+    await bpm.fill('250')
+    await expect(bpm).toHaveValue('180')
+    await expect(slider).toHaveValue('180')
+    await bpm.fill('-10')
+    await expect(bpm).toHaveValue('0')
+    await expect(slider).toHaveValue('0')
+})
+
+test('top navigation opens About and returns to the heart viewer', async ({page}) => {
+    await page.goto('/standard/heart/healthy')
+    await page.getByRole('link', {name: 'About Us', exact: true}).click()
+    await expect(page).toHaveURL('/about')
+    await expect(page.locator('.about-layout')).toBeVisible()
+    await page.getByRole('link', {name: 'Home', exact: true}).click()
+    await expect(page).toHaveURL('/standard/heart/healthy')
+    await expect(page.getByRole('button', {name: 'The Heart', exact: true})).toBeVisible()
+})
