@@ -1,192 +1,16 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
-import { useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
+import { loadCoreBundle, loadVesselsBundle, evaluateStructureFrame } from './heartPackDecode'
 import { capStyle } from './SliceCap'
 
 const NUM_FRAMES = 75
 const ES_FRAME = 25
-// loads all the frames path into an array and iterates over all of them
 
-// builds the list of frame paths for a given public folder, e.g. '/frames' or '/compensated_heart'
-const buildFramePaths = (dir) =>
-  Array.from({ length: NUM_FRAMES }, (_, i) => `${dir}/frame_${i}.glb`)
-
-const buildVesselPaths = (dir) =>
-  Array.from({ length: NUM_FRAMES }, (_, i) => `${dir}/vessels_${i}.glb`)
-
-// Render order: stencil pass (10) -> cap plane (11, see SliceCap) -> myocardium (12) -> chambers/vessels (13)
-// Chambers draw AFTER the myocardium because the myo's inner cavity walls coincide with
-// lv_endo / rv_endo; the later draw wins, so the chamber colours show through.
 const RO_STENCIL = 10
 const RO_MYO = 12
 const RO_OTHER = 13
 const RO_VESSELS = 14
-
-// Renders the companion 3D coronary vessel mesh exported by the Python script
-function SingleVesselFrame({ url, isVisible, clipPlane, showArteries = true, showVeins = true }) {
-  const { scene } = useGLTF(url)
-
-  useEffect(() => {
-    scene.traverse((child) => {
-      if (!child.isMesh) return
-
-      // In GLB, meshes without names default to order or attributes.
-      // We check name or vertex scalar tag to separate arteries and veins.
-      const name = child.name.toLowerCase()
-      const isVein = name.includes('vein') || name.includes('mesh1')
-
-      child.material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(isVein ? '#2b4cb3' : '#d83a3a'),
-        roughness: 0.35,
-        metalness: 0.05,
-        side: THREE.DoubleSide,
-        depthWrite: true,
-      })
-
-      child.renderOrder = RO_VESSELS
-    })
-  }, [scene, url])
-
-  // Visibility toggle for arteries and veins
-  useEffect(() => {
-    scene.traverse((child) => {
-      if (!child.isMesh) return
-      const name = child.name.toLowerCase()
-      const isVein = name.includes('vein') || name.includes('mesh1')
-
-      child.visible = isVein ? showVeins : showArteries
-    })
-  }, [scene, showArteries, showVeins])
-
-  useEffect(() => {
-    const planes = clipPlane ? [clipPlane] : []
-    scene.traverse((child) => {
-      if (child.isMesh && child.material) {
-        child.material.clippingPlanes = planes
-        child.material.needsUpdate = true
-      }
-    })
-  }, [scene, clipPlane])
-
-  return <primitive object={scene} visible={isVisible} />
-}
-
-// function essentially displays only one frame at a time and only loads one frame at a time.
-// all 75 frames are loaded into gpu memory but only active frame is visible
-function SingleFrame({ url, isVisible, showEpi, clipPlane, capColor }) {
-  const { scene } = useGLTF(url)
-  const myoMeshRef = useRef(null)
-  const hasClip = !!clipPlane
-
-  useEffect(() => {
-    scene.traverse((child) => {
-      if (!child.isMesh || child.name === 'stencilHelper') return
-
-      const isMyo = child.name === 'mesh0'
-      if (isMyo) myoMeshRef.current = child
-
-      // Clean anatomical shading for myocardium now that vessels are real 3D geometry
-      if (isMyo && child.material) {
-        child.material.color = new THREE.Color('#9b2226')
-        child.material.roughness = 0.55
-        child.material.metalness = 0.05
-
-        // The cap copies the muscle's real material, unless the myocardium is painted with
-        // per-vertex colours (infarct hearts): then the material colour is white, so use capColor.
-        const hasVertexColors = !!child.geometry?.attributes?.color
-        if (capColor) {
-          capStyle.color = new THREE.Color(capColor)
-        } else if (!hasVertexColors && child.material.color) {
-          capStyle.color = child.material.color.clone()
-        }
-        capStyle.roughness = child.material.roughness ?? null
-        capStyle.metalness = child.material.metalness ?? null
-      }
-
-      if (child.material) {
-        child.material.side = THREE.DoubleSide
-        child.material.flatShading = false
-        child.material.transparent = false
-        child.material.depthWrite = true
-
-        child.renderOrder = isMyo ? RO_MYO : RO_OTHER
-        child.material.polygonOffset = true
-        // myo pulled toward camera, internal chambers pushed back
-        child.material.polygonOffsetFactor = isMyo ? -1.0 : 1.0
-        child.material.polygonOffsetUnits = isMyo ? -1.0 : 1.0
-        child.material.needsUpdate = true
-      }
-    })
-
-    if (!myoMeshRef.current) {
-      console.warn('[HeartModel] mesh0 (myocardium) not found in', url)
-    }
-
-    // Diagnostic: the myocardium should be the largest mesh (~11k triangles in the Python log)
-    if (url.endsWith('frame_0.glb')) {
-      scene.traverse((c) => {
-        if (c.isMesh && c.name !== 'stencilHelper') {
-          const g = c.geometry
-          const tris = (g.index ? g.index.count : g.attributes.position.count) / 3
-          console.log('[HeartModel] frame_0 mesh:', c.name, 'triangles:', tris)
-        }
-      })
-    }
-  }, [scene, url, capColor])
-
-  // Myocardium visibility toggle
-  useEffect(() => {
-    if (myoMeshRef.current) {
-      myoMeshRef.current.visible = showEpi
-    }
-  }, [showEpi])
-
-  // Stencil helper meshes: count back faces (+1) and front faces (-1) of the closed myo volume.
-  // Pixels that end up non-zero are inside muscle. MUST be declared before the clipping effect
-  // so the clipping planes also get applied to these helper materials.
-  useEffect(() => {
-    if (!hasClip) return
-    const myo = myoMeshRef.current
-    if (!myo || !myo.isMesh) return
-
-    // Parity counting: every surface crossed flips the stencil bits, so muscle = odd, cavity = even.
-    // Independent of face winding, so it works even if the cavity walls aren't inverted in the GLB.
-    const mat = new THREE.MeshBasicMaterial({
-      side: THREE.DoubleSide,
-      colorWrite: false,
-      depthWrite: false,
-      depthTest: false,
-      stencilWrite: true,
-      stencilFunc: THREE.AlwaysStencilFunc,
-      stencilFail: THREE.InvertStencilOp,
-      stencilZFail: THREE.InvertStencilOp,
-      stencilZPass: THREE.InvertStencilOp,
-    })
-    const helper = new THREE.Mesh(myo.geometry, mat)
-    helper.renderOrder = RO_STENCIL
-    helper.name = 'stencilHelper'
-    myo.add(helper) // child inherits the heart's transform
-
-    return () => {
-      myo.remove(helper)
-      mat.dispose()
-    }
-  }, [scene, hasClip])
-
-  // Clipping planes (applies to every mesh in the frame, including the stencil helpers)
-  useEffect(() => {
-    const planes = clipPlane ? [clipPlane] : []
-    scene.traverse((child) => {
-      if (child.isMesh && child.material) {
-        child.material.clippingPlanes = planes
-        child.material.needsUpdate = true
-      }
-    })
-  }, [scene, clipPlane, hasClip])
-
-  return <primitive object={scene} visible={isVisible} />
-}
 
 export function HeartModel({
   bpm = 60,
@@ -200,96 +24,242 @@ export function HeartModel({
   capColor = null,
   ...props
 }) {
-  const framePaths = useMemo(() => buildFramePaths(framesDir), [framesDir])
-  const vesselPaths = useMemo(() => buildVesselPaths(framesDir), [framesDir])
-  const [activeFrame, setActiveFrame] = useState(0)
+  const [coreLoaded, setCoreLoaded] = useState(false)
+  const [renderItems, setRenderItems] = useState([])
+  const itemsRef = useRef([])
+  const myoMeshRef = useRef(null)
+  const stencilHelperRef = useRef(null)
+  const centerOffsetRef = useRef(new THREE.Vector3())
   const animElapsed = useRef(0)
-  const currentFrameRef = useRef(0)
+  const hasClip = !!clipPlane
+  const { invalidate } = useThree()
 
-  const safeBpm = Number(bpm) || 60
+  const createMeshItem = (s, idx) => {
+    const name = (s.name || '').toLowerCase()
+    const isMyo = name === 'myo' || name === 'mesh0' || idx === 0
+    const isVein = name.includes('vein')
+    const isArtery = name.includes('arter')
 
-  // Direct sync when external scrubbing or Cine-MRI frames drive the timeline
-  useEffect(() => {
-    if (forcedFrame !== null && forcedFrame !== undefined) {
-      // Scale incoming 30-frame MRI time domain into 75 GLB frames
-      const mapped = Math.floor((forcedFrame / 30) * NUM_FRAMES)
-      const targetFrame = Math.min(Math.max(mapped, 0), NUM_FRAMES - 1)
-      if (targetFrame !== currentFrameRef.current) {
-        currentFrameRef.current = targetFrame
-        setActiveFrame(targetFrame)
+    let mat
+    if (isMyo) {
+      mat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color('#9b2226'),
+        roughness: 0.55,
+        metalness: 0.05,
+        side: THREE.FrontSide,
+        depthWrite: true,
+      })
+      mat.polygonOffset = true
+      mat.polygonOffsetFactor = 2.0
+      mat.polygonOffsetUnits = 2.0
+
+      if (capColor) {
+        capStyle.color = new THREE.Color(capColor)
+      } else {
+        capStyle.color = mat.color.clone()
       }
+      capStyle.roughness = 0.55
+      capStyle.metalness = 0.05
+    } else if (s.bundle === 'vessels') {
+      mat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(isVein ? '#2b4cb3' : '#d83a3a'),
+        roughness: 0.35,
+        metalness: 0.05,
+        side: THREE.FrontSide, // Crucial: prevents backfaces of the tube fighting frontfaces
+        depthWrite: true,
+      })
+    } else {
+      const c = s.material?.color || [1.0, 1.0, 1.0]
+      mat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(c[0], c[1], c[2]),
+        roughness: s.material?.roughness ?? 0.5,
+        metalness: s.material?.metalness ?? 0.05,
+        side: THREE.DoubleSide,
+        depthWrite: true,
+      })
+      mat.polygonOffset = true
+      mat.polygonOffsetFactor = isVein ? -4.0 : -2.0
+      mat.polygonOffsetUnits = isVein ? -4.0 : -2.0
     }
-  }, [forcedFrame])
 
+    const mesh = new THREE.Mesh(s.geometry, mat)
+    mesh.name = s.name || `mesh_${idx}`
+    mesh.renderOrder = isMyo ? RO_MYO : s.bundle === 'vessels' ? RO_VESSELS : RO_OTHER
+
+    if (isMyo && !myoMeshRef.current) myoMeshRef.current = mesh
+
+    return { struct: s, mesh, isVein, isArtery, isMyo }
+  }
+
+  // Phase 1: Core bundle loads first; Phase 2: Vessels stream in background
+  useEffect(() => {
+    let active = true
+
+    loadCoreBundle(framesDir)
+      .then(({ manifest, totalFrames, structures }) => {
+        if (!active) return
+
+        // 1. Establish bounding box and center offset from core structures
+        const masterBox = new THREE.Box3()
+        structures.forEach((s) => {
+          evaluateStructureFrame(s, 0.0)
+          s.geometry.computeBoundingBox()
+          if (s.geometry.boundingBox) masterBox.union(s.geometry.boundingBox)
+        })
+
+        const centerOffset = new THREE.Vector3()
+        masterBox.getCenter(centerOffset)
+        centerOffsetRef.current.copy(centerOffset)
+
+        // 2. Translate Core coordinates to center
+        structures.forEach((s) => {
+          s.geometry.translate(-centerOffset.x, -centerOffset.y, -centerOffset.z)
+          for (let i = 0; i < s.basePositions.length; i += 3) {
+            s.basePositions[i + 0] -= centerOffset.x
+            s.basePositions[i + 1] -= centerOffset.y
+            s.basePositions[i + 2] -= centerOffset.z
+          }
+          s.geometry.computeBoundingBox()
+        })
+
+        const coreItems = structures.map((s, idx) => createMeshItem(s, idx))
+        itemsRef.current = coreItems
+        setRenderItems([...coreItems])
+        setCoreLoaded(true)
+        invalidate()
+
+        // 3. Stream vessels in background
+        loadVesselsBundle(framesDir, manifest, totalFrames)
+          .then((vesselStructures) => {
+            if (!active) return
+
+            const offset = centerOffsetRef.current
+            vesselStructures.forEach((s) => {
+              evaluateStructureFrame(s, 0.0)
+              s.geometry.translate(-offset.x, -offset.y, -offset.z)
+              for (let i = 0; i < s.basePositions.length; i += 3) {
+                s.basePositions[i + 0] -= offset.x
+                s.basePositions[i + 1] -= offset.y
+                s.basePositions[i + 2] -= offset.z
+              }
+              s.geometry.computeBoundingBox()
+            })
+
+            const vesselItems = vesselStructures.map((s, idx) => createMeshItem(s, coreItems.length + idx))
+            itemsRef.current = [...coreItems, ...vesselItems]
+            setRenderItems([...coreItems, ...vesselItems])
+            invalidate()
+          })
+          .catch((err) => console.warn('[HeartModel] Background vessels error:', err))
+      })
+      .catch((err) => console.error('[HeartModel] Core bundle load error:', err))
+
+    return () => {
+      active = false
+    }
+  }, [framesDir])
+
+  // Clipping & Visibility Sync
+  useEffect(() => {
+    const planes = clipPlane ? [clipPlane] : []
+
+    itemsRef.current.forEach(({ mesh, isVein, isArtery, isMyo }) => {
+      if (mesh.material) {
+        mesh.material.clippingPlanes = planes
+        mesh.material.needsUpdate = true
+      }
+      if (isMyo) {
+        mesh.visible = showEpi
+      } else if (isArtery) {
+        mesh.visible = showEpi && showArteries
+      } else if (isVein) {
+        mesh.visible = showEpi && showVeins
+      } else {
+        mesh.visible = true
+      }
+    })
+
+    if (stencilHelperRef.current?.material) {
+      stencilHelperRef.current.material.clippingPlanes = planes
+      stencilHelperRef.current.material.needsUpdate = true
+    }
+
+    invalidate()
+  }, [clipPlane, showEpi, showArteries, showVeins, renderItems, invalidate])
+
+  // Stencil helper
+  useEffect(() => {
+    if (!hasClip || !coreLoaded) return
+    const myo = myoMeshRef.current
+    if (!myo || !myo.isMesh) return
+
+    const mat = new THREE.MeshBasicMaterial({
+      side: THREE.DoubleSide,
+      colorWrite: false,
+      depthWrite: false,
+      depthTest: false,
+      stencilWrite: true,
+      stencilFunc: THREE.AlwaysStencilFunc,
+      stencilFail: THREE.InvertStencilOp,
+      stencilZFail: THREE.InvertStencilOp,
+      stencilZPass: THREE.InvertStencilOp,
+      clippingPlanes: clipPlane ? [clipPlane] : [],
+    })
+
+    const helper = new THREE.Mesh(myo.geometry, mat)
+    helper.renderOrder = RO_STENCIL
+    helper.name = 'stencilHelper'
+    myo.add(helper)
+    stencilHelperRef.current = helper
+
+    return () => {
+      myo.remove(helper)
+      mat.dispose()
+      stencilHelperRef.current = null
+    }
+  }, [coreLoaded, hasClip, clipPlane])
+
+  // Cardiac contraction loop
   useFrame((_, delta) => {
-    // stop advancing the animation timeline if paused or controlled by external forced frame
-    if (isPaused || forcedFrame !== null) return
+    if (!coreLoaded || (isPaused && forcedFrame === null) || itemsRef.current.length === 0) return
 
-    // Cap delta to prevent frame spikes when dragging the slider
+    const safeBpm = Number(bpm) || 60
     const dt = Math.min(delta, 0.05)
-
-    // 1. Total R-R interval in seconds
     const tCycle = 60.0 / safeBpm
 
-    // 2. Weissler's formula for true physiological systolic duration
-    // Scale smoothly so systole never takes more than 50% of the cycle at extreme BPMs
     const maxSysFraction = tCycle * 0.48
     const tSysCalculated = 0.413 - 0.0017 * safeBpm
     const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
-
-    // 3. Diastolic duration absorbs the rest of the cardiac interval
     const tDia = tCycle - tSys
 
-    animElapsed.current = (animElapsed.current + dt) % tCycle
-    const tLocal = animElapsed.current
-
-    let targetFrame = 0
-
-    if (tLocal < tSys) {
-      // SYSTOLIC PHASE (Frames 0 -> ES_FRAME)
-      const progressSys = tLocal / tSys
-      targetFrame = Math.floor(progressSys * ES_FRAME)
+    let ff = 0
+    if (forcedFrame !== null && forcedFrame !== undefined) {
+      ff = (forcedFrame / 30) * (NUM_FRAMES - 1)
     } else {
-      // DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES)
-      const tDiaElapsed = tLocal - tSys
-      const progressDia = tDiaElapsed / tDia
-      targetFrame = ES_FRAME + Math.floor(progressDia * (NUM_FRAMES - ES_FRAME))
+      animElapsed.current = (animElapsed.current + dt) % tCycle
+      const tLocal = animElapsed.current
+
+      if (tLocal < tSys) {
+        ff = (tLocal / tSys) * ES_FRAME
+      } else {
+        ff = ES_FRAME + ((tLocal - tSys) / tDia) * (NUM_FRAMES - ES_FRAME)
+      }
     }
 
-    targetFrame = Math.min(Math.max(targetFrame, 0), NUM_FRAMES - 1)
+    ff = Math.min(Math.max(ff, 0), NUM_FRAMES - 1)
 
-    // Direct ref check prevents frame thrashing and guarantees state stability
-    if (targetFrame !== currentFrameRef.current) {
-      currentFrameRef.current = targetFrame
-      setActiveFrame(targetFrame)
-    }
+    itemsRef.current.forEach(({ struct }) => {
+      evaluateStructureFrame(struct, ff)
+    })
   })
+
+  if (!coreLoaded) return null
 
   return (
     <group {...props}>
-      {framePaths.map((path, idx) => (
-        <SingleFrame
-          key={path}
-          url={path}
-          isVisible={idx === activeFrame}
-          showEpi={showEpi}
-          clipPlane={clipPlane}
-          capColor={capColor}
-        />
+      {renderItems.map(({ mesh }) => (
+        <primitive key={mesh.name} object={mesh} />
       ))}
-
-      {/* Render matching 3D vessel tubes synchronized with active cardiac cycle frame */}
-      {showEpi && (showArteries || showVeins) &&
-        vesselPaths.map((path, idx) => (
-          <SingleVesselFrame
-            key={path}
-            url={path}
-            isVisible={idx === activeFrame}
-            clipPlane={clipPlane}
-            showArteries={showArteries}
-            showVeins={showVeins}
-          />
-        ))}
     </group>
   )
 }

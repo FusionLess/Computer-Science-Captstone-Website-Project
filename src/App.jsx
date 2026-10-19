@@ -4,9 +4,12 @@ import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls, Center, ContactShadows } from '@react-three/drei'
 import { HeartModel } from './HeartModel'
 import { SlicePlaneHelper } from './SlicePlaneHelper'
-import MRIViewer from './MRIViewer'
-import EchoViewer from './EchoViewer'
+//only loads the mri viewer and echo viewer when they're needed
+const MRIViewer = React.lazy(() => import('./MRIViewer'))
+const EchoViewer = React.lazy(() => import('./EchoViewer'))
 import { SliceCap } from './SliceCap'
+
+
 
 const INITIAL_CAMERA_POS = [-225, -20, -200]
 
