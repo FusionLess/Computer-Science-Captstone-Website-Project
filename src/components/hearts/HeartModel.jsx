@@ -1,172 +1,20 @@
-import React, { useRef, useEffect, useLayoutEffect, useMemo } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
-import { useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
-import { HEART_FRAME_COUNT, phaseToFrame, cloneHeartScene, addStencilHelpers, materialsOf, isMuscle } from './heartRendering'
-import { HeartParts } from "../../data/HeartParts"
+import { useFrame, useThree } from '@react-three/fiber'
+import { loadCoreBundle, loadVesselsBundle, evaluateStructureFrame } from './heartPackDecode'
+import { phaseToFrame } from './heartRendering'
+import { HeartParts } from '../../data/HeartParts'
 
-const NUM_FRAMES = HEART_FRAME_COUNT
+const NUM_FRAMES = 75
 const ES_FRAME = 25
-// All frames are loaded; only the active frame is displayed.
-function SingleFrame({ url, vesselUrl, frameIndex, framesRef, pressRef, showEpi, showVeins, showArteries, ventricleOnly, clipPlane, onHover, onSelect, capColor }) {
-  const [{ scene }, { scene: vesselScene }] = useGLTF([url, vesselUrl])
-  const model = useMemo(() => {
-    const heart = cloneHeartScene(scene)
-    const vessels = cloneHeartScene(vesselScene)
-    vessels.traverse((child) => {
-      if (!child.isMesh) return
-      const isVein = child.name.toLowerCase().includes('vein') || child.name === 'mesh1'
-      // Vessel exports reuse the heart's mesh names; keep anatomical picking separate.
-      child.name = isVein ? 'coronaryVeins' : 'coronaryArteries'
-      child.userData.isCoronaryVessel = true
-    })
-    const group = new THREE.Group()
-    group.add(heart, vessels)
-    group.visible = false
-    return group
-  }, [scene, vesselScene])
 
-  useEffect(() => {
-    model.traverse((child) => {
-      if (!child.isMesh || child.name === 'stencilHelper') return
-      const muscle = isMuscle(child)
-      const vessel = child.userData.isCoronaryVessel
-      child.renderOrder = vessel ? 14 : muscle ? 12 : 13
-      materialsOf(child).forEach((material) => {
-        material.side = THREE.DoubleSide
-        material.flatShading = false
-        material.transparent = false
-        material.depthWrite = true
-        material.polygonOffset = !vessel
-        material.polygonOffsetFactor = muscle ? -1 : 1
-        material.polygonOffsetUnits = muscle ? -1 : 1
-        if (vessel) {
-          material.roughness = 0.35
-          material.metalness = 0.05
-        }
-        material.needsUpdate = true
-      })
-    })
-    return () => {
-      model.traverse((child) => {
-        if (child.isMesh && child.name !== 'stencilHelper') {
-          materialsOf(child).forEach((material) => material.dispose())
-        }
-      })
-    }
-  }, [model])
+const RO_STENCIL = 10
+const RO_MYO = 12
+const RO_OTHER = 13
+const RO_VESSELS = 14
 
-  useEffect(() => {
-    model.traverse((child) => {
-      if (!child.isMesh || child.name === 'stencilHelper') return
-      const name = child.name
-      if (child.userData.isCoronaryVessel) {
-        const showVessel = name === 'coronaryVeins' ? showVeins : showArteries
-        child.visible = showVessel && showEpi && !ventricleOnly
-      } else if (isMuscle(child)) {
-        child.visible = showEpi
-      } else {
-        const allowedByView = !ventricleOnly || name === 'mesh1' || name === 'mesh4'
-        child.visible = allowedByView
-      }
-    })
-  }, [model, showEpi, ventricleOnly, showVeins, showArteries])
-
-  useEffect(() => {
-    if (!clipPlane || !showEpi) return
-    return addStencilHelpers(model, clipPlane)
-  }, [model, clipPlane, showEpi])
-
-  useEffect(() => {
-    const planes = clipPlane ? [clipPlane] : []
-    model.traverse((child) => {
-      if (!child.isMesh) return
-      materialsOf(child).forEach((material) => {
-        material.clippingPlanes = planes
-        material.needsUpdate = true
-      })
-    })
-  }, [model, clipPlane])
-
-  const capStyle = useMemo(() => {
-    let style = null
-    model.traverse((child) => {
-      if (!child.isMesh || !isMuscle(child)) return
-      const material = materialsOf(child)[0]
-      style = {
-        color: capColor
-          ? new THREE.Color(capColor)
-          : child.geometry.attributes.color ? null : material.color?.clone(),
-        roughness: material.roughness,
-        metalness: material.metalness,
-      }
-    })
-    return style
-  }, [model, capColor])
-
-  useLayoutEffect(() => {
-    const frames = framesRef.current
-    frames[frameIndex] = { model, capStyle }
-    return () => { delete frames[frameIndex] }
-  }, [model, capStyle, frameIndex, framesRef])
-
-  const getSelectedMesh = (event) => {
-    if (!clipPlane || !showEpi || !isMuscle(event.object)) {
-      return event.object
-    }
-
-    const ventricleHit = event.intersections.find(hit =>
-        hit.eventObject === event.eventObject &&
-        (hit.object.name === 'mesh1' || hit.object.name === 'mesh4') &&
-        Math.abs(hit.distance - event.distance) <= 0.01
-    )
-
-    return ventricleHit?.object ?? event.object
-  }
-
-  return (
-    <primitive object={model}
-      onPointerMove={(event) => {
-       if (pressRef.current || event.pointerType !== 'mouse') return
-       const mesh = getSelectedMesh(event)
-       event.stopPropagation()
-
-       onHover?.({
-         name: HeartParts[mesh.name]?.name ?? mesh.name,
-         x: event.clientX,
-         y: event.clientY,
-       })
-      }}
-      onPointerOut={(event) => {
-        event.stopPropagation()
-        onHover?.(null)
-      }}
-      onPointerDown={(event) => {
-       event.stopPropagation()
-       if (event.button !== 0) return
-       pressRef.current = {
-         pointerId: event.pointerId,
-         x: event.clientX,
-         y: event.clientY,
-       }
-       onHover?.(null)
-      }}
-      onPointerUp={(event) => {
-       const press = pressRef.current
-       pressRef.current = null
-       if (!press || press.pointerId !== event.pointerId) return
-       event.stopPropagation()
-       if (Math.hypot(event.clientX - press.x, event.clientY - press.y) > 8) return
-       onSelect?.(getSelectedMesh(event).name)
-      }}
-      onPointerCancel={() => {
-       pressRef.current = null
-      }}
-    />
-  )
-}
 export function HeartModel({
-  frameFolder = "frames",
+  frameFolder = 'frames',
   bpm = 60,
   showEpi = true,
   showVeins = true,
@@ -182,19 +30,26 @@ export function HeartModel({
   onSelect,
   ...props
 }) {
-  const framePaths = useMemo(() => Array.from({ length: NUM_FRAMES }, (_, i) => {
-    const frame = (i + 50) % NUM_FRAMES
-    return {
-      heart: `/${frameFolder}/frame_${frame}.glb`,
-      vessels: `/${frameFolder}/vessels_${frame}.glb`,
-    }
-  }), [frameFolder])
-  const framesRef = useRef([])
+  const [coreLoaded, setCoreLoaded] = useState(false)
+  const [renderItems, setRenderItems] = useState([])
+  const itemsRef = useRef([])
+  const myoMeshRef = useRef(null)
+  const stencilHelperRef = useRef(null)
+  const centerOffsetRef = useRef(new THREE.Vector3())
   const pressRef = useRef(null)
+
   const animElapsed = useRef(0)
   const totalElapsed = useRef(0)
   const currentFrameRef = useRef(0)
+  const hasClip = !!clipPlane
+  const { invalidate } = useThree()
 
+  // Format folder URL
+  const folderUrl = useMemo(() => {
+    return frameFolder.startsWith('/') ? frameFolder : `/${frameFolder}`
+  }, [frameFolder])
+
+  // Clear pointer interactions
   useEffect(() => {
     const clearPress = () => { pressRef.current = null }
     window.addEventListener('pointerup', clearPress)
@@ -205,91 +60,339 @@ export function HeartModel({
     }
   }, [])
 
-  const safeBpm = Number(bpm) || 60
-  const displayFrame = (targetFrame) => {
-    const next = framesRef.current[targetFrame]
-    if (!next) return
-    const previous = framesRef.current[currentFrameRef.current]
-    if (previous && previous !== next) previous.model.visible = false
-    next.model.visible = true
-    currentFrameRef.current = targetFrame
-    if (capStyleRef) capStyleRef.current = next.capStyle
+  // Material and Mesh Factory
+  const createMeshItem = (s, idx) => {
+    const rawName = s.name || `mesh_${idx}`
+    const nameLower = rawName.toLowerCase()
+    const isMyo = nameLower === 'myo' || nameLower === 'mesh0' || idx === 0
+    const isVein = nameLower.includes('vein') || rawName === 'mesh1_vessel'
+    const isArtery = nameLower.includes('arter') || (s.bundle === 'vessels' && !isVein)
+    const isLV = nameLower.includes('lv') || rawName === 'mesh4'
+    const hasVertexColors = !!s.geometry.attributes.color
+
+    let mat
+    if (isMyo) {
+      mat = new THREE.MeshStandardMaterial({
+        color: hasVertexColors ? new THREE.Color('#ffffff') : new THREE.Color('#B01E28'),
+        vertexColors: hasVertexColors,
+        roughness: 0.55,
+        metalness: 0.05,
+        side: THREE.FrontSide, // FrontSide only: prevents the myocardium's inside cavity wall from colliding with endo
+        depthWrite: true,
+      })
+      mat.polygonOffset = true
+      // Push myocardium SLIGHTLY BACKWARDS in the depth buffer
+      mat.polygonOffsetFactor = 1.0
+      mat.polygonOffsetUnits = 1.0
+    } else if (s.bundle === 'vessels') {
+      mat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(isVein ? '#2b4cb3' : '#d83a3a'),
+        roughness: 0.35,
+        metalness: 0.05,
+        side: THREE.FrontSide,
+        depthWrite: true,
+      })
+      mat.polygonOffset = false
+    } else {
+      // Internal Cavities (rv_endo, lv_endo, atria, aorta, pa)
+      let chamberColor = new THREE.Color('#ffffff')
+      if (isLV) chamberColor = new THREE.Color('#d90429')
+      else if (nameLower.includes('rv') || rawName === 'mesh1') chamberColor = new THREE.Color('#0077b6')
+      else if (nameLower.includes('la') || rawName === 'mesh5') chamberColor = new THREE.Color('#ef233c')
+      else if (nameLower.includes('ra') || rawName === 'mesh2') chamberColor = new THREE.Color('#0096c7')
+      else if (nameLower.includes('aorta') || rawName === 'mesh6') chamberColor = new THREE.Color('#9b2226')
+      else if (nameLower.includes('pulmonary') || rawName === 'mesh3') chamberColor = new THREE.Color('#023e8a')
+      else if (s.material?.color) {
+        chamberColor = new THREE.Color(s.material.color[0], s.material.color[1], s.material.color[2])
+      }
+
+      mat = new THREE.MeshStandardMaterial({
+        color: hasVertexColors ? new THREE.Color('#ffffff') : chamberColor,
+        vertexColors: hasVertexColors,
+        roughness: s.material?.roughness ?? 0.5,
+        metalness: s.material?.metalness ?? 0.05,
+        side: THREE.DoubleSide,
+        depthWrite: true,
+      })
+      mat.polygonOffset = true
+      // Pull internal cavity lining FORWARD in the depth buffer so it always wins over myocardium
+      mat.polygonOffsetFactor = -2.0
+      mat.polygonOffsetUnits = -2.0
+    }
+
+    const mesh = new THREE.Mesh(s.geometry, mat)
+    mesh.name = isVein ? 'coronaryVeins' : isArtery ? 'coronaryArteries' : rawName
+    mesh.userData.originalName = rawName
+    mesh.userData.isCoronaryVessel = s.bundle === 'vessels'
+    mesh.renderOrder = isMyo ? RO_MYO : s.bundle === 'vessels' ? RO_VESSELS : RO_OTHER
+
+    if (isMyo && !myoMeshRef.current) {
+      myoMeshRef.current = mesh
+    }
+
+    return { struct: s, mesh, isVein, isArtery, isMyo }
   }
 
+  // Core Geometry; Lazy Vessels
+  useEffect(() => {
+    let active = true
+    setCoreLoaded(false)
+    myoMeshRef.current = null
+
+    loadCoreBundle(folderUrl)
+      .then(({ manifest, totalFrames, structures }) => {
+        if (!active) return
+
+        const masterBox = new THREE.Box3()
+        structures.forEach((s) => {
+          evaluateStructureFrame(s, 0.0)
+          s.geometry.computeBoundingBox()
+          if (s.geometry.boundingBox) masterBox.union(s.geometry.boundingBox)
+        })
+
+        const centerOffset = new THREE.Vector3()
+        masterBox.getCenter(centerOffset)
+        centerOffsetRef.current.copy(centerOffset)
+
+        structures.forEach((s) => {
+          s.geometry.translate(-centerOffset.x, -centerOffset.y, -centerOffset.z)
+          for (let i = 0; i < s.basePositions.length; i += 3) {
+            s.basePositions[i + 0] -= centerOffset.x
+            s.basePositions[i + 1] -= centerOffset.y
+            s.basePositions[i + 2] -= centerOffset.z
+          }
+
+          // Expand endocardium outward to seal the boundary gap against the cut rim
+          const nameLower = (s.name || '').toLowerCase()
+          if (nameLower.includes('endo') || nameLower === 'mesh1' || nameLower === 'mesh4') {
+            s.geometry.computeVertexNormals()
+            const normals = s.geometry.attributes.normal.array
+            const pos = s.geometry.attributes.position.array
+            const DILATE = 1.0
+
+            for (let i = 0; i < pos.length; i += 3) {
+              pos[i + 0] += normals[i + 0] * DILATE
+              pos[i + 1] += normals[i + 1] * DILATE
+              pos[i + 2] += normals[i + 2] * DILATE
+
+              s.basePositions[i + 0] += normals[i + 0] * DILATE
+              s.basePositions[i + 1] += normals[i + 1] * DILATE
+              s.basePositions[i + 2] += normals[i + 2] * DILATE
+            }
+            s.geometry.attributes.position.needsUpdate = true
+          }
+
+          s.geometry.computeBoundingBox()
+        })
+
+        const coreItems = structures.map((s, idx) => createMeshItem(s, idx))
+        itemsRef.current = coreItems
+        setRenderItems([...coreItems])
+        setCoreLoaded(true)
+        invalidate()
+
+        loadVesselsBundle(folderUrl, manifest, totalFrames)
+          .then((vesselStructures) => {
+            if (!active) return
+
+            const offset = centerOffsetRef.current
+            vesselStructures.forEach((s) => {
+              evaluateStructureFrame(s, 0.0)
+              s.geometry.translate(-offset.x, -offset.y, -offset.z)
+              for (let i = 0; i < s.basePositions.length; i += 3) {
+                s.basePositions[i + 0] -= offset.x
+                s.basePositions[i + 1] -= offset.y
+                s.basePositions[i + 2] -= offset.z
+              }
+              s.geometry.computeBoundingBox()
+            })
+
+            const vesselItems = vesselStructures.map((s, idx) =>
+              createMeshItem(s, coreItems.length + idx)
+            )
+            itemsRef.current = [...coreItems, ...vesselItems]
+            setRenderItems([...coreItems, ...vesselItems])
+            invalidate()
+          })
+          .catch((err) => console.warn('[HeartModel] Lazy vessels error:', err))
+      })
+      .catch((err) => console.error('[HeartModel] Core pack load error:', err))
+
+    return () => {
+      active = false
+    }
+  }, [folderUrl])
+
+  // sync clipping, visibility and ventricle isolation
+  useEffect(() => {
+    const planes = clipPlane ? [clipPlane] : []
+
+    itemsRef.current.forEach(({ mesh, isVein, isArtery, isMyo }) => {
+      if (mesh.material) {
+        mesh.material.clippingPlanes = planes
+        mesh.material.needsUpdate = true
+      }
+
+      const origName = mesh.userData.originalName || mesh.name
+
+      if (mesh.userData.isCoronaryVessel) {
+        const showVessel = isVein ? showVeins : showArteries
+        mesh.visible = showVessel && showEpi && !ventricleOnly
+      } else if (isMyo) {
+        mesh.visible = showEpi
+      } else {
+        const allowedByView = !ventricleOnly || origName === 'mesh1' || origName === 'mesh4' || origName.includes('endo')
+        mesh.visible = allowedByView
+      }
+    })
+
+    if (stencilHelperRef.current?.material) {
+      stencilHelperRef.current.material.clippingPlanes = planes
+      stencilHelperRef.current.material.needsUpdate = true
+    }
+
+    // dynamic slice cap styling
+    if (capStyleRef) {
+      capStyleRef.current = {
+        color: capColor ? new THREE.Color(capColor) : new THREE.Color('#B01E28'),
+        roughness: 0.55,
+        metalness: 0.05,
+      }
+    }
+
+    invalidate()
+  }, [clipPlane, showEpi, showArteries, showVeins, ventricleOnly, renderItems, capColor, capStyleRef, invalidate])
+
+  // stencil cross section helper for solid cut planes
+  useEffect(() => {
+    if (!hasClip || !coreLoaded) return
+    const myo = myoMeshRef.current
+    if (!myo || !myo.isMesh) return
+
+    const mat = new THREE.MeshBasicMaterial({
+      side: THREE.DoubleSide,
+      colorWrite: false,
+      depthWrite: false,
+      depthTest: false,
+      stencilWrite: true,
+      stencilFunc: THREE.AlwaysStencilFunc,
+      stencilFail: THREE.InvertStencilOp,
+      stencilZFail: THREE.InvertStencilOp,
+      stencilZPass: THREE.InvertStencilOp,
+      clippingPlanes: clipPlane ? [clipPlane] : [],
+    })
+
+    const helper = new THREE.Mesh(myo.geometry, mat)
+    helper.renderOrder = RO_STENCIL
+    helper.name = 'stencilHelper'
+    myo.add(helper)
+    stencilHelperRef.current = helper
+
+    return () => {
+      myo.remove(helper)
+      mat.dispose()
+      stencilHelperRef.current = null
+    }
+  }, [coreLoaded, hasClip, clipPlane])
+
+  // pointer and anatomical tooltip resolver
+  const getSelectedMesh = (event) => {
+    if (!clipPlane || !showEpi) return event.object
+    const ventricleHit = event.intersections?.find(
+      (hit) =>
+        hit.eventObject === event.eventObject &&
+        (hit.object.name.includes('lv') || hit.object.name.includes('rv') || hit.object.name === 'mesh1' || hit.object.name === 'mesh4') &&
+        Math.abs(hit.distance - event.distance) <= 0.01
+    )
+    return ventricleHit?.object ?? event.object
+  }
+
+  // animation and morph evaluation loop
   useFrame((_, delta) => {
-    // Imaging views own their timeline, including manual scrubbing while paused.
+    if (!coreLoaded || itemsRef.current.length === 0) return
+
+    let targetFrameFloat = 0
+
     if (animationPhase !== undefined) {
-      displayFrame(phaseToFrame(animationPhase))
-      return
-    }
-    if (isPaused || bpm <= 0) {
-      displayFrame(currentFrameRef.current)
-      return
-    }
-
-    // Cap delta to prevent frame spikes when dragging the slider
-    const dt = Math.min(delta, 0.05)
-
-    // The graph spans multiple beats, so its elapsed time must not wrap each cycle.
-    totalElapsed.current += dt
-    beatInterval?.(totalElapsed.current)
-
-    // 1. Total R-R interval in seconds
-    const tCycle = 60.0 / safeBpm
-
-    // 2. Weissler's formula for true physiological systolic duration
-    // Scale smoothly so systole never takes more than 50% of the cycle at extreme BPMs
-    const maxSysFraction = tCycle * 0.48
-    const tSysCalculated = 0.413 - 0.0017 * safeBpm
-    const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
-
-    // 3. Diastolic duration absorbs the rest of the cardiac interval
-    const tDia = tCycle - tSys
-
-    animElapsed.current = (animElapsed.current + dt) % tCycle
-    const tLocal = animElapsed.current
-
-    let targetFrame = 0
-
-    if (tLocal < tSys) {
-      // --- SYSTOLIC PHASE (Frames 0 -> ES_FRAME) ---
-      // Rapid contraction & ejection
-      const progressSys = tLocal / tSys
-      targetFrame = Math.floor(progressSys * ES_FRAME)
+      targetFrameFloat = phaseToFrame(animationPhase)
+    } else if (isPaused || bpm <= 0) {
+      targetFrameFloat = currentFrameRef.current
     } else {
-      // --- DIASTOLIC PHASE (Frames ES_FRAME -> NUM_FRAMES) ---
-      // Variable relaxation & passive/active filling
-      const tDiaElapsed = tLocal - tSys
-      const progressDia = tDiaElapsed / tDia
-      targetFrame = ES_FRAME + Math.floor(progressDia * (NUM_FRAMES - ES_FRAME))
+      const safeBpm = Number(bpm) || 60
+      const dt = Math.min(delta, 0.05)
+
+      totalElapsed.current += dt
+      beatInterval?.(totalElapsed.current)
+
+      const tCycle = 60.0 / safeBpm
+      const maxSysFraction = tCycle * 0.48
+      const tSysCalculated = 0.413 - 0.0017 * safeBpm
+      const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
+      const tDia = tCycle - tSys
+
+      animElapsed.current = (animElapsed.current + dt) % tCycle
+      const tLocal = animElapsed.current
+
+      if (tLocal < tSys) {
+        targetFrameFloat = (tLocal / tSys) * ES_FRAME
+      } else {
+        targetFrameFloat = ES_FRAME + ((tLocal - tSys) / tDia) * (NUM_FRAMES - ES_FRAME)
+      }
     }
 
-    targetFrame = Math.min(Math.max(targetFrame, 0), NUM_FRAMES - 1)
+    targetFrameFloat = Math.min(Math.max(targetFrameFloat, 0), NUM_FRAMES - 1)
+    currentFrameRef.current = targetFrameFloat
 
-    // Switch scene visibility directly without reconciling all 75 React children.
-    displayFrame(targetFrame)
+    itemsRef.current.forEach(({ struct }) => {
+      evaluateStructureFrame(struct, targetFrameFloat)
+    })
   })
+
+  if (!coreLoaded) return null
 
   return (
     <group {...props}>
-      {framePaths.map((path, idx) => (
-        <SingleFrame
-          key={path.heart}
-          url={path.heart}
-          vesselUrl={path.vessels}
-          frameIndex={idx}
-          framesRef={framesRef}
-          pressRef={pressRef}
-          showEpi={showEpi}
-          showVeins={showVeins}
-          showArteries={showArteries}
-          ventricleOnly={ventricleOnly}
-          clipPlane={clipPlane}
-          capColor={capColor}
-
-          onHover={onHover}
-          onSelect={onSelect}
-
+      {renderItems.map(({ mesh }) => (
+        <primitive
+          key={mesh.name}
+          object={mesh}
+          onPointerMove={(event) => {
+            if (pressRef.current || event.pointerType !== 'mouse') return
+            const selected = getSelectedMesh(event)
+            event.stopPropagation()
+            const displayName = HeartParts[selected.name]?.name || selected.name
+            onHover?.({
+              name: displayName,
+              x: event.clientX,
+              y: event.clientY,
+            })
+          }}
+          onPointerOut={(event) => {
+            event.stopPropagation()
+            onHover?.(null)
+          }}
+          onPointerDown={(event) => {
+            event.stopPropagation()
+            if (event.button !== 0) return
+            pressRef.current = {
+              pointerId: event.pointerId,
+              x: event.clientX,
+              y: event.clientY,
+            }
+            onHover?.(null)
+          }}
+          onPointerUp={(event) => {
+            const press = pressRef.current
+            pressRef.current = null
+            if (!press || press.pointerId !== event.pointerId) return
+            event.stopPropagation()
+            if (Math.hypot(event.clientX - press.x, event.clientY - press.y) > 8) return
+            const selected = getSelectedMesh(event)
+            onSelect?.(selected.name)
+          }}
+          onPointerCancel={() => {
+            pressRef.current = null
+          }}
         />
       ))}
     </group>
