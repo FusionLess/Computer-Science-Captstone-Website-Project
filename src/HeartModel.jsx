@@ -20,7 +20,7 @@ export function HeartModel({
   clipPlane = null,
   isPaused = false,
   forcedFrame = null,
-  framesDir = '/frames',
+  framesDir = '/fibrillation_heart',
   capColor = null,
   ...props
 }) {
@@ -39,11 +39,16 @@ export function HeartModel({
     const isMyo = name === 'myo' || name === 'mesh0' || idx === 0
     const isVein = name.includes('vein')
     const isArtery = name.includes('arter')
+    const isLV = name.includes('lv')
+    const hasVertexColors = !!s.geometry.attributes.color
 
     let mat
     if (isMyo) {
+      // If there are vertex colors (infarct bruise), use white base so colors display.
+      // If no vertex colors (healthy, compensated, etc.), FORCE exact #961c1c hex.
       mat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color('#9b2226'),
+        color: hasVertexColors ? new THREE.Color('#ffffff') : new THREE.Color('#961c1c'),
+        vertexColors: hasVertexColors,
         roughness: 0.55,
         metalness: 0.05,
         side: THREE.FrontSide,
@@ -56,7 +61,7 @@ export function HeartModel({
       if (capColor) {
         capStyle.color = new THREE.Color(capColor)
       } else {
-        capStyle.color = mat.color.clone()
+        capStyle.color = new THREE.Color('#B01E28')
       }
       capStyle.roughness = 0.55
       capStyle.metalness = 0.05
@@ -65,13 +70,25 @@ export function HeartModel({
         color: new THREE.Color(isVein ? '#2b4cb3' : '#d83a3a'),
         roughness: 0.35,
         metalness: 0.05,
-        side: THREE.FrontSide, // Crucial: prevents backfaces of the tube fighting frontfaces
+        side: THREE.FrontSide,
         depthWrite: true,
       })
     } else {
-      const c = s.material?.color || [1.0, 1.0, 1.0]
+      // Cavities: Ensure LV is crimson red, not grey
+      let chamberColor = new THREE.Color('#ffffff')
+      if (isLV) chamberColor = new THREE.Color('#d90429')
+      else if (name.includes('rv')) chamberColor = new THREE.Color('#0077b6')
+      else if (name.includes('la')) chamberColor = new THREE.Color('#ef233c')
+      else if (name.includes('ra')) chamberColor = new THREE.Color('#0096c7')
+      else if (name.includes('aorta')) chamberColor = new THREE.Color('#9b2226')
+      else if (name.includes('pulmonary')) chamberColor = new THREE.Color('#023e8a')
+      else if (s.material?.color) {
+        chamberColor = new THREE.Color(s.material.color[0], s.material.color[1], s.material.color[2])
+      }
+
       mat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(c[0], c[1], c[2]),
+        color: hasVertexColors ? new THREE.Color('#ffffff') : chamberColor,
+        vertexColors: hasVertexColors,
         roughness: s.material?.roughness ?? 0.5,
         metalness: s.material?.metalness ?? 0.05,
         side: THREE.DoubleSide,

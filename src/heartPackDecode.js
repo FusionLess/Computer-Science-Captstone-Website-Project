@@ -57,12 +57,29 @@ export function decodeStructures(manifest, buf, bundleName, totalFrames) {
       weightsP = new Float32Array(buf, s.coeffs.offset, frames * K)
     }
 
-    // 6. Geometry
+    // 6. Geometry & Native Vertex Colors
     const geometry = new THREE.BufferGeometry()
     const posAttr = new THREE.BufferAttribute(new Float32Array(basePositions), 3)
     posAttr.setUsage(THREE.DynamicDrawUsage)
     geometry.setAttribute('position', posAttr)
     geometry.setIndex(new THREE.BufferAttribute(indices, 1))
+
+    // Decode vertex colors with the exact itemSize (RGBA = 4)
+    if (s.colors && s.colors.offset !== undefined) {
+      const itemSize = s.colors.itemSize || 4
+      const rawColors = new Uint8Array(buf, s.colors.offset, N * itemSize)
+      const linearColors = new Float32Array(N * 3)
+
+      for (let i = 0; i < N; i++) {
+        // sRGB to Linear conversion: (c / 255.0) ^ 2.2
+        linearColors[i * 3 + 0] = Math.pow(rawColors[i * itemSize + 0] / 255.0, 2.2)
+        linearColors[i * 3 + 1] = Math.pow(rawColors[i * itemSize + 1] / 255.0, 2.2)
+        linearColors[i * 3 + 2] = Math.pow(rawColors[i * itemSize + 2] / 255.0, 2.2)
+      }
+
+      geometry.setAttribute('color', new THREE.BufferAttribute(linearColors, 3))
+    }
+
     geometry.computeVertexNormals()
 
     structures.push({
