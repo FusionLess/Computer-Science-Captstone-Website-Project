@@ -181,6 +181,10 @@ export default function HeartController2({ compareState, setSelectedPart, comple
     useEffect(() => {
         onSliceEnabledChange?.(effectiveSliceEnabled)
     }, [effectiveSliceEnabled, onSliceEnabledChange])
+    const [leftLoading, setLeftLoading] = useState(true);
+    const [rightLoading, setRightLoading] = useState(true);
+    const eitherLoading = leftLoading || rightLoading;
+    const pauseForLoading = isComparing && eitherLoading;
 
     const compareButtons = (
         <>
@@ -263,6 +267,8 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                     compareSide={isComparing ? "first" : undefined}
                     onNavigate={navigateWithPause}
                     onSliceEnabledChange={setLeftSliceEnabled}
+                    onLoadingChange={setLeftLoading}
+                    pauseForLoading={pauseForLoading}
 
                 />
 
@@ -307,11 +313,13 @@ export default function HeartController2({ compareState, setSelectedPart, comple
                         compareSide="second"
                         onNavigate={navigateWithPause}
                         onSliceEnabledChange={setRightSliceEnabled}
+                        onLoadingChange={setRightLoading}
+                        pauseForLoading={pauseForLoading}
                     />
                     
                 )}
             </div>
-            {isComparing && syncEnabled && (
+            {isComparing && syncEnabled && !eitherLoading && (
                 <div className="shared-heart-controller">
                     <HeartController
                         isPaused={isPaused}
@@ -401,7 +409,9 @@ function HeartPanel({
                         otherHeart,
                         compareSide,
                         onNavigate,
-                        onSliceEnabledChange
+                        onSliceEnabledChange,
+                        onLoadingChange,
+                        pauseForLoading,
                     }: {
     active: HeartState,
     showVeins: boolean,
@@ -437,6 +447,8 @@ function HeartPanel({
     onNavigate?: (to: string) => void,
     showControls?: boolean,
     onSliceEnabledChange?: (enabled: boolean) => void,
+    onLoadingChange?: (loading: boolean) => void,
+    pauseForLoading?: boolean,
 }) {
     const {
         syncEnabled,
@@ -491,7 +503,9 @@ function HeartPanel({
 
                     complexity={complexity}
                     showAdvancedSliceControls={showAdvancedSliceControls} showControls={undefined}
-                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined} onSliceEnabledChange={onSliceEnabledChange}               />
+                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined} onSliceEnabledChange={onSliceEnabledChange} onLoadingChange={onLoadingChange} pauseForLoading={pauseForLoading}
+
+             />
             </div>
         </div>
     )

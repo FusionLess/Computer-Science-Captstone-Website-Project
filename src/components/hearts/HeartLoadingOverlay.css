@@ -1,0 +1,48 @@
+.heart-loading-overlay {
+    position: absolute;
+    top: 12px;
+    right: 0;
+    bottom: 0;
+    left: 0;    
+    z-index: 60;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--home-background);
+    border-radius: 20px;
+    height: auto;    
+}
+
+.mri-panel .heart-loading-overlay {
+    top: 0;
+    border-radius: 0;   
+}
+
+.heart-loading-container {
+    position: relative;
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart-loading-spinner {
+    position: absolute;
+    inset: 0;
+
+    border: 5px solid var(--divider);
+    border-top-color: var(--active-labels);
+    border-radius: 50%;
+
+    animation: heart-spin 1s linear infinite;
+}
+
+@keyframes heart-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

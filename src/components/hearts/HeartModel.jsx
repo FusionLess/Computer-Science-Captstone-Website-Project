@@ -28,6 +28,7 @@ export function HeartModel({
   beatInterval,
   onHover,
   onSelect,
+  onLoaded,
   ...props
 }) {
   const [coreLoaded, setCoreLoaded] = useState(false)
@@ -212,6 +213,7 @@ export function HeartModel({
             )
             itemsRef.current = [...coreItems, ...vesselItems]
             setRenderItems([...coreItems, ...vesselItems])
+            onLoaded?.()
             invalidate()
           })
           .catch((err) => console.warn('[HeartModel] Lazy vessels error:', err))

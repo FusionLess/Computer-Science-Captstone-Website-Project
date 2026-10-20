@@ -8,6 +8,7 @@ import { SliceCap } from './SliceCap.jsx'
 import { SlicePlaneHelper } from './SlicePlaneHelper.jsx'
 import CameraController from './CameraController.jsx'
 import SliceControls from './SliceController.jsx'
+import HeartLoadingOverlay from './HeartLoadingOverlay'
 
 import { HeartParts } from '../../data/HeartParts.ts'
 import { useHeartMonitor } from "../context/HeartMonitorContext.tsx"
@@ -70,6 +71,8 @@ export default function HeartViewer({
     externalClipPlane,
     animationPhase,
     onSliceEnabledChange,
+    onLoadingChange,
+    pauseForLoading = false,
 }) {
     const defaultPreset = "frontal"
 
@@ -343,6 +346,13 @@ export default function HeartViewer({
     useEffect(() => {
         onSliceEnabledChange?.(sliceEnabled)
     }, [sliceEnabled, onSliceEnabledChange])
+    
+    const [loadedFolder, setLoadedFolder] = useState(null);
+    const isLoading = loadedFolder !== frameFolder;
+    useEffect(() => {
+        onLoadingChange?.(isLoading);
+    }, [isLoading, onLoadingChange]);
+    const effectiveIsPaused = isPaused || pauseForLoading;
     return (
 
         <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: 'var(--background-colour)' }}>
@@ -379,25 +389,28 @@ export default function HeartViewer({
                 <directionalLight position={[-250, -250, 200]} intensity={0.6} />
 
                 <Suspense fallback={null}>
-                    <Center position={[0,15,0]}>
+                    <group key={frameFolder}>
+                        <Center position={[0,15,0]}>
                             <HeartModel
-                            showVeins={showVeins}
-                            showArteries={showArteries}
-                            frameFolder={frameFolder}
-                            bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
-                            showEpi={showEpi}
-                            ventricleOnly={ventricleOnly}
-                            clipPlane={clipPlane}
-                            capStyleRef={capStyleRef}
-                            isPaused={isPaused}
-                            beatInterval={beatInterval}
-                            animationPhase={animationPhase}
-                            rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
-                            onSelect={setSelectedPart}
-                            onHover={setHoverInfo}
+                                showVeins={showVeins}
+                                showArteries={showArteries}
+                                frameFolder={frameFolder}
+                                bpm={bpm} // exposes the options for the heart model in the viewer such as the options listed below
+                                showEpi={showEpi}
+                                ventricleOnly={ventricleOnly}
+                                clipPlane={clipPlane}
+                                capStyleRef={capStyleRef}
+                                isPaused={effectiveIsPaused}
+                                beatInterval={beatInterval}
+                                animationPhase={animationPhase}
+                                rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
+                                onSelect={setSelectedPart}
+                                onHover={setHoverInfo}
+                                onLoaded={() => setLoadedFolder(frameFolder)}
 
-                        />
-                    </Center>
+                            />
+                        </Center>
+                    </group>
                     {showEpi && (
                         <SliceCap clipPlane={clipPlane} capStyleRef={capStyleRef} />
                     )}
@@ -431,6 +444,7 @@ export default function HeartViewer({
                 />
             </Canvas>
 
+            {isLoading && <HeartLoadingOverlay />}
             {/* Hover popup */}
             {hoverInfo && (
             <div
@@ -451,11 +465,11 @@ export default function HeartViewer({
             </div>
             )}
 
-            {showControls !== false && (!useSharedControls || showSyncedControls) && (
+            {showControls !== false && (!useSharedControls || showSyncedControls) && !isLoading && (
                 <>
                     <div className="viewer-controls">
                         <HeartController
-                        isPaused={isPaused}
+                        isPaused={effectiveIsPaused}
                         setIsPaused={setIsPaused}
                         syncEnabled={syncEnabled}
                         showEpi={showEpi}
