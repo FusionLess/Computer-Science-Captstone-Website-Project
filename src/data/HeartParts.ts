@@ -11,7 +11,7 @@ type HeartPart = {
 }
 
 export const HeartParts: Record<string, HeartPart> =  {
-  mesh0: {
+  myo: {
     name: "Epicardium",
     description: {
       basic: "This is a thin layer on the outside of the heart",
@@ -32,7 +32,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     ]
   },
 
-  mesh1: {
+  rv_endo: {
     name: "Right Ventricle",
     description: {
       basic: "The right ventricle is on the lower right part of the heart",
@@ -54,7 +54,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     
   },
 
-  mesh2: {
+  ra_endo: {
     name: "Right Atrium",
     description: {
       basic: "The right atrium is the upper right part of the heart",
@@ -75,7 +75,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     ]
   },
 
-  mesh3: {
+  pulmonary_artery: {
     name: "Pulmonary Artery",
     description: {
       basic: "The pulmonary artery is an important blood vessel that acts as a birdge for the heart and lungs",
@@ -96,7 +96,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     ]
   },
 
-  mesh4: {
+  lv_endo: {
     name: "Left Ventricle",
     description: {
       basic: "The left ventricle is the chamber on the bottom left of the heart",
@@ -117,7 +117,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     ]
   },
 
-  mesh5: {
+  la_endo: {
     name: "Left Atrium",
     description: {
       basic: "The left atrium is a chamber of a heart that is onn the upper left part of the heart",
@@ -139,7 +139,7 @@ export const HeartParts: Record<string, HeartPart> =  {
     
   },
 
-  mesh6: {
+  aorta: {
     name: "Aorta",
     description: {
       basic: "The aorta is the biggest artery in the human which connects to the lower left part of the heart (left ventricle)",

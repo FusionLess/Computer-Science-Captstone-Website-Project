@@ -65,8 +65,8 @@ export function HeartModel({
     const rawName = s.name || `mesh_${idx}`
     const nameLower = rawName.toLowerCase()
     const isMyo = nameLower === 'myo' || nameLower === 'mesh0' || idx === 0
-    const isVein = nameLower.includes('vein') || rawName === 'mesh1_vessel'
-    const isArtery = nameLower.includes('arter') || (s.bundle === 'vessels' && !isVein)
+    const isVein = s.bundle === 'vessels' && (nameLower.includes('vein') || rawName === 'mesh1_vessel')
+    const isArtery = s.bundle === 'vessels' && !isVein
     const isLV = nameLower.includes('lv') || rawName === 'mesh4'
     const hasVertexColors = !!s.geometry.attributes.color
 
@@ -241,8 +241,8 @@ export function HeartModel({
       } else if (isMyo) {
         mesh.visible = showEpi
       } else {
-        const allowedByView = !ventricleOnly || origName === 'mesh1' || origName === 'mesh4' || origName.includes('endo')
-        mesh.visible = allowedByView
+        const isVentricle = origName === 'rv_endo' || origName === 'lv_endo'
+        mesh.visible = !ventricleOnly || isVentricle
       }
     })
 
