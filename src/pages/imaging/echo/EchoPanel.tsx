@@ -7,7 +7,7 @@ import { HEART_FRAME_COUNT } from '../../../components/hearts/heartRendering';
 
 const totalFrames = 30;
 const modelFrameOffsets: Record<EchoView, number> = {
-  '4CH': 28, // Adjust this number for 4CH
+  '4CH': -3, // Adjust this number for 4CH
   '2CH': 29, // Adjust this number for 2CH
 };
 

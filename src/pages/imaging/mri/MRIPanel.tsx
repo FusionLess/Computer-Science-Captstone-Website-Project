@@ -18,8 +18,8 @@ export default function MRIPanel() {
 
     const totalSlices = 10;
     const totalFrames = 30;
-    const heartFrameOffset = 0;
-    const modelFrameOffset = 23;
+    const heartFrameOffset = -2.5;
+    const modelFrameOffset = 0;
 
     useEffect(() => {
         if (!isPlaying || bpm <= 0) return;
@@ -104,7 +104,8 @@ export default function MRIPanel() {
                             showControls={false}
                             externalClipPlane={externalClipPlane}
                             animationPhase={((frame + heartFrameOffset) / totalFrames
-                                + modelFrameOffset / HEART_FRAME_COUNT) % 1} setSelectedPart={undefined}
+                                + modelFrameOffset / HEART_FRAME_COUNT) % 1}
+                            setSelectedPart={undefined}
                             title={undefined} syncEnabled={undefined} syncedCameraRef={undefined} index={undefined}
                             sharedResetTrigger={undefined} setSharedResetTrigger={undefined}
                             useSharedControls={undefined} showSyncedControls={undefined} sharedShowEpi={undefined}
