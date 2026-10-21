@@ -60,7 +60,6 @@ export default function EchoPanel() {
         <div className="echo-panel-viewer echo-viewer">
           <span className="echo-panel-header">
             <span>Echo Viewer</span>
-            <span className="echo-mode-label">CAMUS B-MODE {activeView}</span>
           </span>
           <EchoViewer activeView={activeView} frame={frame} totalFrames={totalFrames} />
         </div>
@@ -75,14 +74,14 @@ export default function EchoPanel() {
               aria-pressed={activeView === '4CH'}
               onClick={() => setActiveView('4CH')}
             >
-              Apical 4-Chamber (4CH)
+              4-Chamber (4CH)
             </button>
             <button
               type="button"
               aria-pressed={activeView === '2CH'}
               onClick={() => setActiveView('2CH')}
             >
-              Apical 2-Chamber (2CH)
+              2-Chamber (2CH)
             </button>
           </div>
         </div>

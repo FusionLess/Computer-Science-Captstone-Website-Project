@@ -108,6 +108,10 @@
         overflow: visible;
     }
 
+    .imaging-layout .imaging-main-box {
+        order: -1;
+    }
+
     .imaging-central-panel {
         height: auto;
     }

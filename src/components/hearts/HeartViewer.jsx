@@ -252,11 +252,11 @@ export default function HeartViewer({
     }
 
     const handleResetView = () => {
-        setFullView(false)
+        setFullView(true)
         setVentricleOnly(false)
         setShowEpi(true)
-        setSliceEnabled(true)
-        setShowPlaneGuide(true)
+        setSliceEnabled(false)
+        setShowPlaneGuide(false)
 
         setActivePreset("frontal")
         setSliceOrientation(0, 40, 0)
