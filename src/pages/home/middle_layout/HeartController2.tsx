@@ -92,11 +92,11 @@ export default function HeartController2({ compareState, setSelectedPart, comple
 
     const handleSharedReset = () => {
         setSharedShowEpi(true)
-        setSharedVentricleOnly(true)
-        setSharedFullView(false)
+        setSharedVentricleOnly(false)
+        setSharedFullView(true)
 
-        setSharedSliceEnabled(true)
-        setSharedShowPlaneGuide(true)
+        setSharedSliceEnabled(false)
+        setSharedShowPlaneGuide(false)
 
         setSharedActivePreset("frontal")
         setSharedPitch(0)
