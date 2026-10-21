@@ -237,15 +237,21 @@ export function HeartModel({
 
       const origName = mesh.userData.originalName || mesh.name
 
+      let isVisible = true
+
       if (mesh.userData.isCoronaryVessel) {
         const showVessel = isVein ? showVeins : showArteries
-        mesh.visible = showVessel && showEpi && !ventricleOnly
+        isVisible = showVessel && showEpi && !ventricleOnly
       } else if (isMyo) {
-        mesh.visible = showEpi
+        isVisible = showEpi
       } else {
         const isVentricle = origName === 'rv_endo' || origName === 'lv_endo'
-        mesh.visible = !ventricleOnly || isVentricle
+        isVisible = !ventricleOnly || isVentricle
       }
+
+      mesh.visible = isVisible
+      // Disable raycasting when hidden so it never catches pointer events
+      mesh.raycast = isVisible ? THREE.Mesh.prototype.raycast : () => { }
     })
 
     if (stencilHelperRef.current?.material) {
@@ -299,14 +305,16 @@ export function HeartModel({
 
   // pointer and anatomical tooltip resolver
   const getSelectedMesh = (event) => {
-    if (!clipPlane || !showEpi) return event.object
-    const ventricleHit = event.intersections?.find(
-      (hit) =>
-        hit.eventObject === event.eventObject &&
-        (hit.object.name.includes('lv') || hit.object.name.includes('rv') || hit.object.name === 'mesh1' || hit.object.name === 'mesh4') &&
-        Math.abs(hit.distance - event.distance) <= 0.01
-    )
-    return ventricleHit?.object ?? event.object
+    if (showEpi && !clipPlane) {
+      return event.object
+    }
+
+    const chamberHit = event.intersections?.find((hit) => {
+      const name = (hit.object.userData.originalName || hit.object.name || '').toLowerCase()
+      return hit.object.visible && name !== 'myo' && name !== 'mesh0' && name !== 'stencilhelper'
+    })
+
+    return chamberHit?.object ?? event.object
   }
 
   // animation and morph evaluation loop
