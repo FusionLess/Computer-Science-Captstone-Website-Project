@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore, type ReactNode, type Dispatch, type SetStateAction } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type Dispatch, type SetStateAction } from "react"
 
 function createPhaseStore() {
     let phase = 0
@@ -24,6 +24,7 @@ type HeartMonitorContextType = {
     setIsPaused: Dispatch<SetStateAction<boolean>>
     phaseStore: ReturnType<typeof createPhaseStore>
     beatInterval: (elapsedSeconds: number) => void
+    getAnimationTime: () => number
 }
 
 const HeartMonitorContext = createContext<HeartMonitorContextType | undefined>(undefined)
@@ -33,6 +34,8 @@ export const GRAPH_BEAT_COUNT = window.matchMedia("(max-width: 768px)").matches 
 export function HeartMonitorProvider({ children }: { children: ReactNode }) {
     const [bpm, setBpm] = useState<number>(60)
     const [isPaused, setIsPaused] = useState<boolean>(false)
+    const elapsed = useRef(0)
+    const getAnimationTime = useCallback(() => elapsed.current, [])
     // Only the animated graphs subscribe to ticks; controls stay in React state.
     const [phaseStore] = useState(createPhaseStore)
     const beatInterval = useCallback((elapsedSeconds: number) => {
@@ -42,8 +45,23 @@ export function HeartMonitorProvider({ children }: { children: ReactNode }) {
         phaseStore.update((completedBeats % GRAPH_BEAT_COUNT) / GRAPH_BEAT_COUNT)
     }, [bpm, phaseStore])
 
-    const value = useMemo(() => ({ bpm, setBpm, isPaused, setIsPaused, phaseStore, beatInterval }),
-        [bpm, isPaused, phaseStore, beatInterval])
+    useEffect(() => {
+        let previous = performance.now()
+        let request: number
+        const tick = (now: number) => {
+            if (!isPaused && bpm > 0) {
+                elapsed.current += Math.min((now - previous) / 1000, 0.05)
+                beatInterval(elapsed.current)
+            }
+            previous = now
+            request = requestAnimationFrame(tick)
+        }
+        request = requestAnimationFrame(tick)
+        return () => cancelAnimationFrame(request)
+    }, [isPaused, bpm, beatInterval])
+
+    const value = useMemo(() => ({ bpm, setBpm, isPaused, setIsPaused, phaseStore, beatInterval, getAnimationTime }),
+        [bpm, isPaused, phaseStore, beatInterval, getAnimationTime])
 
 
     return (

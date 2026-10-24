@@ -26,6 +26,7 @@ export function HeartModel({
   capStyleRef,
   capColor = null,
   beatInterval,
+  getAnimationTime,
   onHover,
   onSelect,
   onLoaded,
@@ -39,7 +40,6 @@ export function HeartModel({
   const centerOffsetRef = useRef(new THREE.Vector3())
   const pressRef = useRef(null)
 
-  const animElapsed = useRef(0)
   const totalElapsed = useRef(0)
   const currentFrameRef = useRef(0)
   const hasClip = !!clipPlane
@@ -328,26 +328,21 @@ export function HeartModel({
     } else if (isPaused || bpm <= 0) {
       targetFrameFloat = currentFrameRef.current
     } else {
-      const safeBpm = Number(bpm) || 60
       const dt = Math.min(delta, 0.05)
-
-      totalElapsed.current += dt
-      beatInterval?.(totalElapsed.current)
-
-      const tCycle = 60.0 / safeBpm
-      const maxSysFraction = tCycle * 0.48
-      const tSysCalculated = 0.413 - 0.0017 * safeBpm
-      const tSys = Math.min(Math.max(tSysCalculated, 0.18), maxSysFraction)
-      const tDia = tCycle - tSys
-
-      animElapsed.current = (animElapsed.current + dt) % tCycle
-      const tLocal = animElapsed.current
-
-      if (tLocal < tSys) {
-        targetFrameFloat = (tLocal / tSys) * ES_FRAME
-      } else {
-        targetFrameFloat = ES_FRAME + ((tLocal - tSys) / tDia) * (NUM_FRAMES - ES_FRAME)
+      if (!getAnimationTime) {
+        totalElapsed.current += dt
+        beatInterval?.(totalElapsed.current)
       }
+      // Both viewers use the same elapsed time with the original frame mapping.
+      const elapsed = getAnimationTime?.() ?? totalElapsed.current
+      const safeBpm = Number(bpm) || 60
+      const tCycle = 60 / safeBpm
+      const tSys = Math.min(Math.max(0.413 - 0.0017 * safeBpm, 0.18), tCycle * 0.48)
+      const tLocal = elapsed % tCycle
+
+      targetFrameFloat = tLocal < tSys
+        ? (tLocal / tSys) * ES_FRAME
+        : ES_FRAME + ((tLocal - tSys) / (tCycle - tSys)) * (NUM_FRAMES - ES_FRAME)
     }
 
     targetFrameFloat = Math.min(Math.max(targetFrameFloat, 0), NUM_FRAMES - 1)
