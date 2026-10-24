@@ -24,7 +24,7 @@ const CAMERA_POSITIONS = {
     topDown: [0.1, 300, 0.02],
     tiltedShortAxis: [280, 150, 56],
 
-    twoCH: [240, -20, -200],
+    twoCH: [300, 50, -150],
     fourCH: [-225, 50, -200]
 }
 

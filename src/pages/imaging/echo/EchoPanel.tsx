@@ -7,8 +7,8 @@ import { HEART_FRAME_COUNT } from '../../../components/hearts/heartRendering';
 
 const totalFrames = 30;
 const modelFrameOffsets: Record<EchoView, number> = {
-  '4CH': -3, // Adjust this number for 4CH
-  '2CH': 29, // Adjust this number for 2CH
+  '4CH': 72, // Adjust this number for 4CH
+  '2CH': 71, // Adjust this number for 2CH
 };
 
 export default function EchoPanel() {
@@ -29,8 +29,8 @@ export default function EchoPanel() {
 
   const externalClipPlane = useMemo(() => {
     const settings = activeView === '4CH'
-        ? { pitch: 0, yaw: 40, depth: 0 }
-        : { pitch: 0, yaw: 324, depth: 14 };
+        ? { pitch: 0, yaw: 40, depth: 10 }
+        : { pitch: 0, yaw: 317, depth: 30 };
 
     const pitch = THREE.MathUtils.degToRad(settings.pitch);
     const yaw = THREE.MathUtils.degToRad(settings.yaw);

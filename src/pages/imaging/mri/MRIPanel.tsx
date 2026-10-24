@@ -18,7 +18,7 @@ export default function MRIPanel() {
 
     const totalSlices = 10;
     const totalFrames = 30;
-    const heartFrameOffset = -2.5;
+    const heartFrameOffset = -5;
     const modelFrameOffset = 0;
 
     useEffect(() => {
