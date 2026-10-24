@@ -338,7 +338,7 @@ export function HeartModel({
       const safeBpm = Number(bpm) || 60
       const tCycle = 60 / safeBpm
       const tSys = Math.min(Math.max(0.413 - 0.0017 * safeBpm, 0.18), tCycle * 0.48)
-      const CONTRACTION_PHASE_OFFSET = 0.35
+      const CONTRACTION_PHASE_OFFSET = 0.3
       const tLocal = ((elapsed / tCycle - CONTRACTION_PHASE_OFFSET + 1) % 1) * tCycle
 
       targetFrameFloat = tLocal < tSys

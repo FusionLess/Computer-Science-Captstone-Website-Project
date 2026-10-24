@@ -27,4 +27,23 @@
     .content.descriptions-hidden + .graph-panel {
         margin: 10px var(--side-margin);
     }
+
+    .content.descriptions-hidden {
+        flex: 1 0 auto;
+    }
+
+    .content.descriptions-hidden .middle-panel,
+    .content.descriptions-hidden .middle-panel-viewers {
+        flex: 1;
+    }
+
+    .content.descriptions-hidden .middle-panel-viewers > .heart_panel {
+        flex: 1;
+        height: auto;
+        min-height: 430px;
+    }
+
+    .content.descriptions-hidden .middle-panel-viewers:has(> .heart_panel + .heart_panel) > .heart_panel {
+        min-height: 240px;
+    }
 }
