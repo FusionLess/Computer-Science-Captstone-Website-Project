@@ -4,13 +4,11 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "r
 import { NavLink, useLocation, useNavigate } from "react-router"
 import { useHeartMonitor } from "../../context/HeartMonitorContext"
 import type { Complexity } from "../../types/complexities.ts";
-import { getHeartPath } from "../../../utils/heartRoutes"
+import { getHeartPath, isHeartPagePath } from "../../../utils/heartRoutes"
 
 function TopBar({showVeins, setShowVeins, showArteries, setShowArteries, graphActive, setGraphActive, glowActive, setGlowActive, complexity, setComplexity, showDescriptions, setShowDescriptions, showAdvancedSliceControls, setShowAdvancedSliceControls, sliceEnabled = false}: { showVeins?: boolean, setShowVeins?: (value: boolean) => void, showArteries?: boolean, setShowArteries?: (value: boolean) => void, graphActive: boolean, setGraphActive: (v: boolean) => void, glowActive: boolean, setGlowActive: (v: boolean) => void, complexity: Complexity, setComplexity: (v: Complexity) => void, showDescriptions?: boolean, setShowDescriptions?: (value: boolean) => void, showAdvancedSliceControls: boolean, setShowAdvancedSliceControls: (v: boolean) => void,sliceEnabled?: boolean}) {
     const { pathname } = useLocation()
-    const isHeartPage =
-        /^\/(basic|standard|advanced)\/(heart|heart-attack|heart-electricity|heart-failure)\/[^/]+$/.test(pathname) ||
-        /^\/(basic|standard|advanced)\/compare\/[^/]+\/[^/]+$/.test(pathname)
+    const isHeartPage = isHeartPagePath(pathname)
 
 
     const navigate = useNavigate()

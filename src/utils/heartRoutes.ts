@@ -1,6 +1,11 @@
 import type { HeartCategory,HeartOption, HeartState} from "../components/types/states"
 import type {Complexity} from "../components/types/complexities"
 
+export function isHeartPagePath(pathname: string): boolean {
+    return /^\/(basic|standard|advanced)\/(heart|heart-attack|heart-electricity|heart-failure)\/[^/]+\/?$/.test(pathname) ||
+        /^\/(basic|standard|advanced)\/compare\/[^/]+\/[^/]+\/?$/.test(pathname)
+}
+
 const categoryPaths: Record<HeartCategory, string> = {
     healthy: "heart",
     attack: "heart-attack",
