@@ -26,8 +26,8 @@ function Content({ compareState, complexity, showDescriptions, showAdvancedSlice
     return (
         <main className={`content${showDescriptions ? "" : " descriptions-hidden"}`}>
             {showDescriptions && (<LeftBox compareState={compareState} complexity={complexity} />)}
-            <HeartController2 compareState={compareState} setSelectedPart={setSelectedPart} complexity={complexity} showAdvancedSliceControls={showAdvancedSliceControls} showVeins={showVeins} showArteries={showArteries}onSliceEnabledChange={setSliceEnabled}/>
-            {showDescriptions && (<RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity}/>)}
+            <HeartController2 compareState={compareState} setSelectedPart={setSelectedPart} selectedPart={selectedPart} complexity={complexity} showAdvancedSliceControls={showAdvancedSliceControls} showVeins={showVeins} showArteries={showArteries} onSliceEnabledChange={setSliceEnabled}/>
+            {showDescriptions && (<RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity} onCancel={() => setSelectedPart(null)} onHighlight={setSelectedPart}/>)}
         </main>
     )
 }

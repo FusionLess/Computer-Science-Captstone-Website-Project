@@ -29,6 +29,7 @@ export function HeartModel({
   getAnimationTime,
   onHover,
   onSelect,
+  selectedPart = null,
   onLoaded,
   ...props
 }) {
@@ -224,6 +225,16 @@ export function HeartModel({
       active = false
     }
   }, [folderUrl])
+
+  // Emissive shading follows the animated mesh and its clipping plane.
+  useEffect(() => {
+    itemsRef.current.forEach(({ mesh }) => {
+      const selected = mesh.name === selectedPart
+      mesh.material.emissive.set(selected ? '#ffb347' : '#000000')
+      mesh.material.emissiveIntensity = selected ? 0.65 : 0
+    })
+    invalidate()
+  }, [selectedPart, renderItems, invalidate])
 
   // sync clipping, visibility and ventricle isolation
   useEffect(() => {

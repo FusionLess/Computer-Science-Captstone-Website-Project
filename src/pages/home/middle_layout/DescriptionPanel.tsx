@@ -6,8 +6,8 @@ import { DESCRIPTIONS } from "../../../data/HeartDescriptions.ts";
 import type { Complexity } from "../../../components/types/complexities.ts";
 import PopUpInfoBox from "./PopUpInfoBox"
 
-function RightBox({compareState, selectedPart, complexity} :
-                  {compareState : CompareState, selectedPart: string | null, complexity: Complexity}) {
+function RightBox({compareState, selectedPart, complexity, onCancel, onHighlight} :
+                  {compareState : CompareState, selectedPart: string | null, complexity: Complexity, onCancel: () => void, onHighlight: (part: string) => void}) {
     const isMobile = window.matchMedia("(orientation: portrait)").matches;
     const active = compareState.selection1
     const selectionTone = {Healthy: "green", Minor: "amber", Severe: "red", Fibrillation: "blue", Compensated: "amber", Decompensated: "red",}
@@ -94,7 +94,7 @@ function RightBox({compareState, selectedPart, complexity} :
                             block: "start",
                         })
                     }>
-                        <HeartPartInfo selectedPart={selectedPart} complexity={complexity}/>
+                        <HeartPartInfo selectedPart={selectedPart} complexity={complexity} onCancel={onCancel} onHighlight={onHighlight}/>
                     </div>
                 </div>
             </div>

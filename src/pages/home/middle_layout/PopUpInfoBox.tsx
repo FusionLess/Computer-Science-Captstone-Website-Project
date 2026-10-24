@@ -16,6 +16,7 @@ type PopUpInfoBoxProps = {
     selectedPart?: string | null
     complexity?: Complexity
     onClose: () => void
+    onHighlight?: (part: string) => void
 }
 
 function PopUpInfoBox({
@@ -26,7 +27,8 @@ function PopUpInfoBox({
     media = [],
     selectedPart,
     complexity,
-    onClose
+    onClose,
+    onHighlight
 }: PopUpInfoBoxProps) {
 
     const [mediaIndex, setMediaIndex] = useState(0)
@@ -141,6 +143,14 @@ function PopUpInfoBox({
 
                         {currentMedia?.transcript && (
                             <p className="popup_media_caption">{currentMedia.transcript}</p>
+                        )}
+                        {variant === "anatomy" && onHighlight && (
+                            <button type="button" className="explore_button" onClick={() => {
+                                onClose()
+                                onHighlight(currentPartKey)
+                            }}>
+                                Highlight Part
+                            </button>
                         )}
                     </div>
                             

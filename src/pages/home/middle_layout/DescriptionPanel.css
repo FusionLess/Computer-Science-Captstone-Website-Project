@@ -126,7 +126,8 @@
 }
 
 
-.content .explore_button {
+.content .explore_button,
+.content .heart_anatomy_cancel {
     transition:
             translate 100ms ease,
             transform 100ms ease,
@@ -150,12 +151,14 @@
     flex: 0 0 18px;
 }
 
-.explore_button:hover {
+.explore_button:hover,
+.heart_anatomy_cancel:hover {
     transform: translateY(-1px) scale(1.03);
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
 }
 
-.explore_button:active {
+.explore_button:active,
+.heart_anatomy_cancel:active {
     transform: translateY(0) scale(0.98);
 }
 

@@ -4,10 +4,12 @@ import type { Complexity } from "../../../components/types/complexities.ts"
 import { useState } from "react"
 import PopUpInfoBox from "./PopUpInfoBox.tsx"
 function HeartPartInfo({
-    selectedPart, complexity
+    selectedPart, complexity, onCancel, onHighlight
 }: {
     selectedPart: string | null
     complexity: Complexity
+    onCancel: () => void
+    onHighlight: (part: string) => void
 }) {
     const info = selectedPart
         ? HeartParts[
@@ -18,7 +20,14 @@ function HeartPartInfo({
 
     return (
         <section className="heart_part_info">
-            <h3>Heart Anatomy</h3>
+            <div className="heart_anatomy_header">
+                <h3>Heart Anatomy</h3>
+                {selectedPart && <button type="button" className="heart_anatomy_cancel" onClick={(event) => {
+                    event.stopPropagation()
+                    setShowPopup(false)
+                    onCancel()
+                }}>Cancel</button>}
+            </div>
             {info ? (
                 <div className="heart_part_description">
                     <h4>{info.name}</h4>
@@ -54,6 +63,7 @@ function HeartPartInfo({
                     variant="anatomy"
                     selectedPart={selectedPart}
                     complexity={complexity}
+                    onHighlight={onHighlight}
                     onClose={() => setShowPopup(false)}
                 />
             )}

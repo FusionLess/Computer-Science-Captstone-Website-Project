@@ -33,6 +33,7 @@ export default function HeartViewer({
     showArteries = true,
     frameFolder,
     setSelectedPart,
+    selectedPart,
     title,
     syncEnabled,
     syncedCameraRef,
@@ -87,6 +88,17 @@ export default function HeartViewer({
         : cameraPreset)
     const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
+    const [highlightedPart, setHighlightedPart] = useState(null)
+    useEffect(() => {
+        if (selectedPart !== undefined) setHighlightedPart(selectedPart)
+    }, [selectedPart])
+    const selectPart = (part) => {
+        setHighlightedPart(part)
+        setSelectedPart?.(part)
+    }
+    useEffect(() => {
+        setHighlightedPart(null)
+    }, [frameFolder])
     const { bpm, isPaused, setIsPaused, getAnimationTime } = useHeartMonitor()
 
     // sets the preset states you can slice the heart
@@ -173,6 +185,15 @@ export default function HeartViewer({
     const setShowEpi = useSharedControls
         ? setSharedShowEpi
         : setLocalShowEpi
+
+    useEffect(() => {
+        if (highlightedPart === 'lv_endo' || highlightedPart === 'rv_endo') {
+            setShowEpi(false)
+        }
+        if (highlightedPart === 'myo') {
+            setShowEpi(true)
+        }
+    }, [highlightedPart, setShowEpi])
 
 
     const ventricleOnly = useSharedControls
@@ -373,6 +394,7 @@ export default function HeartViewer({
                 </h3>
             )}
             <Canvas
+                onPointerMissed={() => selectPart(null)}
                 onCreated={({ camera }) => {
                     camera.layers.enable(1)
                 }}
@@ -404,7 +426,8 @@ export default function HeartViewer({
                                 getAnimationTime={getAnimationTime}
                                 animationPhase={animationPhase}
                                 rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
-                                onSelect={setSelectedPart}
+                                onSelect={selectPart}
+                                selectedPart={highlightedPart}
                                 onHover={setHoverInfo}
                                 onLoaded={() => setLoadedFolder(frameFolder)}
 
