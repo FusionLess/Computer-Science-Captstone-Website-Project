@@ -98,6 +98,7 @@ export default function MRIPanel() {
                             />
                         </div>
                         <HeartViewer
+                            externalVentricleOnly={true}
                             cameraView={heartView}
                             cameraViewResetTrigger={heartViewResetTrigger}
                             frameFolder="frames"

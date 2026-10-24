@@ -252,7 +252,7 @@ export function HeartModel({
 
       if (mesh.userData.isCoronaryVessel) {
         const showVessel = isVein ? showVeins : showArteries
-        isVisible = showVessel && showEpi && !ventricleOnly
+        isVisible = showVessel && showEpi 
       } else if (isMyo) {
         isVisible = showEpi
       } else {

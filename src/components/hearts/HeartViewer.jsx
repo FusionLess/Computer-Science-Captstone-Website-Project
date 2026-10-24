@@ -74,6 +74,7 @@ export default function HeartViewer({
     onSliceEnabledChange,
     onLoadingChange,
     pauseForLoading = false,
+    externalVentricleOnly,
 }) {
     const defaultPreset = "frontal"
 
@@ -187,18 +188,20 @@ export default function HeartViewer({
         : setLocalShowEpi
 
     useEffect(() => {
+        if (cameraView) return
+
         if (highlightedPart === 'lv_endo' || highlightedPart === 'rv_endo') {
             setShowEpi(false)
         }
         if (highlightedPart === 'myo') {
             setShowEpi(true)
         }
-    }, [highlightedPart, setShowEpi])
+    }, [highlightedPart, setShowEpi, cameraView])
 
 
-    const ventricleOnly = useSharedControls
-        ? sharedVentricleOnly
-        : localVentricleOnly
+    const ventricleOnly = externalVentricleOnly ?? (
+        useSharedControls ? sharedVentricleOnly : localVentricleOnly
+    )
 
     const setVentricleOnly = useSharedControls
         ? setSharedVentricleOnly
