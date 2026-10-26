@@ -66,7 +66,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
     const useSharedControls = isComparing && syncEnabled
     const [sharedSliceEnabled, setSharedSliceEnabled] = useState(false)
     const [sharedShowPlaneGuide, setSharedShowPlaneGuide] = useState(false)
-    const [sharedSliceControlsOpen, setSharedSliceControlsOpen] = useState(false)
+    const [sharedSliceControlsOpen, setSharedSliceControlsOpen] = useState(() => !window.matchMedia('(orientation: portrait)').matches)
     const [leftSliceEnabled, setLeftSliceEnabled] = useState(false)
     const [rightSliceEnabled, setRightSliceEnabled] = useState(false)
 
@@ -504,8 +504,9 @@ function HeartPanel({
 
                     complexity={complexity}
                     showAdvancedSliceControls={showAdvancedSliceControls} showControls={undefined}
-                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined} onSliceEnabledChange={onSliceEnabledChange} onLoadingChange={onLoadingChange} pauseForLoading={pauseForLoading}
-
+                    cameraView={undefined} externalClipPlane={undefined} animationPhase={undefined}
+                    onSliceEnabledChange={onSliceEnabledChange} onLoadingChange={onLoadingChange}
+                    pauseForLoading={pauseForLoading} externalVentricleOnly={undefined}
              />
             </div>
         </div>

@@ -6,16 +6,6 @@
     transform: scale(0.95);
 }
 
-.viewer-controls button svg {
-    width: var(--control-icon-size);
-    height: var(--control-icon-size);
-}
-
-.heart-controller .controller-actions button svg {
-    width: var(--control-icon-size);
-    height: var(--control-icon-size);
-}
-
 .content .controller button {
     transition:
             width 250ms ease,

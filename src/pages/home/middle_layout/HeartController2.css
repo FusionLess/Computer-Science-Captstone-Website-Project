@@ -303,8 +303,4 @@ button.compare-button.not-comparing {
         gap: 8px;
     }
 
-    .shared-heart-controller button svg {
-        width: 20px;
-        height: 20px;
-    }
 }

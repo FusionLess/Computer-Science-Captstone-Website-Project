@@ -105,7 +105,7 @@ export default function HeartViewer({
 
     // sets the preset states you can slice the heart
     const [sliceControlEnabled, setSliceControlEnabled] = useState(false)
-    const [sliceControlsOpen, setSliceControlsOpen] = useState(false)
+    const [sliceControlsOpen, setSliceControlsOpen] = useState(() => !window.matchMedia('(orientation: portrait)').matches)
     const [localSliceEnabled, setLocalSliceEnabled] =
         useState(false)
 

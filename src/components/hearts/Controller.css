@@ -59,6 +59,12 @@
     line-height: 1.1;
     overflow-wrap: normal;
 }
+.controller button svg {
+    width: var(--control-icon-size);
+    height: var(--control-icon-size);
+    flex-shrink: 0;
+}
+
 .controller-actions {
     display: flex;
     align-items: center;
