@@ -90,6 +90,7 @@ export default function HeartViewer({
     const capStyleRef = useRef(null)
     const [viewMode, setViewMode] = useState('3d')
     const [highlightedPart, setHighlightedPart] = useState(null)
+    const activeHighlightedPart = selectedPart === undefined ? highlightedPart : selectedPart
     useEffect(() => {
         if (selectedPart !== undefined) setHighlightedPart(selectedPart)
     }, [selectedPart])
@@ -190,13 +191,13 @@ export default function HeartViewer({
     useEffect(() => {
         if (cameraView) return
 
-        if (highlightedPart === 'lv_endo' || highlightedPart === 'rv_endo') {
+        if (activeHighlightedPart === 'lv_endo' || activeHighlightedPart === 'rv_endo') {
             setShowEpi(false)
         }
-        if (highlightedPart === 'myo') {
+        if (activeHighlightedPart === 'myo') {
             setShowEpi(true)
         }
-    }, [highlightedPart, setShowEpi, cameraView])
+    }, [activeHighlightedPart, setShowEpi, cameraView])
 
 
     const ventricleOnly = externalVentricleOnly ?? (
@@ -430,7 +431,7 @@ export default function HeartViewer({
                                 animationPhase={animationPhase}
                                 rotation={[-Math.PI / 12, -Math.PI / 3, 0]} // tweaks the pitch and yaw of the heart in the viewer
                                 onSelect={selectPart}
-                                selectedPart={highlightedPart}
+                                selectedPart={activeHighlightedPart}
                                 onHover={setHoverInfo}
                                 onLoaded={() => setLoadedFolder(frameFolder)}
 

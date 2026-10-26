@@ -23,11 +23,14 @@ function Content({ compareState, complexity, showDescriptions, showAdvancedSlice
         complexity,
     ])
 
+    const activeSelectedPart = compareState.isComparing ? null : selectedPart;
+    const selectPart = (part: string | null) => setSelectedPart(compareState.isComparing ? null : part);
+
     return (
         <main className={`content${showDescriptions ? "" : " descriptions-hidden"}`}>
             {showDescriptions && (<LeftBox compareState={compareState} complexity={complexity} />)}
-            <HeartController2 compareState={compareState} setSelectedPart={setSelectedPart} selectedPart={selectedPart} complexity={complexity} showAdvancedSliceControls={showAdvancedSliceControls} showVeins={showVeins} showArteries={showArteries} onSliceEnabledChange={setSliceEnabled}/>
-            {showDescriptions && (<RightBox compareState={compareState} selectedPart={selectedPart} complexity={complexity} onCancel={() => setSelectedPart(null)} onHighlight={setSelectedPart}/>)}
+            <HeartController2 compareState={compareState} setSelectedPart={selectPart} selectedPart={activeSelectedPart} complexity={complexity} showAdvancedSliceControls={showAdvancedSliceControls} showVeins={showVeins} showArteries={showArteries} onSliceEnabledChange={setSliceEnabled}/>
+            {showDescriptions && (<RightBox compareState={compareState} selectedPart={activeSelectedPart} complexity={complexity} onCancel={() => setSelectedPart(null)} onHighlight={selectPart}/>)}
         </main>
     )
 }
