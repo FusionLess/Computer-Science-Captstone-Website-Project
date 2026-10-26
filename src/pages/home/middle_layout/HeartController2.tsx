@@ -113,7 +113,6 @@ export default function HeartController2({ compareState, selectedPart, setSelect
         const nextFullView = !sharedFullView
 
         setSharedFullView(nextFullView)
-        setSharedVentricleOnly(!nextFullView)
         setSharedShowEpi(true)
 
         setSharedSliceEnabled(!nextFullView)
@@ -135,7 +134,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
 
         setSharedSliceEnabled(true)
         setSharedShowPlaneGuide(true)
-        setSharedVentricleOnly(true)
+        setSharedVentricleOnly(false)
 
         setSharedActivePreset(presetKey)
         setSharedPitch(pitch)
@@ -162,7 +161,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
 
         if (enabled) {
             setSharedFullView(false)
-            setSharedVentricleOnly(true)
+            setSharedVentricleOnly(false)
 
             setSharedActivePreset("frontal")
             setSharedPitch(0)

@@ -219,7 +219,6 @@ export default function HeartViewer({
 
     useEffect(() => {
         setLocalFullView(true)
-        setVentricleOnly(false)
 
         setSliceEnabled(false)
         setShowPlaneGuide(false)
@@ -308,7 +307,6 @@ export default function HeartViewer({
     const handlePresetSelect = (presetKey, p, y) => {
         setFullView(false)
         setSliceEnabled(true)
-        setVentricleOnly(true)
         setShowPlaneGuide(true)
         setActivePreset(presetKey)
         setPitch(p)
@@ -334,7 +332,6 @@ export default function HeartViewer({
 
         if (enabled) {
             setFullView(false)
-            setVentricleOnly(true)
 
             setActivePreset(defaultPreset)
             setSliceOrientation(0, 40, 0)
