@@ -231,7 +231,7 @@ export function HeartModel({
     itemsRef.current.forEach(({ mesh }) => {
       const selected = mesh.name === selectedPart
       mesh.material.emissive.set(selected ? '#ffb347' : '#000000')
-      mesh.material.emissiveIntensity = selected ? 0.65 : 0
+      mesh.material.emissiveIntensity = selected ? 0.25 : 0
     })
     invalidate()
   }, [selectedPart, renderItems, invalidate])
