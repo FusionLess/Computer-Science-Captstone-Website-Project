@@ -191,7 +191,7 @@ button.compare-button.not-comparing {
     transform: none;
 }
 
-@media (orientation: portrait) {
+@media (orientation: portrait), (orientation: landscape) and (max-height: 600px) {
     /* The fixed title row contains the phone Compare and Sync buttons. */
     .middle-panel > .compare-button,
     .middle-panel > .sync {
@@ -240,6 +240,9 @@ button.compare-button.not-comparing {
         order: -1;
     }
 
+}
+
+@media (orientation: portrait) {
     .middle-panel {
         flex: none;
         min-height: 0;

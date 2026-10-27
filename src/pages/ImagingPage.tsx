@@ -10,7 +10,7 @@ export default function ImagingPage() {
     const [showAdvancedSliceControls, setShowAdvancedSliceControls] = useState<boolean>(true)
 
     return (
-        <main className = "app">
+        <main className = "app imaging-app">
             <TopBar
                 graphActive={graphActive}
                 setGraphActive={setGraphActive}

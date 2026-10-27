@@ -1,3 +1,7 @@
+.imaging-app {
+    container: imaging-page / inline-size;
+}
+
 .imaging-layout {
     display: flex;
     flex: 1;
@@ -21,6 +25,7 @@
     display: flex;
     flex-direction: column;
     gap: 32px;
+    min-width: 0;
     padding: 32px;
     margin: 0;
     flex: 1;
@@ -90,6 +95,59 @@
 .imaging-description { min-height: 200px; }
 .imaging-sidepanel-extra { min-height: 120px; }
 
+@media (orientation: landscape) {
+    /* A height-sized scan must leave at least half the row for the heart. */
+    .mri-panel-viewers > .mri-panel-viewer:last-child {
+        max-width: calc((100% - 16px) / 2);
+        min-width: 0;
+    }
+
+    .echo-panel-viewers > .echo-panel-viewer.echo-viewer {
+        max-width: calc((100% - 20px) / 2);
+        min-width: 0;
+    }
+
+    /* Reserve room for the sidebar, panel padding and two useful viewer widths. */
+    @container imaging-page (max-width: 1200px) {
+        .imaging-layout {
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .imaging-layout .imaging-left-box,
+        .imaging-layout .imaging-main-box {
+            flex: none;
+            width: 100%;
+            height: auto;
+            padding: 0;
+            overflow: visible;
+        }
+
+        .imaging-layout .imaging-main-box {
+            flex: 1 0 480px;
+            min-height: 480px;
+        }
+
+        .imaging-side-panel {
+            display: grid;
+            grid-template-columns: minmax(140px, 180px) minmax(0, 1fr);
+            gap: 12px 24px;
+            align-items: start;
+        }
+
+        .imaging-side-panel h1,
+        .imaging-side-panel-extra {
+            grid-column: 1 / -1;
+        }
+
+        .imaging-description {
+            min-height: 0;
+        }
+    }
+}
+
 @media (orientation: portrait) {
     .imaging-layout {
         margin-top: var(--bar-height);
@@ -106,10 +164,6 @@
         height: auto;
         padding: 0;
         overflow: visible;
-    }
-
-    .imaging-layout .imaging-main-box {
-        order: -1;
     }
 
     .imaging-central-panel {
