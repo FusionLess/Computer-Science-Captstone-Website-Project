@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useMemo, useRef, useEffect } from 'react'
+import React, { Suspense, useState, useMemo, useRef, useEffect, useImperativeHandle } from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Center, ContactShadows } from '@react-three/drei'
@@ -29,6 +29,7 @@ const CAMERA_POSITIONS = {
 }
 
 export default function HeartViewer({
+    prepareSyncRef,
     showVeins = true,
     showArteries = true,
     frameFolder,
@@ -216,6 +217,35 @@ export default function HeartViewer({
     const setFullView = useSharedControls
         ? setSharedFullView
         : setLocalFullView
+
+    useImperativeHandle(prepareSyncRef, () => () => {
+        setSharedShowEpi(showEpi)
+        setSharedVentricleOnly(ventricleOnly)
+        setSharedFullView(fullView)
+        setSharedSliceEnabled(sliceEnabled)
+        setSharedShowPlaneGuide(showPlaneGuide)
+        setSharedActivePreset(activePreset)
+        setSharedPitch(pitch)
+        setSharedYaw(yaw)
+        setSharedSliceDistance(sliceDistance)
+    })
+
+    // Keep the last shared view when returning to independent controls.
+    useEffect(() => {
+        if (!useSharedControls) return
+        setLocalShowEpi(sharedShowEpi)
+        setLocalVentricleOnly(sharedVentricleOnly)
+        setLocalFullView(sharedFullView)
+        setLocalSliceEnabled(sharedSliceEnabled)
+        setLocalShowPlaneGuide(sharedShowPlaneGuide)
+        setLocalActivePreset(sharedActivePreset)
+        setLocalPitch(sharedPitch)
+        setLocalYaw(sharedYaw)
+        setLocalSliceDistance(sharedSliceDistance)
+        if (sharedActivePreset) setCameraPreset(sharedActivePreset)
+    }, [useSharedControls, sharedShowEpi, sharedVentricleOnly, sharedFullView,
+        sharedSliceEnabled, sharedShowPlaneGuide, sharedActivePreset,
+        sharedPitch, sharedYaw, sharedSliceDistance])
 
     useEffect(() => {
         setLocalFullView(true)

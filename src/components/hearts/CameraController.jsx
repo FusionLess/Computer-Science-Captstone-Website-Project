@@ -19,6 +19,7 @@ export default function CameraController({
     const targetTarget = useRef(new THREE.Vector3())
 
     const animatingRef = useRef(false)
+    const previousResetTrigger = useRef(resetTrigger)
     const startTimeRef = useRef(0)
     const DURATION = 0.8 // Duration in seconds
 
@@ -30,6 +31,8 @@ export default function CameraController({
     const endUp = useMemo(() => new THREE.Vector3(0, 1, 0), [])
 
     useEffect(() => {
+        // A sync transition adopts the current camera, not an old preset animation.
+        animatingRef.current = false
         if (!syncEnabled) {
             if (syncedCameraRef) syncedCameraRef.current = null
             return
@@ -45,6 +48,9 @@ export default function CameraController({
     }, [syncEnabled, index, camera, syncedCameraRef])
 
     useEffect(() => {
+        // Switching shared/local presets must not itself initiate a camera reset.
+        if (previousResetTrigger.current === resetTrigger) return
+        previousResetTrigger.current = resetTrigger
         if (resetTrigger === 0 || !controlsRef.current) return
 
         startPos.current.copy(camera.position)

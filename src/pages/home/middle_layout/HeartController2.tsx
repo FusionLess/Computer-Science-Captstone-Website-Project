@@ -7,6 +7,7 @@ import type { SyncedCamera, SyncState } from "../../../components/types/sync.ts"
 
 import { FRAMES } from "../../../data/frames.ts"
 import { useState, useRef, useEffect } from "react";
+import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 
 import HeartViewer from "../../../components/hearts/HeartViewer.jsx"
@@ -52,6 +53,12 @@ export default function HeartController2({ compareState, selectedPart, setSelect
     const showControls = complexity !== "basic"
 
     const [syncEnabled, setSyncEnabled] = useState(false)
+    const prepareSyncRef = useRef<(() => void) | null>(null)
+    const handleSyncToggle = () => {
+        // Seed shared controls from the left heart before either viewer switches to them.
+        if (!syncEnabled) prepareSyncRef.current?.()
+        setSyncEnabled(enabled => !enabled)
+    }
     const [compareButtonsTarget, setCompareButtonsTarget] = useState<HTMLElement | null>(null)
     useEffect(() => {
         setCompareButtonsTarget(document.getElementById("mobile-compare-buttons"))
@@ -200,7 +207,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
                 <button
                     className={`sync${syncEnabled ? " is-active" : ""}`}
                     aria-pressed={syncEnabled}
-                    onClick={() => (setSyncEnabled((syncEnabled) => !syncEnabled))}
+                    onClick={handleSyncToggle}
                     style={{
                         background: syncEnabled ? "var(--selected-condition-background)" : "var(--cards-background)",
                         color: syncEnabled ? "var(--cards-background)" : "var(--body-texts)",
@@ -230,6 +237,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
                 <HeartPanel
                     showVeins={showVeins}
                     showArteries={showArteries}
+                    prepareSyncRef={prepareSyncRef}
                     active={selection1}
                     setActive={chooseSelection1}
                     syncState={syncState}
@@ -376,6 +384,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
 }
 
 function HeartPanel({
+                        prepareSyncRef,
                         showVeins,
                         showArteries,
                         active,
@@ -413,6 +422,7 @@ function HeartPanel({
                         onLoadingChange,
                         pauseForLoading,
                     }: {
+    prepareSyncRef?: RefObject<(() => void) | null>,
     active: HeartState,
     showVeins: boolean,
     showArteries: boolean,
@@ -464,6 +474,7 @@ function HeartPanel({
                     compareSide={compareSide} onNavigate={onNavigate}/>
             <div className="heart_viewer">
                 <HeartViewer
+                    prepareSyncRef={prepareSyncRef}
                     showVeins={showVeins}
                     showArteries={showArteries}
                     frameFolder={FRAMES[active.option]}
