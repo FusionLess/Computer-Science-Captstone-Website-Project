@@ -123,7 +123,7 @@ export default function HomePage() {
         }
     }, [complexity, sliceEnabled])
     return (
-        <main className="app">
+        <main className="app home-page">
             <TopBar
                 showVeins={showVeins}
                 setShowVeins={setShowVeins}
@@ -143,6 +143,10 @@ export default function HomePage() {
 
 
             />
+            <div className="complexity-title">
+                <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
+                <div id="mobile-compare-buttons" className="mobile-compare-buttons" />
+            </div>
             <Content active={active} 
                 showVeins={showVeins}
                 showArteries={showArteries}

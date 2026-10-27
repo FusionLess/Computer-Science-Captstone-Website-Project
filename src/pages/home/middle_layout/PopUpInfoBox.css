@@ -266,7 +266,7 @@
     box-shadow: 0 2px 8px var(--popup-button-shadow);
 }
 
-@media (orientation: portrait) {
+@media (orientation: portrait), (max-height: 600px) {
     .popup_header {
         align-items: flex-start;
         padding: 18px 14px;

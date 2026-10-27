@@ -97,12 +97,6 @@ function TopBar({showVeins, setShowVeins, showArteries, setShowArteries, graphAc
                     aria-hidden="true"
                 />
             </div>
-            {isHeartPage && (
-                <div className="complexity-title">
-                    <h5>{complexity.charAt(0).toUpperCase() + complexity.slice(1)} View</h5>
-                    <div id="mobile-compare-buttons" className="mobile-compare-buttons" />
-                </div>
-            )}
             <div className="desktop_navigation">
                 <HomeButton complexity={complexity} isHeartPage={isHeartPage} />
                 <ImagingButton />

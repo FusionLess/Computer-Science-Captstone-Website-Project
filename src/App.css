@@ -8,10 +8,109 @@
     overflow: hidden;
 }
 
+.app.home-page > .complexity-title {
+    top: 0;
+    z-index: 100;
+    height: var(--bar-height);
+    display: flex;
+    align-items: center;
+}
+
+.app.home-page > .complexity-title h5 {
+    margin: 0;
+}
+
 @media (orientation: portrait) {
     .app {
         overflow-y: auto;
         padding-bottom: var(--bar-height);
         box-sizing: border-box;
+    }
+}
+@media (orientation: landscape) and (max-height: 600px) {
+    .app.home-page {
+        overflow-y: auto;
+        padding-bottom: var(--bar-height);
+        box-sizing: border-box;
+    }
+
+    .app.home-page .topbar {
+        position: relative;
+    }
+
+    /* The view/Compare row is a full-width sibling beneath the top bar. */
+    .app.home-page > .complexity-title {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        flex: 0 0 var(--mobile-complexity-title-height);
+        width: 100%;
+        margin: 0;
+    }
+
+    .app.home-page > .content {
+        margin-top: 0;
+    }
+}
+
+@media (orientation: portrait) {
+    .app.home-page > .complexity-title {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        flex: 0 0 var(--mobile-complexity-title-height);
+        width: 100%;
+        margin: var(--bar-height) 0 0;
+    }
+
+    .app.home-page > .content {
+        margin-top: 0;
+    }
+}
+
+@media (orientation: portrait), (max-height: 600px) {
+    .app.home-page > .complexity-title {
+        z-index: 90;
+        height: var(--mobile-complexity-title-height);
+        box-sizing: border-box;
+        justify-content: flex-start;
+        padding: 0 12px;
+        background: var(--home-background);
+        color: var(--primary-headings);
+        font-size: clamp(13px, 4vw, 16px);
+    }
+
+    .app.home-page > .complexity-title h5 {
+        white-space: nowrap;
+    }
+
+    .app.home-page > .complexity-title .mobile-compare-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        pointer-events: auto;
+    }
+}
+
+/* Only short landscape keeps the horizontal navigation at the top. */
+@media (orientation: landscape) and (max-height: 600px) {
+    .app.home-page {
+        padding-bottom: 0;
+    }
+
+    .app.home-page .desktop_navigation {
+        display: flex;
+    }
+
+    .app.home-page .mobile_navigation,
+    .app.home-page .mobile_settings {
+        display: none;
+    }
+
+    .app.home-page .logo img {
+        height: calc(var(--bar-height) - 8px);
     }
 }

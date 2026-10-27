@@ -173,16 +173,16 @@ button.compare-button.not-comparing {
 
 .shared-heart-controller {
     position: absolute;
-    
+
         left: 50%;
         bottom: 24px;
         transform: translateX(-50%);
-    
+
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 10px;
-    
+
         z-index: 20;
 }
 
@@ -191,119 +191,118 @@ button.compare-button.not-comparing {
     transform: none;
 }
 
-@media (orientation: portrait), (orientation: landscape) and (max-height: 600px) {
-    /* The fixed title row contains the phone Compare and Sync buttons. */
-    .middle-panel > .compare-button,
-    .middle-panel > .sync {
-        display: none;
-    }
+.home-page {
+    @media (orientation: portrait), (max-height: 600px) {
+        /* The fixed title row contains the phone Compare and Sync buttons. */
+        .middle-panel > .compare-button,
+        .middle-panel > .sync {
+            display: none;
+        }
 
-    .mobile-compare-buttons button,
-    .mobile-compare-buttons button.compare-button.not-comparing {
-        position: static;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex: none;
-        width: auto;
-        height: 28px;
-        min-height: 28px;
-        margin: 0;
-        padding: 0 9px;
-        transform: none;
-        border: 0;
-        border-radius: 16px;
-        background: var(--cards-background);
-        color: var(--body-texts);
-        box-shadow: 0 1px 4px rgb(0 0 0 / 14%);
-        font-size: 11px;
-        line-height: 1;
-        white-space: nowrap;
-    }
+        .mobile-compare-buttons button,
+        .mobile-compare-buttons button.compare-button.not-comparing {
+            position: static;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: none;
+            width: auto;
+            height: 28px;
+            min-height: 28px;
+            margin: 0;
+            padding: 0 9px;
+            transform: none;
+            border: 0;
+            border-radius: 16px;
+            background: var(--cards-background);
+            color: var(--body-texts);
+            box-shadow: 0 1px 4px rgb(0 0 0 / 14%);
+            font-size: 11px;
+            line-height: 1;
+            white-space: nowrap;
+        }
 
-    .mobile-compare-buttons button.compare-button.not-comparing {
-        z-index: 20;
-    }
+        .mobile-compare-buttons button.compare-button.not-comparing {
+            z-index: 20;
+        }
 
-    .mobile-compare-buttons .compare-button:not(.not-comparing),
-    .mobile-compare-buttons .sync.is-active {
-        background: var(--selected-condition-background);
-        color: var(--selected-suboptions);
-    }
+        .mobile-compare-buttons .compare-button:not(.not-comparing),
+        .mobile-compare-buttons .sync.is-active {
+            background: var(--selected-condition-background);
+            color: var(--selected-suboptions);
+        }
 
-    .mobile-compare-buttons .sync svg {
-        width: 13px;
-        height: 13px;
-    }
+        .mobile-compare-buttons .sync svg {
+            width: 13px;
+            height: 13px;
+        }
 
-    .mobile-compare-buttons .sync {
-        order: -1;
-    }
+        .mobile-compare-buttons .sync {
+            order: -1;
+        }
 
+    }
 }
 
-@media (orientation: portrait) {
-    .middle-panel {
-        flex: none;
-        min-height: 0;
-    }
+.home-page {
+    @media (orientation: portrait), (max-height: 600px) {
+        .middle-panel {
+            flex: none;
+            min-height: 0;
+        }
 
-    /* The single-view selector is fixed below the title bar. */
-    .middle-panel:not(:has(.heart_panel + .heart_panel)) {
-        padding-top: 54px;
-    }
+        .middle-panel-viewers {
+            flex: none;
+            flex-direction: column;
+        }
 
-    .middle-panel-viewers {
-        flex: none;
-        flex-direction: column;
-    }
+        .heart_panel {
+            flex: none;
+            height: clamp(430px, 58dvh, 520px);
+            min-height: 0;
+        }
 
-    .heart_panel {
-        flex: none;
-        height: clamp(430px, 58dvh, 520px);
-        min-height: 0;
-    }
+        .middle-panel-viewers:has(> .heart_panel + .heart_panel) > .heart_panel {
+            height: clamp(240px, 37dvh, 330px);
+        }
 
-    .middle-panel-viewers:has(> .heart_panel + .heart_panel) > .heart_panel {
-        height: clamp(240px, 37dvh, 330px);
-    }
+        .middle-panel-viewers > .heart_panel + .heart_panel::before {
+            top: 0;
+            right: var(--side-margin);
+            bottom: auto;
+            left: var(--side-margin);
+            width: auto;
+            height: 1px;
+            background: var(--divider);
+            z-index: 2;
+        }
 
-    .middle-panel-viewers > .heart_panel + .heart_panel::before {
-        top: 0;
-        right: var(--side-margin);
-        bottom: auto;
-        left: var(--side-margin);
-        width: auto;
-        height: 1px;
-        background: var(--divider);
-        z-index: 2;
-    }
+        .heart_viewer {
+            width: calc(100% - 2 * var(--side-margin));
+            margin-inline: auto;
+            overflow: visible;
+        }
 
-    .heart_viewer {
-        width: calc(100% - 2 * var(--side-margin));
-        margin-inline: auto;
-        overflow: visible;
-    }
+        .heart_viewer > div {
+            overflow: visible !important;
+        }
 
-    .heart_viewer > div {
-        overflow: visible !important;
-    }
+        .viewer-controls {
+            left: 0;
+            pointer-events: none;
+        }
 
-    .viewer-controls {
-        left: 0;
-        pointer-events: none;
-    }
+        .viewer-controls > .controller {
+            pointer-events: auto;
+        }
 
-    .viewer-controls > .controller {
-        pointer-events: auto;
-    }
+        .shared-heart-controller {
+            left: var(--side-margin);
+            bottom: 10px;
+            transform: none;
+            align-items: flex-start;
+            gap: 8px;
+        }
 
-    .shared-heart-controller {
-        left: var(--side-margin);
-        bottom: 10px;
-        transform: none;
-        align-items: flex-start;
-        gap: 8px;
     }
-
 }

@@ -172,102 +172,108 @@
     border: 2px solid var(--secondary-cards-border);
 }
 
-@media (orientation: portrait) {
-    .right {
-        position: static;
-        order: 3;
+.home-page {
+    @media (orientation: portrait), (max-height: 600px) {
+        .right button.right_toggle {
+            display: none;
+        }
 
-        width: calc(100% - (var(--side-margin) * 2));
-        padding: 0;
-        margin: 0 auto 4px;
+        .right {
+            position: static;
+            order: 3;
 
-        display: block;
-        flex: 0 0 auto;
-    }
+            width: calc(100% - (var(--side-margin) * 2));
+            padding: 0;
+            margin: 0 auto 4px;
 
-    .right.collapsed {
-        display: none;
-    }
+            display: block;
+            flex: 0 0 auto;
+        }
 
-    .right_content {
-        width: 100%;
-        height: auto;
-        min-height: 0;
-        padding: 0;
+        .right.collapsed {
+            display: none;
+        }
 
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+        .right_content {
+            width: 100%;
+            height: auto;
+            min-height: 0;
+            padding: 0;
 
-        background: transparent;
-        box-shadow: none;
-        overflow: visible;
-    }
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
 
-    .right_scroll {
-        flex: none;
-        overflow: visible;
-        scrollbar-gutter: auto;
-        gap: 12px;
-    }
+            background: transparent;
+            box-shadow: none;
+            overflow: visible;
+        }
 
-    .heart_state_info,
-    .heart_part_info {
-        box-sizing: border-box;
-        width: 100%;
-        padding: 20px;
+        .right_scroll {
+            flex: none;
+            overflow: visible;
+            scrollbar-gutter: auto;
+            gap: 12px;
+        }
 
-        background: var(--cards-background);
-        border: 1px solid var(--divider);
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgb(7 27 61 / 12%);
-    }
+        .heart_state_info,
+        .heart_part_info {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 20px;
 
-    .heart_part_info {
-        gap: 8px;
-    }
+            background: var(--cards-background);
+            border: 1px solid var(--divider);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgb(7 27 61 / 12%);
+        }
 
-    .current_selection {
-        display: inline-flex;
-        align-self: flex-start;
+        .heart_part_info {
+            gap: 8px;
+        }
 
-        margin: 0 0 8px;
-        padding: 4px 9px;
+        .current_selection {
+            display: inline-flex;
+            align-self: flex-start;
 
-        border-radius: 999px;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        line-height: 1;
-    }
+            margin: 0 0 8px;
+            padding: 4px 9px;
 
-    .current_selection.green {
-        background: var(--green-gradient-start);
-        color: var(--green-text);
-    }
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            line-height: 1;
+        }
 
-    .current_selection.amber {
-        background: var(--amber-gradient-start);
-        color: var(--amber-text);
-    }
+        .current_selection.green {
+            background: var(--green-gradient-start);
+            color: var(--green-text);
+        }
 
-    .current_selection.red {
-        background: var(--red-gradient-start);
-        color: var(--red-text);
-    }
+        .current_selection.amber {
+            background: var(--amber-gradient-start);
+            color: var(--amber-text);
+        }
 
-    .current_selection.blue {
-        background: var(--blue-gradient-start);
-        color: var(--blue-text);
-    }
+        .current_selection.red {
+            background: var(--red-gradient-start);
+            color: var(--red-text);
+        }
 
-    .heart-part-info-anchor {
-        scroll-margin-top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 12px);
-        border: none;
-    }
+        .current_selection.blue {
+            background: var(--blue-gradient-start);
+            color: var(--blue-text);
+        }
 
-    .heart-part-info-anchor h3 {
-        color: var(--primary-headings)
+        .heart-part-info-anchor {
+            scroll-margin-top: calc(var(--bar-height) + var(--mobile-complexity-title-height) + 12px);
+            border: none;
+        }
+
+        .heart-part-info-anchor h3 {
+            color: var(--primary-headings)
+        }
     }
 }
