@@ -278,31 +278,7 @@ export default function HeartViewer({
     }, [sharedResetTrigger])
 
     const handleFullView = () => {
-        if (!fullView) {
-            // Enter Full View
-            setFullView(true)
-            setVentricleOnly(false)
-            setShowEpi(true)
-
-            setSliceEnabled(false)
-            setShowPlaneGuide(false)
-            setActivePreset(defaultPreset)
-            setSliceOrientation(0, 40, 0)
-
-            setCameraPreset(defaultPreset)
-            setResetTrigger(prev => prev + 1)
-
-        } else {
-            setFullView(false)
-            setSliceEnabled(true)
-            setShowPlaneGuide(true)
-
-            setActivePreset(defaultPreset)
-            setSliceOrientation(0, 40, 0)
-
-            setCameraPreset(defaultPreset)
-            setResetTrigger(prev => prev + 1)
-        }
+        setSliceEnabled(!sliceEnabled)
     }
 
     const handleResetView = () => {

@@ -117,20 +117,7 @@ export default function HeartController2({ compareState, selectedPart, setSelect
     }
 
     const handleSharedFullView = () => {
-        const nextFullView = !sharedFullView
-
-        setSharedFullView(nextFullView)
-        setSharedShowEpi(true)
-
-        setSharedSliceEnabled(!nextFullView)
-        setSharedShowPlaneGuide(!nextFullView)
-
-        setSharedActivePreset("frontal")
-        setSharedPitch(0)
-        setSharedYaw(40)
-        setSharedSliceDistance(0)
-
-        setSharedResetTrigger(prev => prev + 1)
+        setSharedSliceEnabled(!sharedSliceEnabled)
     }
     const handleSharedPresetSelect = (
         presetKey: string,

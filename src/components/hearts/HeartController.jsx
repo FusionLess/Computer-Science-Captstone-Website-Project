@@ -153,12 +153,7 @@ export default function HeartController({
 
                 <button
                     type="button"
-                    onClick={() => {
-                        if (fullView) {
-                            onOpenSliceControls?.()
-                        }
-                        handleFullView()
-                    }}
+                    onClick={handleFullView}
                     className={`full-view-button${sliceEnabled ? ' is-active' : ''}`}
                 >          
                     <svg xmlns="http://www.w3.org/2000/svg"
