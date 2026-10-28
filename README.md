@@ -1,63 +1,141 @@
-# 3D Cardiac cycle web viewer
+# From Lab to Life: Interactive Heart Visualisations for Education and Outreach
 
-This is the documentation for implementation of the web-based cardiac visualisation tool built with **React Three Fiber**, **Three,js**, and **PyVista**. This tool renders all 25 frames with some hardware acceleration for rendering and a clipping plane that lets you see into the heart with different anatomical structure toggles. It also features variable heart rate slider (although very crude as of the writing of this documentation) as well as a pause button (WOW).
+An interactive web application developed for COMPSCI 399 at the University of Auckland, designed to turn complex anatomy into an interactive 3D website, giving people the clarity they need to better understand and care for their health.
 
----
+The website allows users to explore animated healthy and diseased heart models, compare different conditions, and learn about different conditions along with physiological graphs and medical imaging.
+
+## Features
+
+- **Interactive 3D Heart Models:** Rotate, zoom, pause and adjust the heart rate.
+- **Heart Condition Selection:** Explore six different heart conditions.
+- **Comparison Mode:** Compare two heart models side by side with optional synchronised controls.
+- **Anatomical Exploration:** Highlight and select structures to view educational descriptions.
+- **Cross-Sectional Viewing:** Examine internal structures using clipping planes.
+- **Physiological Graphs:** View ECG and pressure/volume visualisations.
+- **Medical Imaging:** Explore MRI and echocardiography images.
+- **Adjustable Complexity:** Switch between basic, standard and advanced educational detail.
+- **Responsive Design:** Supports desktop and mobile devices.
+
+## Project Management
+We used Trello to assign tasks to team members and track their progress throughout the project.
+
+**Trello:** [Insert link]
+
+We also used GitHub to organise tasks, track bugs.
+
+
+## Technologies Used
+
+| Technology               | Purpose                                  |
+|--------------------------|------------------------------------------|
+| JavaScript / TypeScript  | Frontend development                     |
+| React                    | User interface                           |
+| Vite                     | Development and build tooling            |
+| React Router             | Page navigation                          |
+| Three.js                 | 3D rendering                             |
+| React Three Fiber        | React integration with Three.js          |
+| React Three Drei         | 3D rendering utilities                   |
+| CSS                      | Styling and responsive layouts           |
+| Node.js                  | Development tooling and regression tests |
+| Playwright               | Browser-based end-to-end tests           |
+| GitHub Actions           | Continuous integration                   |
+| Figma                    | Website prototypes design tool           |
+
+
 ## Architecture Overview
-1. **Python export pipeline (not available in this repo)**
-    - Essentially turns the .npz files provided by Stephen Creamer's team into '.glb' files that can be used in the web. If necessary, I can upload all that and document it here.
 
-2. **Frontend Render Engine (the meat and potatoes)**
-    - **Playback engine** runs a gpu accelerated frame-swapping mechanism inside @react-three/fiber`'s `useFrame` loop. The cardiac timeline is driven dynamically by a beats-per-minute (BPM) formula without heavy CPU mesh transformations.
-    - **GPU Hardware Clipping:** Implements `THREE.Plane` calculations directly in fragment shaders, enabling arbitrary oblique cutaways with zero geometry degradation.
-    - **Double-Sided Rendering:** Meshes leverage `THREE.DoubleSide` and `logarithmicDepthBuffer` to prevent internal cavity culling and z-fighting during slice operations.
+The application uses React for its user interface and Three.js with React Three Fiber for interactive 3D visualisation. 
+Preprocessed GLB heart models and medical images are loaded as static assets.
 
-# Getting Started
-## Prerequisties
-- Node.js (v18+)
-- Python 3.9+ with pyvista, numpy, and trimesh (only necessary if the mesh generation code is here)
+The 3D heart rendering system supports frame-based animation, anatomical interaction, clipping and visibility controls.
 
-## Frontend Installation and Development
-Install dependencies and launch the local Vite development server
+For more details about heart model setup, see the [Technical Documentation](docs/HEART_README.md).
 
-```Bash  
+## Installation and Setup
+
+### Prerequisites
+
+- Node.js 22.18+ or Node.js 24
+- npm
+- A modern browser with WebGL support
+
+### Installation
+
+
+Install the dependencies:
+
+```bash
 npm install
-npm install three @react-three/fiber @react-three/drei
-npm install -D vite @vitejs/plugin-react
-npm run dev 
 ```
-# Component API Reference
-### `<HeartModel />`
-#### Properties
 
-| Prop        | Type                                 | Default     | Description                                                                                               |
-| :---------- | :----------------------------------- | :---------- | :-------------------------------------------------------------------------------------------------------- |
-| `bpm`       | `number`                             | `60`        | Playback speed in beats per minute. Dynamically scales the frame interval duration (`(60.0 / bpm) / 25`). |
-| `isPaused`  | `boolean`                            | `false`     | When `true`, freezes frame timeline accumulation in `useFrame`, holding the active frame static.          |
-| `showEpi`   | `boolean`                            | `true`      | Toggles visibility of the epicardium outer wall (`mesh0`). When `false`, exposes the internal chambers.   |
-| `clipPlane` | `THREE.Plane \| null`                | `null`      | Active clipping plane instance passed to all sub-mesh materials for GPU-accelerated slicing.              |
-| `rotation`  | `[number, number, number]`           | `[0, 0, 0]` | Euler rotation array in radians applied to the root heart model group.                                    |
-| `position`  | `[number, number, number]`           | `[0, 0, 0]` | World position coordinates for the model root.                                                            |
-| `scale`     | `number \| [number, number, number]` | `1`         | Scale factor applied to the root model group.                                                             |
+Start the development server:
 
----
+```bash
+npm run dev
+```
 
-### `<SingleFrame />` (Internal)
+Open the local URL displayed in the terminal, typically `http://localhost:5173`.
 
-Sub-component instantiated 75 times by `<HeartModel />`. Preloads, parses, and manages material configuration for an individual GLB frame file.
-#### Properties
+### Production Build
 
-| Prop | Type | Required | Description |
-| :--- | :--- | :--- | :--- |
-| `url` | `string` | Yes | Path to the exported frame asset (e.g., `/frames/frame_0.glb`). |
-| `isVisible` | `boolean` | Yes | Controls whether this specific frame mesh is rendered in the current animation tick. |
-| `showEpi` | `boolean` | Yes | Controls mesh visibility specifically for `mesh0` (epicardium). |
-| `clipPlane` | `THREE.Plane \| null` | No | Clipping plane assigned to the `material.clippingPlanes` array. |
+```bash
+npm run build
+npm run preview
+```
 
-#### Material Configuration Defaults
-- `material.side`: `THREE.DoubleSide` (enables hollow interior cavity rendering during cross-sections)
-- `material.clipShadows`: `true`
-- `material.needsUpdate`: `true` (triggered dynamic ally on clipping plane change)
+The production build is generated in the `dist` directory.
 
+## Usage Examples
 
+**Exploring a heart model:** Select a heart condition, rotate or zoom the model, adjust the heart rate and use the anatomical controls to explore internal structures.
 
+**Comparing conditions:** Enable comparison mode, select two heart conditions and examine the models side by side.
+
+**Viewing medical imaging:** Open the medical imaging section to explore MRI and echocardiography images.
+
+## Testing and Quality Assurance
+
+We use both automated and manual testing to verify the application.
+
+- **Node.js regression tests:** Check rendering logic and routing.
+- **Playwright end-to-end tests:** Verify browser interactions such as condition selection, comparison mode, navigation and heart rate controls.
+- **GitHub Actions:** Automatically runs tests on pull requests and pushes to `main` or `Development`.
+- **Manual testing:** Checks for UI layout and UX. 
+
+Run the automated tests using:
+
+```bash
+npm test
+npm run test:e2e
+```
+
+## Deployment
+
+**Live Website:** https://main.daug44awk3a81.amplifyapp.com/
+
+## Future Plans
+
+Potential future improvements include:
+
+- Search-enabled highlighting and labeling of heart structures
+- Hoverable regions and pop-up info in the medical imaging section
+- Affected region highlighting
+- Integration with PPG sensors
+- Demographic-based heart changes
+- Educational quizzes or mini-games
+- Heart valves
+- Multilingual support
+
+## Acknowledgements
+
+We thank our client for providing the heart models and scientific guidance, our academic supervisors for their support, and user-testing participants for their feedback.
+
+MRI and echocardiography images were obtained from open-source resources suggested by the client. Specific sources and licences should be credited where applicable.
+
+We also acknowledge the open-source libraries and tools used throughout development.
+
+## Team
+
+Developed by **Five Random Men (Team 23)** for COMPSCI 399 at the University of Auckland.
+
+**Final Report:** [Insert link]
