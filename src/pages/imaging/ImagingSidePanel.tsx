@@ -21,7 +21,6 @@ export default function ImagingSidePanel({ viewerMode, setViewerMode }: LeftImag
             <div className="imaging-description">
                 {imagingDescriptions[viewerMode]}
             </div>
-            <div className="imaging-side-panel-extra">Additional information</div>
         </aside>
     )
 }
